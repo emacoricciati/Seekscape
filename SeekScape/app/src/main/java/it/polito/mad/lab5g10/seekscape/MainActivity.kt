@@ -53,6 +53,10 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        //Log.d("MainActivity", "onCreate called")
+        //logIntentDetails(intent, "onCreate")
+
         val accountService = AccountService()
         lifecycleScope.launch {
             if (accountService.hasUser()) {
@@ -70,11 +74,12 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             SeekScapeTheme {
-                //NotificationPermissionRequester()
+                NotificationPermissionRequester()
                 SeekScapeApp(initialIntent = intent)
                 //Support()
             }
         }
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -83,18 +88,50 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
-    private fun handleIntent(intent: Intent){
-        intent.let {
-            val notificationItem = NotificationItem(
-                id = it.getStringExtra("notification_Id")!!,
-                type = it.getStringExtra("notification_type")!!,
-                title = it.getStringExtra("notification_title")!!,
-                description = it.getStringExtra("notification_description")!!,
-                tab = it.getStringExtra("notification_tab")!!,
-                navRoute = it.getStringExtra("notification_route")!!
-            )
+    private fun logIntentDetails(intent: Intent?, tag: String) {
+        if (intent == null) {
+            Log.e("MainActivity", "$tag: Intent is NULL")
+            return
+        }
+        Log.d("MainActivity", "$tag: Intent Action: ${intent.action}")
+        Log.d("MainActivity", "$tag: Intent Data: ${intent.data}")
+        Log.d("MainActivity", "$tag: Intent Flags: ${intent.flags}")
 
-            navigateToNotificationAction(notificationItem)
+        val extras = intent.extras
+        if (extras == null) {
+            Log.e("MainActivity", "$tag: Intent Extras are NULL")
+        } else {
+            Log.d("MainActivity", "$tag: Intent Extras:")
+            for (key in extras.keySet()) {
+                Log.d("MainActivity", "  $key: ${extras.get(key)}")
+            }
+        }
+    }
+
+    private fun handleIntent(intent: Intent?){
+        intent?.let {
+            val notificationId = it.getStringExtra("id")
+            val notificationType = it.getStringExtra("type")
+            val notificationTitle = it.getStringExtra("title")
+            val notificationDescription = it.getStringExtra("description")
+            val notificationTab = it.getStringExtra("tab")
+            val notificationRoute = it.getStringExtra("navRoute")
+
+            if(notificationId != null && notificationType!= null && notificationTitle!= null &&
+                notificationDescription!= null && notificationTab!= null && notificationRoute!= null){
+                val notificationItem = NotificationItem(
+                    id = notificationId,
+                    type = notificationType,
+                    title = notificationTitle,
+                    description = notificationDescription,
+                    tab = notificationTab,
+                    navRoute = notificationRoute
+                )
+                navigateToNotificationAction(notificationItem)
+            }
+            else{
+                Log.w("MainActivity", "Missing Intent or incomplete intent")
+            }
         }
     }
 }
