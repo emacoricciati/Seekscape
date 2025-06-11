@@ -333,7 +333,6 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
     val currentRoute = currentNavController.currentBackStackEntry?.destination?.route
     val isLogged by AppState.isLogged.collectAsState()
     val user = AppState.myProfile.collectAsState().value
-    val actions = remember(currentNavController) { Actions(currentNavController) }
 
     TopAppBar(
         title = {

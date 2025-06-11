@@ -491,7 +491,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if(travelItinerary==null || travelItinerary.isEmpty()){
+            if(travelItinerary.isEmpty()){
                 Text(
                     text = "no itineraries specified",
                     style = MaterialTheme.typography.bodyMedium,

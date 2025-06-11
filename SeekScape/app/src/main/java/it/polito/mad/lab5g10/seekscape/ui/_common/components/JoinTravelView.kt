@@ -41,14 +41,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.SingleRequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Travel
@@ -291,7 +289,7 @@ fun ConfirmRequestButton(vm: SingleRequestViewModel, navCont: NavHostController)
         Button(
             onClick = {
                 scope.launch{
-                    CommonModel.InsertRequestDB(request).onSuccess {
+                    CommonModel.addRequestToJoin(request).onSuccess {
                         Toast.makeText(
                             context,
                             "Request sent",

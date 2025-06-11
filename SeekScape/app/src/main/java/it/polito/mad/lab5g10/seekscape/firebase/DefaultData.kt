@@ -2,13 +2,11 @@ package it.polito.mad.lab5g10.seekscape.firebase
 
 import java.time.LocalDate
 
-
 import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.Activity
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.Itinerary
-import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.models.PAST
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.Request
@@ -37,6 +35,7 @@ val unknown_User = User(
     "",listOf<String>(),null,null,null,null,null,0
 )
 
+
 fun generateRandomDateOfBirth(age: Int): String {
     val today = LocalDate.now()
     val startDate = today.minusYears((age + 1).toLong()).plusDays(1)
@@ -49,6 +48,10 @@ fun generateRandomDateOfBirth(age: Int): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return randomDate.format(formatter)
 }
+
+
+
+//--------------------------USERS
 
 val user_ob = User(
     userId = "2",
@@ -258,6 +261,10 @@ val user_ec = User(
     )
 )
 
+
+//--------------------------TRAVELS & REQUESTS
+
+
 val t1_i4 = Itinerary(
     itineraryId = 4,
     name = "Day 4: Lisbon Nightlife",
@@ -409,10 +416,38 @@ val travel1 = Travel(
     travelReviews = listOf()
 )
 
+val t1_req1 = Request(
+    lastUpdate = LocalDate.parse("16/02/2025", formatter)!!,
+    id = "",
+    author = user_ob,
+    trip = travel1,
+    isAccepted = false,
+    isRefused = true,
+    spots = 1,
+    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip.",
+    responseMessage = "I'm so sorry but I don't know you so well"
+)
+
+val t1_req2 = Request(
+    lastUpdate = LocalDate.parse("25/01/2025", formatter)!!,
+    id = "",
+    author = user_eh,
+    trip = travel1,
+    isAccepted = true,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip.",
+    responseMessage = "Yea let's go"
+)
+
+
+
+
+
 val t2_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Arrival in Interlaken",
-    startDate = LocalDate.parse("15/06/2025", formatter)!!,
+    startDate = LocalDate.parse("15/07/2025", formatter)!!,
     places = listOf("Interlaken, Switzerland"),
     description = "We kick off our alpine journey in Interlaken, a beautiful town nestled between two lakes and surrounded by mountains.",
     itineraryImages = mutableListOf(),
@@ -426,7 +461,7 @@ val t2_i1 = Itinerary(
 val t2_i2 = Itinerary(
     itineraryId = 2,
     name = "Day 2: Lauterbrunnen Valley Hiking",
-    startDate = LocalDate.parse("16/06/2025", formatter)!!,
+    startDate = LocalDate.parse("16/07/2025", formatter)!!,
     places = listOf("Lauterbrunnen, Switzerland"),
     description = "A full day hike in Lauterbrunnen Valley, one of the most picturesque places in Switzerland.",
     itineraryImages = mutableListOf(),
@@ -452,36 +487,62 @@ val travel2 = Travel(
     priceMax = 600,
     status = AVAILABLE,
     distance = "120 km",
-    startDate = LocalDate.parse("15/06/2025", formatter)!!,
-    endDate = LocalDate.parse("22/06/2025", formatter)!!,
+    startDate = LocalDate.parse("15/07/2025", formatter)!!,
+    endDate = LocalDate.parse("22/07/2025", formatter)!!,
     travelItinerary = mutableListOf(t2_i1, t2_i2),
-    travelCompanions = mutableListOf(TravelCompanion(user_ob), TravelCompanion(user_ec)),
+    travelCompanions = mutableListOf(TravelCompanion(user_ob), TravelCompanion(user_ec), TravelCompanion(user_me)),
     maxPeople = 6,
     travelReviews = listOf()
 )
-val travel2update = Travel(
-    travelId = "101",
-    creator = user_ob,
-    title = "Pochettino",
-    description = "A scenic adventure through the Swiss Alps. Ideal for nature lovers and hikers.",
-    country = "Interlaken, Switzerland",
-    travelTypes = mutableListOf("Adventure", "Nature"),
-    travelImages = listOf(
-        TravelImage.Resource(R.drawable.t2_image1),
-        TravelImage.Resource(R.drawable.t2_image2),
-        TravelImage.Url("https://st.ilfattoquotidiano.it/wp-content/uploads/2024/09/11/pochettino-stati-uniti.jpg")
-    ),
-    priceMin = 400,
-    priceMax = 600,
-    status = AVAILABLE,
-    distance = "120 km",
-    startDate = LocalDate.parse("15/06/2025", formatter)!!,
-    endDate = LocalDate.parse("22/06/2025", formatter)!!,
-    travelItinerary = mutableListOf(t2_i1, t2_i2),
-    travelCompanions = mutableListOf(TravelCompanion(user_ob), TravelCompanion(user_ec)),
-    maxPeople = 6,
-    travelReviews = listOf()
+
+val t2_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "1",
+    author = user_dw,
+    trip = travel2,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi, I would like to join your trip because I'm very interested in going again to see that beautiful landscapes!"
 )
+
+val t2_req2 = Request(
+    lastUpdate = LocalDate.parse("13/07/2025", formatter)!!,
+    id = "2",
+    author = user_sl,
+    trip = travel2,
+    isAccepted = false,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Hi, I would like to join your trip because I've never been in the Alps. I hope you'll accept me"
+)
+
+val t2_req3 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "13",
+    author = user_me,
+    trip = travel2,
+    isAccepted = false,
+    isRefused = true,
+    spots = 1,
+    reqMessage = "Hey! This trip to the Swiss Alps is fire, I would like to have parties there! Can I be part of your trip team?",
+    responseMessage = "Thanks for your interest, but I prefer to travel with people whose aim is to visit and enjoy all the landscapes of the nature"
+)
+
+val t2_req4 = Request(
+    lastUpdate = LocalDate.parse("06/07/2025", formatter)!!,
+    id = "14",
+    author = user_ec,
+    trip = travel2,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi! I see the advert of your trip in the Alps and I think, as a nature lover, I can be a good companion for this trip",
+    responseMessage = "Yes sure!! I like people like you for this kind of travels towards several nature landscapes"
+)
+
+
+
 
 val t3_i1 = Itinerary(
     itineraryId = 1,
@@ -535,6 +596,33 @@ val travel3 = Travel(
     travelReviews = listOf()
 )
 
+val t3_req1 = Request(
+    lastUpdate = LocalDate.parse("16/07/2025", formatter)!!,
+    id = "1",
+    author = user_ec,
+    trip = travel3,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi, I would like to join your trip",
+    responseMessage = "yea let's go"
+)
+
+val t3_req2 = Request(
+    lastUpdate = LocalDate.parse("26/05/2025", formatter)!!,
+    id = "1",
+    author = user_dw,
+    trip = travel3,
+    isAccepted = false,
+    isRefused = false,
+    spots = 3,
+    reqMessage = "Hi, I would like chill on the beach with you"
+)
+
+
+
+
+
 val t4_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Casablanca & Transfer to Rabat",
@@ -587,6 +675,9 @@ val travel4 = Travel(
 )
 
 
+
+
+
 val t5_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Arrival in Tokyo",
@@ -637,6 +728,33 @@ val travel5 = Travel(
     travelReviews = listOf()
 )
 
+val t5_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "1",
+    author = user_eh,
+    trip = travel5,
+    isAccepted = true,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Let's go eat sushiii",
+    responseMessage = "I like your spirit"
+)
+
+val t5_req2 = Request(
+    lastUpdate = LocalDate.parse("20/06/2025", formatter)!!,
+    id = "1",
+    author = user_dw,
+    trip = travel5,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "I can speak Japanese ",
+)
+
+
+
+
+
 val t6_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Historical Athens",
@@ -682,9 +800,36 @@ val travel6 = Travel(
     endDate = LocalDate.parse("22/05/2025", formatter)!!,
     travelItinerary = mutableListOf(t6_i1, t6_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_dw), TravelCompanion(user_sl)),
-    maxPeople = 16,
+    maxPeople = 5,
     travelReviews = listOf()
 )
+
+val t6_req1 = Request(
+    lastUpdate = LocalDate.parse("16/04/2025", formatter)!!,
+    id = "1",
+    author = user_ob,
+    trip = travel6,
+    isAccepted = false,
+    isRefused = true,
+    spots = 1,
+    reqMessage = "I love grece, please let's go together, I want to fish and eat what I catch",
+    responseMessage = "Sorry I am vegan i do not appreciate that",
+)
+
+val t6_req2 = Request(
+    lastUpdate = LocalDate.parse("16/04/2025", formatter)!!,
+    id = "1",
+    author = user_sl,
+    trip = travel6,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "I love grece, please let's go together",
+    responseMessage = "We will have fun",
+)
+
+
+
 
 val t7_i1 = Itinerary(
     itineraryId = 1,
@@ -734,6 +879,33 @@ val travel7 = Travel(
     maxPeople = 8,
     travelReviews = listOf()
 )
+
+
+val t7_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "",
+    author = user_dw,
+    trip = travel7,
+    isAccepted = true,
+    isRefused = false,
+    spots = 4,
+    reqMessage = "Pizza partyyyyy",
+    responseMessage = "Yea we will eat a lot",
+)
+
+val t7_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "",
+    author = user_sl,
+    trip = travel7,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "I love Italy, I want pizza",
+)
+
+
+
 
 val t8_i1 = Itinerary(
     itineraryId = 1,
@@ -789,6 +961,45 @@ val travel8 = Travel(
     maxPeople = 18,
     travelReviews = listOf()
 )
+
+val t8_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "",
+    author = user_me,
+    trip = travel8,
+    isAccepted = true,
+    isRefused = false,
+    spots = 3,
+    reqMessage = "I want to see Paris with you",
+    responseMessage = "Let's go then"
+)
+
+val t8_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "",
+    author = user_sl,
+    trip = travel8,
+    isAccepted = true,
+    isRefused = false,
+    spots = 3,
+    reqMessage = "I want to see the Louvre with you",
+    responseMessage = "Let's go then"
+)
+
+val t8_req3 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "",
+    author = user_dw,
+    trip = travel8,
+    isAccepted = true,
+    isRefused = false,
+    spots = 3,
+    reqMessage = "I want to see Paris with you",
+    responseMessage = "Let's go then"
+)
+
+
+
 
 val t9_i1 = Itinerary(
     itineraryId = 1,
@@ -874,6 +1085,34 @@ val travel9 = Travel(
     travelReviews = listOf(t9_r1, t9_r2)
 )
 
+val t9_req1 = Request(
+    lastUpdate = LocalDate.parse("10/10/2024", formatter)!!,
+    id = "3",
+    author = user_ob,
+    trip = travel9,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hello! I'd love to join your trip to Japan—I've always dreamed of visiting Kyoto in the fall!",
+    responseMessage = "Sure"
+)
+
+val t9_req2 = Request(
+    lastUpdate = LocalDate.parse("10/10/2024", formatter)!!,
+    id = "3",
+    author = user_dw,
+    trip = travel9,
+    isAccepted = true,
+    isRefused = false,
+    spots = 4,
+    reqMessage = "Hello! I'd love to join your trip to Japan, I have some friends hope you don't mind",
+    responseMessage = "No problem, let's go"
+)
+
+
+
+
+
 
 val t10_i1 = Itinerary(
     itineraryId = 1,
@@ -923,11 +1162,38 @@ val travel10 = Travel(
     travelCompanions = mutableListOf(
         TravelCompanion(user_sl),
         TravelCompanion(user_ob),
-        TravelCompanion(user_dw)
+        TravelCompanion(user_ec)
     ),
     maxPeople = 4,
     travelReviews = listOf()
 )
+
+val t10_req1 = Request(
+    lastUpdate = LocalDate.parse("10/10/2024", formatter)!!,
+    id = "4",
+    author = user_ob,
+    trip = travel10,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip.",
+    responseMessage = "It is, let's go"
+)
+
+val t10_req2 = Request(
+    lastUpdate = LocalDate.parse("10/10/2024", formatter)!!,
+    id = "4",
+    author = user_ec,
+    trip = travel10,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip.",
+    responseMessage = "It is, let's go"
+)
+
+
+
 
 val t11_i1 = Itinerary(
     itineraryId = 1,
@@ -981,6 +1247,32 @@ val travel11 = Travel(
     maxPeople = 6,
     travelReviews = listOf()
 )
+
+val t11_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "6",
+    author = user_ec,
+    trip = travel11,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hi there! Spend some days in Spain it's one of my dream, it would be great if you accept my request",
+    responseMessage = "Sure! I want people like you to spend some days in Spain!"
+)
+
+val t11_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "6",
+    author = user_ob,
+    trip = travel11,
+    isAccepted = false,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Hi there! Spend some days in Spain it's one of my dream",
+)
+
+
+
 val t12_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Arrival in Rio",
@@ -1034,6 +1326,33 @@ val travel12 = Travel(
     travelReviews = listOf()
 )
 
+val t12_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "7",
+    author = user_ob,
+    trip = travel12,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hey! Exploring Brazil with this group sounds like an unforgettable experience—count me in!",
+    responseMessage = "Absolutely! Brazil is better with good company, welcome aboard!"
+)
+
+val t12_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "7",
+    author = user_me,
+    trip = travel12,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hey! Exploring Brazil with this group sounds like an unforgettable experience—count me in!"
+)
+
+
+
+
+
 val t13_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Arrival in Delhi",
@@ -1081,14 +1400,50 @@ val travel13 = Travel(
     travelItinerary = mutableListOf(t13_i1, t13_i2),
     travelCompanions = mutableListOf(
         TravelCompanion(user_eh),
-        TravelCompanion(user_ec),
         TravelCompanion(user_dw),
-        TravelCompanion(user_sl),
-        TravelCompanion(user_ob)
+        TravelCompanion(user_sl)
     ),
     maxPeople = 9,
     travelReviews = listOf()
 )
+
+val t13_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "8",
+    author = user_dw,
+    trip = travel13,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "India has always fascinated me—I'd love to join this adventure through Delhi!",
+    responseMessage = "We're thrilled to have you on board!"
+)
+
+val t13_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "8",
+    author = user_sl,
+    trip = travel13,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "India has always fascinated me",
+    responseMessage = "Delhi awaits with all its colors and history!"
+)
+
+val t13_req3 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "8",
+    author = user_ec,
+    trip = travel13,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "India has always fascinated me—I'd love to join this adventure through Delhi!",
+)
+
+
+
 
 val t14_i1 = Itinerary(
     itineraryId = 1,
@@ -1182,11 +1537,38 @@ val travel14 = Travel(
     travelItinerary = mutableListOf(t14_i1, t14_i2, t14_i3, t14_i4, t14_i5),
     travelCompanions = mutableListOf(
         TravelCompanion(user_me),
-        TravelCompanion(user_dw)
+        TravelCompanion(user_dw, 2)
     ),
     maxPeople = 6,
     travelReviews = listOf()
 )
+
+val t14_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "9",
+    author = user_dw,
+    trip = travel14,
+    isAccepted = true,
+    isRefused = false,
+    spots = 3,
+    reqMessage = "Hey! This NYC adventure looks incredible—I'd love to tag along if there's room!",
+    responseMessage = "Thanks for your interest, but I prefer to travel with people I know well."
+)
+
+val t14_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "9",
+    author = user_sl,
+    trip = travel14,
+    isAccepted = false,
+    isRefused = true,
+    spots = 6,
+    reqMessage = "Hey! This NYC adventure looks incredible, I have lots of friends interested",
+    responseMessage = "You guys are too many"
+)
+
+
+
 
 val t15_i1 = Itinerary(
     itineraryId = 1,
@@ -1250,10 +1632,45 @@ val travel15 = Travel(
     travelCompanions = mutableListOf(
         TravelCompanion(user_ec),
         TravelCompanion(user_dw),
-        TravelCompanion(user_sl)
+        TravelCompanion(user_sl, 1)
     ),
     maxPeople = 5,
     travelReviews = listOf()
+)
+
+val t15_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "9",
+    author = user_dw,
+    trip = travel15,
+    isAccepted = true,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hey! This  Saint Petersburg dressed in fall colors looks incredible—I'd love to tag along if there's room!",
+    responseMessage = "Thanks for your interest, but I prefer to travel with people I know well."
+)
+
+val t15_req2 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "9",
+    author = user_sl,
+    trip = travel15,
+    isAccepted = true,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Hey! This looks incredible, I have one friends interested",
+    responseMessage = "Thanks for your interest, i love to have you and your friend"
+)
+
+val t15_req3 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "9",
+    author = user_ob,
+    trip = travel15,
+    isAccepted = false,
+    isRefused = false,
+    spots = 1,
+    reqMessage = "Hey! This adventure looks incredible—I'd love to tag along if there's room!",
 )
 
 
@@ -1317,12 +1734,15 @@ val travel16 = Travel(
     endDate = LocalDate.parse("21/10/2025", formatter)!!,
     travelItinerary = mutableListOf(t16_i1, t16_i2, t16_i3),
     travelCompanions = mutableListOf(
-        TravelCompanion(user_eh),
-        TravelCompanion(user_sl)
+        TravelCompanion(user_eh)
     ),
     maxPeople = 4,
     travelReviews = listOf()
 )
+
+
+
+
 
 val t17_i1 = Itinerary(
     itineraryId = 1,
@@ -1377,6 +1797,21 @@ val travel17 = Travel(
     travelReviews = listOf()
 )
 
+val t17_req1 = Request(
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    id = "10",
+    author = user_sl,
+    trip = travel17,
+    isAccepted = false,
+    isRefused = false,
+    spots = 2,
+    reqMessage = "Hey! I've always wanted to see Venice in summer—hope you'll let me join this quick getaway!"
+)
+
+
+
+
+
 val t18_i1 = Itinerary(
     itineraryId = 1,
     name = "Day 1: Arrival & Museum Island",
@@ -1423,198 +1858,9 @@ val travel18 = Travel(
     endDate = LocalDate.parse("06/01/2026", formatter)!!,
     travelItinerary = mutableListOf(t18_i1, t18_i2),
     travelCompanions = mutableListOf(
-        TravelCompanion(user_me),
-        TravelCompanion(user_dw),
-        TravelCompanion(user_sl)
+        TravelCompanion(user_me)
     ),
     maxPeople = 3,
     travelReviews = listOf()
 )
 
-val request1 = Request(
-    id = "1",
-    author = user_dw,
-    trip = travel2,
-    isAccepted = false,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hi, I would like to join your trip because I'm very interested in going again to see that beautiful landscapes!"
-)
-
-val request2 = Request(
-    id = "2",
-    author = user_sl,
-    trip = travel2,
-    isAccepted = false,
-    isRefused = false,
-    spots = 2,
-    reqMessage = "Hi, I would like to join your trip because I've never been in the Alps. I hope you'll accept me"
-)
-
-val request3 = Request(
-    id = "3",
-    author = user_ob,
-    trip = travel9,
-    isAccepted = true,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hello! I'd love to join your trip to Japan—I've always dreamed of visiting Kyoto in the fall!"
-)
-
-val request4 = Request(
-    id = "4",
-    author = user_ob,
-    trip = travel10,
-    isAccepted = true,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip."
-)
-
-val request5 = Request(
-    id = "5",
-    author = user_ob,
-    trip = travel1,
-    isAccepted = false,
-    isRefused = true,
-    spots = 1,
-    reqMessage = "Hi there! Istanbul in December sounds amazing—I'm really interested in joining this trip.",
-    responseMessage = "I'm so sorry but I don't know you so well"
-)
-
-val request6 = Request(
-    id = "6",
-    author = user_ob,
-    trip = travel11,
-    isAccepted = false,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hi there! Spend some days in Spain it's one of my dream, it would be great if you accept my request",
-    responseMessage = "Sure! I want people like you to spend some days in Spain!"
-)
-
-val request7 = Request(
-    id = "7",
-    author = user_ob,
-    trip = travel12,
-    isAccepted = true,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hey! Exploring Brazil with this group sounds like an unforgettable experience—count me in!",
-    responseMessage = "Absolutely! Brazil is better with good company, welcome aboard!"
-)
-
-val request8 = Request(
-    id = "8",
-    author = user_ob,
-    trip = travel13,
-    isAccepted = true,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "India has always fascinated me—I'd love to join this adventure through Delhi!",
-    responseMessage = "We're thrilled to have you on board! Delhi awaits with all its colors and history!"
-)
-
-val request9 = Request(
-    id = "9",
-    author = user_ob,
-    trip = travel14,
-    isAccepted = false,
-    isRefused = true,
-    spots = 1,
-    reqMessage = "Hey! This NYC adventure looks incredible—I'd love to tag along if there's room!",
-    responseMessage = "Thanks for your interest, but I prefer to travel with people I know well."
-)
-
-val request10 = Request(
-    id = "10",
-    author = user_sl,
-    trip = travel17,
-    isAccepted = false,
-    isRefused = false,
-    spots = 2,
-    reqMessage = "Hey! I've always wanted to see Venice in summer—hope you'll let me join this quick getaway!"
-)
-
-
-val request11 = Request(
-    id = "13",
-    author = user_me,
-    trip = travel2,
-    isAccepted = false,
-    isRefused = true,
-    spots = 1,
-    reqMessage = "Hey! This trip to the Swiss Alps is fire, I would like to have parties there! Can I be part of your trip team?",
-    responseMessage = "Thanks for your interest, but I prefer to travel with people whose aim is to visit and enjoy all the landscapes of the nature"
-)
-
-val request12 = Request(
-    id = "14",
-    author = user_ec,
-    trip = travel2,
-    isAccepted = true,
-    isRefused = false,
-    spots = 1,
-    reqMessage = "Hi! I see the advert of your trip in the Alps and I think, as a nature lover, I can be a good companion for this trip",
-    responseMessage = "Yes sure!! I like people like you for this kind of travels towards several nature landscapes"
-)
-
-
-
-
-val travelTypesMoked = listOf<String>("Relax","Road Trips", "Culture", "Party", "Adventure", "Sport", "Beach", "Mountain")
-
-val notificationMocked = mutableListOf<NotificationItem>(
-    /*
-    NotificationItem(
-        1, "account",
-        "Change Password", "Your password has been the same for 3 months, change it.",
-        ""
-    ),
-    */
-
-    /*
-    NotificationItem(
-        2, "msg",
-        "New Messages", "You have a new message from the travel 'Alpine Escape - Switzerland Hiking Adventure'.",
-        ""
-    ),
-    */
-    NotificationItem(
-        "3",
-        "request_accepted",
-        "Request accepted",
-        "Your request for 'Brazilian Adventure: From Rio to Paraty' has been accepted.",
-        "travels",
-        "travel/12/action/SHOW_RESPONSE"
-    ),
-    NotificationItem(
-        "4", "request_denied",
-        "Request Denied", "Your request for 'Urban Escape: NYC & Beyond' has been denied.",
-        "travels", "travel/14/action/SHOW_RESPONSE"
-    ),
-    NotificationItem(
-        "5",
-        "manage_apply",
-        "Application for 1 spots",
-        "Daniel Whitmore is interested in 'Alpine Escape - Switzerland Hiking Adventure'.",
-        "travels",
-        "travels/action/SHOW_APPLY_1"
-    ),
-    NotificationItem(
-        "6",
-        "manage_apply",
-        "Application for 2 spots",
-        "Sophia Lancaster and 1 friend are interested in 'Alpine Escape - Switzerland Hiking Adventure'.",
-        "travels",
-        "travels/action/SHOW_APPLY_2"
-    ),
-    NotificationItem(
-        "7",
-        "manage_apply",
-        "Application for 2 spots",
-        "Sophia Lancaster and 1 friend are interested in 'Summer Escape to Venice'.",
-        "travels",
-        "travels/action/SHOW_APPLY_10"
-    )
-)

@@ -4,21 +4,15 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.*
 
-import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,34 +21,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import it.polito.mad.lab5g10.seekscape.cleanStack
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
-import it.polito.mad.lab5g10.seekscape.firebase.unknown_User
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.ItineraryViewModel
 import it.polito.mad.lab5g10.seekscape.models.ItineraryViewModelFactory
-import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
-import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
-import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
-import it.polito.mad.lab5g10.seekscape.models.OwnedTravelsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.ProfileViewModelFactory
-import it.polito.mad.lab5g10.seekscape.models.Request
-import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
-import it.polito.mad.lab5g10.seekscape.models.RequestsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.Search
 import it.polito.mad.lab5g10.seekscape.models.SearchViewModel
 import it.polito.mad.lab5g10.seekscape.models.SearchViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.Travel
-import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelDuplicator
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModel
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.TravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.TravelViewModelFactory
-import it.polito.mad.lab5g10.seekscape.models.User
 import it.polito.mad.lab5g10.seekscape.models.UserInfoViewModel
-import it.polito.mad.lab5g10.seekscape.models.deepCopy
 import it.polito.mad.lab5g10.seekscape.models.getBlankItinerary
 import it.polito.mad.lab5g10.seekscape.models.getBlankTravel
 import it.polito.mad.lab5g10.seekscape.models.getBlankTravelReview
@@ -62,23 +43,15 @@ import it.polito.mad.lab5g10.seekscape.services.AccountService
 import it.polito.mad.lab5g10.seekscape.ui.profile.CompleteRegistrationScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.LoginScreen
 import it.polito.mad.lab5g10.seekscape.ui.UnloggedUserScreen
-import it.polito.mad.lab5g10.seekscape.ui._common.ArrowBackIcon
-import it.polito.mad.lab5g10.seekscape.ui._common.FullscreenImageViewer
 import it.polito.mad.lab5g10.seekscape.ui.add.AddItinerary
 import it.polito.mad.lab5g10.seekscape.ui.add.AddTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.explore.ExploreTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.EditAccountScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.ProfileTabScreenView
 import it.polito.mad.lab5g10.seekscape.ui.profile.SignupScreen
-import it.polito.mad.lab5g10.seekscape.ui.profile.UserProfile
 import it.polito.mad.lab5g10.seekscape.ui.profile.UserProfileScreen
 import it.polito.mad.lab5g10.seekscape.ui.review.AddReviewScreen
 import it.polito.mad.lab5g10.seekscape.ui.travels.ApplyToJoinView
-import it.polito.mad.lab5g10.seekscape.ui.travels.ChangeModeButton
-import it.polito.mad.lab5g10.seekscape.ui.travels.MyTravelsScreen
-import it.polito.mad.lab5g10.seekscape.ui.travels.TravelProposalScreen
-import it.polito.mad.lab5g10.seekscape.ui.travels.ViewItineraryScreen
-import kotlinx.coroutines.launch
 
 object Destinations {
     const val TRAVEL = "travel"
@@ -207,7 +180,6 @@ fun StackNavigation(
     tab: String
 ): Actions {
     val actions = remember(navCont) { Actions(navCont) }
-    val theTravelModel = remember { TheTravelModel() }
 
     when (tab) {
         "explore" ->

@@ -307,47 +307,6 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
             else -> {}
         }
     }
-    /*
-        when (newStatus) {
-            OWNED -> {
-                text = "Edit";
-                enabled = true;
-            }
-            PENDING -> {
-                text = "Pending Approval - tap to cancel";
-                enabled = true;
-            }
-            JOINED -> {
-                text = "Leave Trip";
-                enabled = true;
-            }
-            DENIED -> {
-                text = "Rejected";
-                enabled = false;
-            }
-            AVAIABLE -> {
-                text = "Apply To Join";
-                enabled = true;
-            }
-            TO_REVIEW -> {
-                text = "Rate your experience";
-                enabled = true
-            }
-            FULL -> {
-                text = "Fully Booked";
-                enabled = false;
-            }
-            PAST -> {
-                text = "Past travel";
-                enabled = false;
-            }
-            DELETED -> {
-                text = "Deleted travel";
-                enabled = false;
-            }
-            else -> {}
-        }
-    */
 
     if(!isLoggedIn)
         text = "Sign in to apply to join"
