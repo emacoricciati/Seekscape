@@ -50,14 +50,14 @@ fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
 
     // Load owned travels and requests asynchronously
     val ownedTravelsState = produceState<List<Travel>?>(initialValue = null) {
-        Log.e("OwnedTravels", "Loading owned travels...")
+        Log.d("OwnedTravels", "Loading owned travels...")
         value = theTravelModel.getOwnedTravels()
-        Log.e("OwnedTravels", "Owned travels loaded: ${value?.size ?: 0}")
+        Log.d("OwnedTravels", "Owned travels loaded: ${value?.size ?: 0}")
     }
     val requestsState = produceState<List<Request>?>(initialValue = null) {
-        Log.e("RequestTab", "Loading requests...")
+        Log.d("RequestTab", "Loading requests...")
         value = theTravelModel.getRequestsToMyTrips()
-        Log.e("RequestTab", "Requests loaded: ${value?.size ?: 0}")
+        Log.d("RequestTab", "Requests loaded: ${value?.size ?: 0}")
     }
 
     if (ownedTravelsState.value != null && requestsState.value != null) {
