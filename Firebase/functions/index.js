@@ -21,12 +21,15 @@ async function updateNumTravelsForCompanions(travelCompanions) {
 }
 
 
+
+
 // --------------------------- MANAGE TRAVEL STATUS -----------------------------
 
 function parseDate(dateStr) {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day); // month is 0-based in JS
 }
+
 
 async function updateTravelStatus(docSnap) {
 
@@ -69,7 +72,6 @@ async function updateTravelStatus(docSnap) {
       }
     }
   });
-
 }
 
 
@@ -78,10 +80,56 @@ exports.travelStatus_checkOnUpdate = onDocumentWritten("Travels/{travelId}", asy
   return null;
 });
 
+
+async function manageExpiredRequests() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+  const snapshot = await db.collection("Travels")
+    .where("startDate", "==", formattedDate)
+    .get();
+  const travelIds = snapshot.docs.map(doc => doc.id);
+
+  if (travelIds.length === 0) {
+    console.log("No travels found starting today.");
+    return travelIds;
+  }
+
+  const requestsRef = db.collection("Requests");
+  const batchSize = 10;
+
+  for (let i = 0; i < travelIds.length; i += batchSize) {
+    const chunk = travelIds.slice(i, i + batchSize);
+
+    const snapshot = await requestsRef
+      .where("tripId", "in", chunk)
+      .where("accepted", "==", false)
+      .where("refused", "==", false)
+      .get();
+
+    const batch = db.batch();
+
+    snapshot.docs.forEach(doc => {
+      batch.update(doc.ref, {
+        refused: true,
+        lastUpdate: formattedDate,
+        responseMessage: "The creator of the travel has not accepted your request, so it has been automatically refused."
+      });
+    });
+    await batch.commit();
+  }
+
+}
+
 exports.travelStatus_checkStartDay = onSchedule("1 0 * * *", async (event) => {
   const snapshot = await db.collection("Travels").get();
   const promises = snapshot.docs.map(docSnap => updateTravelStatus(docSnap));
   await Promise.all(promises);
+
+  await manageExpiredRequests();
 });
 
 
