@@ -344,14 +344,13 @@ class TravelModel(travel: Travel?=null, travelId: String?=null) {
 class TravelViewModel(private val model: TravelModel) : ViewModel() {
     var isAddingLocation by mutableStateOf(false)
 
-    private val theTravelModel = TheTravelModel()
-
     init{
         if(!model.isTravelLoadedValue.value){
             viewModelScope.launch {
                 val travel = CommonModel.getTravelById(model.travelIdValue.value)
                 if(travel!=null){
-                    model.loadTravel(travel!!)      //spero non faccia danno
+                    AppState.setTravelToTab(travel)
+                    model.loadTravel(travel)
                 }
             }
 

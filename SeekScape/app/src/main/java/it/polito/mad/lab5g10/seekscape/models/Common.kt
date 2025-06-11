@@ -51,7 +51,6 @@ object AppState {
 
 
 
-
     //------------AUTHENTICATION-----------------------------------------------------------------
     private val _isLogged = MutableStateFlow<Boolean>(false)
     val isLogged: StateFlow<Boolean> = _isLogged.asStateFlow()
@@ -134,5 +133,27 @@ object AppState {
     fun updateMyTravelTab(new: String) {
         _myTravelTab.value = new
     }
+
+
+//------------SAVES DATA TO AVOID MULTIPLE QUERIES-----------------------------------------------------------------
+
+    private val _travelsTabMap = MutableStateFlow<MutableMap<String, Travel?>>(
+        mutableMapOf(
+            MainDestinations.HOME_ROUTE to null,
+            MainDestinations.TRAVELS_ROUTE to null,
+            MainDestinations.ADD_ROUTE to null,
+            MainDestinations.PROFILE_ROUTE to null
+        )
+    )
+    fun setTravelToTab(travel: Travel, tab: String=_currentTab.value) {
+        val updatedMap = _travelsTabMap.value.toMutableMap()
+        updatedMap[tab] = travel
+        _travelsTabMap.value = updatedMap
+    }
+    fun getTravelOfTab(tab: String=_currentTab.value): Travel? {
+        return _travelsTabMap.value[tab]
+    }
+
+
 
 }

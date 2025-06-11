@@ -130,7 +130,7 @@ class Actions(private val navCont: NavHostController) {
     val editItineraryfromCopy: (String, Int) -> Unit = { travelId, itineraryId ->
         navCont.navigate(Destinations.TRAVEL + "/" +  travelId + "/" +  Destinations.COPY + "/" + Destinations.ITINERARY + "/" + itineraryId + "/" + Destinations.EDIT)
     }
-     */
+    */
 
     val navigateToCopyTravelItinerary: (String) -> Unit = { travelId ->
         navCont.navigate(Destinations.ADD + "/${travelId}" + "/" + Destinations.COPY + "/" + Destinations.ITINERARY)
@@ -248,16 +248,21 @@ fun StackNavigation(
                         val itineraryId = entry.arguments?.getInt("itineraryId")
 
                         if (id != null) {
-                            val travel = produceState<Travel?>(initialValue = null) {
-                                value = CommonModel.getTravelById(id)
-                            }
-                            if(travel.value != null){
-                                val itinerary = travel.value!!.travelItinerary?.firstOrNull{
+                            val travelTab = AppState.getTravelOfTab()
+
+                            val travel: Travel? =
+                                if(travelTab!=null && id==travelTab.travelId) travelTab
+                                else produceState<Travel?>(initialValue = null) {
+                                    value = CommonModel.getTravelById(id)
+                                }.value
+
+                            if(travel != null){
+                                val itinerary = travel.travelItinerary?.firstOrNull{
                                     it.itineraryId == itineraryId
                                 }
 
                                 if (itinerary != null) {
-                                    ViewItineraryScreen(travel.value!!, itinerary)
+                                    ViewItineraryScreen(travel, itinerary)
                                 }
                             }
                         }
@@ -270,12 +275,16 @@ fun StackNavigation(
                     val id = entry.arguments?.getString("travelId")
 
                     if (id != null) {
-                        val travel = produceState<Travel?>(initialValue = null) {
-                            value = CommonModel.getTravelById(id)
-                        }
+                        val travelTab = AppState.getTravelOfTab()
 
-                        if(travel.value != null)
-                            ApplyToJoinView(travel.value!!, navCont)
+                        val travel: Travel? =
+                            if(travelTab!=null && id==travelTab.travelId) travelTab
+                            else produceState<Travel?>(initialValue = null) {
+                                value = CommonModel.getTravelById(id)
+                            }.value
+
+                        if(travel != null)
+                            ApplyToJoinView(travel, navCont)
                     }
                 }
 
@@ -290,13 +299,16 @@ fun StackNavigation(
                     val index = entry.arguments?.getInt("imageIndex") ?: 0
 
                     if (id != null) {
-                        val travelImagesState = produceState<List<TravelImage>?>(initialValue = null) {
-                            Log.e("getTravelImages", "Loading travel images...")
-                            value = theTravelModel.getTravelImages(id)
-                            Log.e("getTravelImages", "Travel Images loaded: ${value?.size ?: 0}")
-                        }
-                        //val travel=getBlankTravel(unknown_User)//TODO change this, get the travel by id
-                        val travelImages = travelImagesState.value
+                        val travelTab = AppState.getTravelOfTab()
+
+                        val travelImages: List<TravelImage>? =
+                            if(travelTab!=null && id==travelTab.travelId) travelTab.travelImages
+                            else produceState<List<TravelImage>?>(initialValue = null) {
+                                Log.e("getTravelImages", "Loading travel images...")
+                                value = theTravelModel.getTravelImages(id)
+                                Log.e("getTravelImages", "Travel Images loaded: ${value?.size ?: 0}")
+                            }.value
+
                         when{
                             travelImages == null -> {
                                 Box(
@@ -491,7 +503,6 @@ fun StackNavigation(
                     }
                 }
 
-                //NEW
                 composable(
                     "travel/{travelId}",
                     arguments = listOf(navArgument("travelId") { type = NavType.StringType })
@@ -519,18 +530,21 @@ fun StackNavigation(
                     val itineraryId = entry.arguments?.getInt("itineraryId")
 
                     if (id != null) {
-                        val travel = produceState<Travel?>(initialValue = null) {
-                            value = CommonModel.getTravelById(id)
-                            Log.d("ITINERARY ID RICEVUTO", value?.travelItinerary?.find { it.itineraryId == itineraryId }
-                                .toString())
-                        }
-                        if(travel.value != null){
-                            val itinerary = travel.value!!.travelItinerary?.firstOrNull{
+                        val travelTab = AppState.getTravelOfTab()
+
+                        val travel: Travel? =
+                            if(travelTab!=null && id==travelTab.travelId) travelTab
+                            else produceState<Travel?>(initialValue = null) {
+                                value = CommonModel.getTravelById(id)
+                            }.value
+
+                        if(travel != null){
+                            val itinerary = travel.travelItinerary?.firstOrNull{
                                 it.itineraryId == itineraryId
                             }
 
                             if (itinerary != null) {
-                                ViewItineraryScreen(travel.value!!, itinerary)
+                                ViewItineraryScreen(travel, itinerary)
                             }
                         }
                     }
@@ -562,15 +576,44 @@ fun StackNavigation(
 
                     if (id != null) {
 
-                        val travel=getBlankTravel(unknown_User)//TODO change this, get the travel by id
+                        val travelTab = AppState.getTravelOfTab()
 
-                        travel.travelImages?.takeIf { it.isNotEmpty() }?.let { images ->
-                            FullscreenImageViewer(images, startIndex = index)
-                            Box(modifier = Modifier.padding(16.dp)) {
-                                val clickFunc = {
-                                    actions.navigateBack()
+                        val travelImages: List<TravelImage>? =
+                            if(travelTab!=null && id==travelTab.travelId) travelTab.travelImages
+                            else produceState<List<TravelImage>?>(initialValue = null) {
+                                Log.e("getTravelImages", "Loading travel images...")
+                                value = theTravelModel.getTravelImages(id)
+                                Log.e("getTravelImages", "Travel Images loaded: ${value?.size ?: 0}")
+                            }.value
+
+                        when{
+                            travelImages == null -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
                                 }
-                                ArrowBackIcon(clickFunc = clickFunc)
+                            }
+
+                            travelImages.isNotEmpty() -> {
+                                FullscreenImageViewer(travelImages, startIndex = index)
+
+                                Box(modifier = Modifier.padding(16.dp)) {
+                                    val clickFunc = {
+                                        actions.navigateBack()
+                                    }
+                                    ArrowBackIcon(clickFunc = clickFunc)
+                                }
+                            }
+
+                            else -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("No images available.")
+                                }
                             }
                         }
                     }
