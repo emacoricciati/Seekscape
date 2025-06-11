@@ -1,15 +1,12 @@
 package it.polito.mad.lab5g10.seekscape.firebase
 
-import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
-import com.google.firebase.messaging.FirebaseMessaging
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.User
 import kotlinx.coroutines.tasks.await
-import java.lang.reflect.Field
 
 class TheUserModel() {
 

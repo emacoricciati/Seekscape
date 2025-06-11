@@ -44,6 +44,8 @@ import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.Reviews
+import androidx.compose.material.icons.outlined.Timelapse
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -95,7 +97,10 @@ import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NOT_ACCOUNT
 import it.polito.mad.lab5g10.seekscape.models.NOT_APPLY
+import it.polito.mad.lab5g10.seekscape.models.NOT_LAST_MINUTE_JOIN
 import it.polito.mad.lab5g10.seekscape.models.NOT_MSG
+import it.polito.mad.lab5g10.seekscape.models.NOT_MY_PROFILE_REV
+import it.polito.mad.lab5g10.seekscape.models.NOT_MY_TRAVEL_REV
 import it.polito.mad.lab5g10.seekscape.models.NOT_REMINDER
 import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_ACC
 import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_DEN
@@ -563,6 +568,32 @@ fun NotificationItemView(
                 )
             }
 
+            NOT_LAST_MINUTE_JOIN -> {
+                Icon(
+                    imageVector = Icons.Outlined.Timelapse,
+                    contentDescription = "Reminder",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            NOT_MY_PROFILE_REV -> {
+                Icon(
+                    imageVector = Icons.Outlined.Reviews,
+                    contentDescription = "Reviews",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            NOT_MY_TRAVEL_REV -> {
+                Icon(
+                    imageVector = Icons.Outlined.Reviews,
+                    contentDescription = "Reviews",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
             else -> {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,

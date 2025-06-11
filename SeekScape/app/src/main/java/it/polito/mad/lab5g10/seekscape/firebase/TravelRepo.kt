@@ -1,6 +1,5 @@
 package it.polito.mad.lab5g10.seekscape.firebase
 
-import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.Firebase
@@ -8,11 +7,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.storage
 import com.google.gson.Gson
-import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadDrawableToFirebase
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadImageToFirebase
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.models.DELETED
 import it.polito.mad.lab5g10.seekscape.models.DENIED
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.JOINED
