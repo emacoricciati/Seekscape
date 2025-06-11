@@ -47,6 +47,11 @@ const val TO_REVIEW = "to-review"
 
 object AppState {
 
+    //TODO initialize, fetch dark mode boolean
+
+
+
+
     //------------AUTHENTICATION-----------------------------------------------------------------
     private val _isLogged = MutableStateFlow<Boolean>(false)
     val isLogged: StateFlow<Boolean> = _isLogged.asStateFlow()
@@ -75,7 +80,7 @@ object AppState {
     }
 
 
-
+//----------
     private val _myProfile = MutableStateFlow<User>(unknown_User)
     val myProfile: StateFlow<User> = _myProfile.asStateFlow()
 
@@ -83,6 +88,14 @@ object AppState {
         _myProfile.value = new
     }
 
+
+    private val _isDarkMode = MutableStateFlow<Boolean?>(null)
+    val isDarkMode: StateFlow<Boolean?> = _isDarkMode.asStateFlow()
+
+    fun updateIsDarkMode(new: Boolean) {
+        _isDarkMode.value = new
+        //make persistant on phone
+    }
 
 //------------NAVIGATION-----------------------------------------------------------------
 

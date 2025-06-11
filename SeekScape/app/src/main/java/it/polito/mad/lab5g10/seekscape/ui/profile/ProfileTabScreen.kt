@@ -3,11 +3,13 @@ package it.polito.mad.lab5g10.seekscape.ui.profile
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material.icons.outlined.Logout
@@ -45,6 +47,8 @@ fun ProfileTabScreenView(navCont: NavHostController) {
     val accountService = AccountService()
     val coroutineScope = rememberCoroutineScope()
     val isLoggedIn by AppState.isLogged.collectAsState()
+    val isDarkMode by AppState.isDarkMode.collectAsState()
+
     val context = LocalContext.current
 
     if (!isLoggedIn) {
@@ -237,60 +241,102 @@ fun ProfileTabScreenView(navCont: NavHostController) {
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
 
-                //LOGOUT
-                Row(
+            // DARK-LIGHT MODE
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            coroutineScope.launch {
-                                try {
-                                    accountService.signOut()
-                                    val token = FirebaseMessaging.getInstance().token.await()
-                                    CommonModel.removeFcmToken(AppState.myProfile.value.userId, token)
-                                    AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
-                                    AppState.setUserAsUnlogged()
-                                }
-                                catch (e: Exception){
-                                    Toast.makeText(
-                                        context,
-                                        "Error during log-out, try again later",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-                        .padding(vertical = 8.dp, horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .size(36.dp)
+                        .background(MaterialTheme.colorScheme.outline, CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .background(MaterialTheme.colorScheme.outline, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Logout,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = "Log-out",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = Icons.Filled.ChevronRight,
+                        imageVector = Icons.Outlined.DarkMode,
                         contentDescription = null,
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Dark Mode",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        text = "Switch to dark mode",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(
+                    modifier = Modifier.size(18.dp).padding(end=24.dp),
+                    checked = (if(isDarkMode==null) isSystemInDarkTheme() else isDarkMode) == true,
+                    onCheckedChange = { AppState.updateIsDarkMode(it) }
+                )
             }
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+
+
+            //LOGOUT
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        coroutineScope.launch {
+                            try {
+                                accountService.signOut()
+                                val token = FirebaseMessaging.getInstance().token.await()
+                                CommonModel.removeFcmToken(AppState.myProfile.value.userId, token)
+                                AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+                                AppState.setUserAsUnlogged()
+                            }
+                            catch (e: Exception){
+                                Toast.makeText(
+                                    context,
+                                    "Error during log-out, try again later",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(MaterialTheme.colorScheme.outline, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Logout,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Log-out",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Filled.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        }
     }
 }

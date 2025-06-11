@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import it.polito.mad.lab5g10.seekscape.models.AppState
 
 private val LightColorScheme = lightColorScheme(
     primary = OrangePrimaryLight,
@@ -86,22 +88,16 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun SeekScapeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    /* dynamicColor: Boolean = true, */
     content: @Composable () -> Unit
 ) {
-    /*
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val darkSystemTheme: Boolean = isSystemInDarkTheme()
+    val isDarkMode = AppState.isDarkMode.collectAsState().value
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }*/
-
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme;
+    val colorScheme =
+        if ((isDarkMode==null && darkSystemTheme) || (isDarkMode!=null && isDarkMode))
+            DarkColorScheme
+        else
+            LightColorScheme;
 
     MaterialTheme(
         colorScheme = colorScheme,
