@@ -207,9 +207,7 @@ fun StackNavigation(
     tab: String
 ): Actions {
     val actions = remember(navCont) { Actions(navCont) }
-    val theUserModel = remember { TheUserModel() }
     val theTravelModel = remember { TheTravelModel() }
-    val scope = rememberCoroutineScope()
 
     when (tab) {
         "explore" ->
@@ -219,53 +217,6 @@ fun StackNavigation(
                     val search = Search()
                     val vm: SearchViewModel = viewModel(factory = SearchViewModelFactory(search))
                     ExploreTravelsScreen(vm = vm, navController = navCont)
-                }
-
-                composable(
-                    "travel/{travelId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
-                ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    if (id != null) {
-                        val viewModel: TravelViewModel =
-                            viewModel(factory = TravelViewModelFactory(travelId=id) )
-
-                        TravelProposalScreen(viewModel, navCont)
-                        Box(modifier = Modifier.padding(16.dp)) {
-                            val clickFunc = {
-                                actions.navigateBack()
-                            }
-                            ArrowBackIcon(clickFunc = clickFunc)
-                        }
-                    }
-                }
-
-                composable("travel/{travelId}/itinerary/{itineraryId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType },
-                        navArgument("itineraryId") { type = NavType.IntType })){
-                    entry ->
-                        val id = entry.arguments?.getString("travelId")
-                        val itineraryId = entry.arguments?.getInt("itineraryId")
-
-                        if (id != null) {
-                            val travelTab = AppState.getTravelOfTab()
-
-                            val travel: Travel? =
-                                if(travelTab!=null && id==travelTab.travelId) travelTab
-                                else produceState<Travel?>(initialValue = null) {
-                                    value = CommonModel.getTravelById(id)
-                                }.value
-
-                            if(travel != null){
-                                val itinerary = travel.travelItinerary?.firstOrNull{
-                                    it.itineraryId == itineraryId
-                                }
-
-                                if (itinerary != null) {
-                                    ViewItineraryScreen(travel, itinerary)
-                                }
-                            }
-                        }
                 }
 
                 composable(
@@ -288,6 +239,25 @@ fun StackNavigation(
                     }
                 }
 
+
+                // Common routes, same implementation
+
+                composable(
+                    "travel/{travelId}",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravel(entry, navCont)
+                }
+
+                composable("travel/{travelId}/itinerary/{itineraryId}",
+                    arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType },
+                        navArgument("itineraryId") { type = NavType.IntType }
+                    )
+                ) { entry ->
+                    RouteTravelItinerary(entry, navCont)
+                }
+
                 composable(
                     "travel/{travelId}/fullscreen/{imageIndex}",
                     arguments = listOf(
@@ -295,259 +265,39 @@ fun StackNavigation(
                         navArgument("imageIndex") { type = NavType.IntType }
                     )
                 ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    val index = entry.arguments?.getInt("imageIndex") ?: 0
-
-                    if (id != null) {
-                        val travelTab = AppState.getTravelOfTab()
-
-                        val travelImages: List<TravelImage>? =
-                            if(travelTab!=null && id==travelTab.travelId) travelTab.travelImages
-                            else produceState<List<TravelImage>?>(initialValue = null) {
-                                Log.e("getTravelImages", "Loading travel images...")
-                                value = theTravelModel.getTravelImages(id)
-                                Log.e("getTravelImages", "Travel Images loaded: ${value?.size ?: 0}")
-                            }.value
-
-                        when{
-                            travelImages == null -> {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-
-                            travelImages.isNotEmpty() -> {
-                                FullscreenImageViewer(travelImages, startIndex = index)
-
-                                Box(modifier = Modifier.padding(16.dp)) {
-                                    val clickFunc = {
-                                        actions.navigateBack()
-                                    }
-                                    ArrowBackIcon(clickFunc = clickFunc)
-                                }
-                            }
-
-                            else -> {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text("No images available.")
-                                }
-                            }
-                        }
-                    }
+                    RouteTravelImages(entry, navCont)
                 }
 
                 composable(
                     "profile/{userId}",
                     arguments = listOf(navArgument("userId") { type = NavType.StringType })
                 ) { entry ->
-                    val id = entry.arguments?.getString("userId")
-
-                    if (id != null) {
-                        val user = AppState.myProfile.collectAsState().value
-                        val viewModel: UserInfoViewModel =
-                            viewModel(factory = ProfileViewModelFactory(userInfo=null, isOwnProfile=false, userId=id))
-                        UserProfile(vm = viewModel, true, {}, {}, navCont)
-                    }
+                    RouteUser(entry, navCont)
                 }
+
                 composable("profile/unlogged") {
                     UnloggedUserScreen(navCont)
                 }
             }
 
+
+
         "travels" ->
             NavHost(navController = navCont, startDestination = "travels") {
-                composable("travels") {
 
+                composable("travels") { entry ->
                     if (!AppState.isLogged.collectAsState().value) {
                         actions.navigateTo("profile/unlogged")
                         return@composable
                     }
-
-                    val currentMode = AppState.myTravelMode.collectAsState().value
-
-                    // Load owned travels and requests asynchronously
-                    val ownedTravelsState = produceState<List<Travel>?>(initialValue = null) {
-                        Log.d("OwnedTravels", "Loading owned travels...")
-                        value = theTravelModel.getOwnedTravels()
-                        Log.d("OwnedTravels", "Owned travels loaded: ${value?.size ?: 0}")
-                    }
-                    val requestsState = produceState<List<Request>?>(initialValue = null) {
-                        Log.d("RequestTab", "Loading requests...")
-                        value = theTravelModel.getRequestsToMyTrips()
-                        Log.d("RequestTab", "Requests loaded: ${value?.size ?: 0}")
-                    }
-
-                    if (ownedTravelsState.value != null && requestsState.value != null) {
-                        val ownedTravelViewModel: OwnedTravelViewModel =
-                            viewModel(factory = OwnedTravelsViewModelFactory(ownedTravelsState.value!!))
-
-                        val requestViewModel: RequestViewModel =
-                            viewModel(factory = RequestsViewModelFactory(requestsState.value!!.toMutableList()))
-
-                        MyTravelsScreen(
-                            ownedTravelViewModel = ownedTravelViewModel,
-                            requestViewModel = requestViewModel,
-                            navCont,
-                            currentMode
-                        )
-
-                    } else {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    Box(Modifier.fillMaxSize()) {
-                        ChangeModeButton(
-                            {
-                                if (currentMode == CREATOR_TRAVEL_MODE) {
-                                    AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
-                                    AppState.updateMyTravelTab("Upcoming")
-                                } else {
-                                    AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-                                    AppState.updateMyTravelTab("My trips")
-                                }
-                            },
-                            if (currentMode == "Creator") "Explorer" else "Creator",
-                            modifier = Modifier
-                                .padding(end = 20.dp)
-                                .align(Alignment.BottomEnd)
-                        )
-                    }
+                    RouteTravels(entry, navCont)
                 }
 
                 composable(
                     "travels/action/{action}",
                     arguments = listOf(navArgument("action") { type = NavType.StringType })
                 ) { entry ->
-                    val action = entry.arguments?.getString("action")
-
-                    if (!AppState.isLogged.collectAsState().value) {
-                        actions.navigateTo("profile/unlogged")
-                        return@composable
-                    }
-
-                    val currentMode = AppState.myTravelMode.collectAsState().value
-
-                    // Load owned travels and requests asynchronously
-                    val ownedTravelsState = produceState<List<Travel>?>(initialValue = null) {
-                        Log.e("OwnedTravels", "Loading owned travels...")
-                        value = theTravelModel.getOwnedTravels()
-                        Log.e("OwnedTravels", "Owned travels loaded: ${value?.size ?: 0}")
-                    }
-                    val requestsState = produceState<List<Request>?>(initialValue = null) {
-                        Log.e("RequestTab", "Loading requests...")
-                        value = theTravelModel.getRequestsToMyTrips()
-                        Log.e("RequestTab", "Requests loaded: ${value?.size ?: 0}")
-                    }
-
-                    if (ownedTravelsState.value != null && requestsState.value != null) {
-                        val ownedTravelViewModel: OwnedTravelViewModel =
-                            viewModel(factory = OwnedTravelsViewModelFactory(ownedTravelsState.value!!))
-
-                        val requestViewModel: RequestViewModel =
-                            viewModel(factory = RequestsViewModelFactory(requestsState.value!!.toMutableList()))
-
-                        MyTravelsScreen(
-                            ownedTravelViewModel = ownedTravelViewModel,
-                            requestViewModel = requestViewModel,
-                            navCont,
-                            currentMode,
-                            action
-                        )
-                    } else {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    Box(Modifier.fillMaxSize()) {
-                        ChangeModeButton(
-                            {
-                                if (currentMode == CREATOR_TRAVEL_MODE) {
-                                    AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
-                                    AppState.updateMyTravelTab("Upcoming")
-                                } else {
-                                    AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-                                    AppState.updateMyTravelTab("My trips")
-                                }
-                            }, if (currentMode == "Creator") "Explorer" else "Creator",
-                            modifier = Modifier
-                                .padding(end = 20.dp)
-                                .align(Alignment.BottomEnd)
-                        )
-                    }
-                }
-
-                composable(
-                    "travel/{travelId}/action/{action}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
-                ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    val action = entry.arguments?.getString("action")
-                    if (id != null) {
-                        val viewModel: TravelViewModel =
-                            viewModel(factory = TravelViewModelFactory(travelId=id) )
-
-                        TravelProposalScreen(viewModel, navCont, action)
-                        Box(modifier = Modifier.padding(16.dp)) {
-                            val clickFunc = {
-                                actions.navigateBack()
-                            }
-                            ArrowBackIcon(clickFunc = clickFunc)
-                        }
-                    }
-                }
-
-                composable(
-                    "travel/{travelId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
-                ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    if (id != null) {
-                        val viewModel: TravelViewModel =
-                            viewModel(factory = TravelViewModelFactory(travelId=id) )
-
-                        TravelProposalScreen(viewModel, navCont)
-                        Box(modifier = Modifier.padding(16.dp)) {
-                            val clickFunc = {
-                                actions.navigateBack()
-                            }
-                            ArrowBackIcon(clickFunc = clickFunc)
-                        }
-                    }
-                }
-
-                composable("travel/{travelId}/itinerary/{itineraryId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType },
-                        navArgument("itineraryId") { type = NavType.IntType })){
-                        entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    val itineraryId = entry.arguments?.getInt("itineraryId")
-
-                    if (id != null) {
-                        val travelTab = AppState.getTravelOfTab()
-
-                        val travel: Travel? =
-                            if(travelTab!=null && id==travelTab.travelId) travelTab
-                            else produceState<Travel?>(initialValue = null) {
-                                value = CommonModel.getTravelById(id)
-                            }.value
-
-                        if(travel != null){
-                            val itinerary = travel.travelItinerary?.firstOrNull{
-                                it.itineraryId == itineraryId
-                            }
-
-                            if (itinerary != null) {
-                                ViewItineraryScreen(travel, itinerary)
-                            }
-                        }
-                    }
+                    RouteTravels(entry, navCont)
                 }
 
                 composable("travel/{travelId}/review", arguments = listOf(
@@ -562,61 +312,6 @@ fun StackNavigation(
                         AddReviewScreen(viewModel, navCont)
                     }
 
-                }
-
-                composable(
-                    "travel/{travelId}/fullscreen/{imageIndex}",
-                    arguments = listOf(
-                        navArgument("travelId") { type = NavType.StringType },
-                        navArgument("imageIndex") { type = NavType.IntType }
-                    )
-                ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    val index = entry.arguments?.getInt("imageIndex") ?: 0
-
-                    if (id != null) {
-
-                        val travelTab = AppState.getTravelOfTab()
-
-                        val travelImages: List<TravelImage>? =
-                            if(travelTab!=null && id==travelTab.travelId) travelTab.travelImages
-                            else produceState<List<TravelImage>?>(initialValue = null) {
-                                Log.e("getTravelImages", "Loading travel images...")
-                                value = theTravelModel.getTravelImages(id)
-                                Log.e("getTravelImages", "Travel Images loaded: ${value?.size ?: 0}")
-                            }.value
-
-                        when{
-                            travelImages == null -> {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-
-                            travelImages.isNotEmpty() -> {
-                                FullscreenImageViewer(travelImages, startIndex = index)
-
-                                Box(modifier = Modifier.padding(16.dp)) {
-                                    val clickFunc = {
-                                        actions.navigateBack()
-                                    }
-                                    ArrowBackIcon(clickFunc = clickFunc)
-                                }
-                            }
-
-                            else -> {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text("No images available.")
-                                }
-                            }
-                        }
-                    }
                 }
 
                 composable(
@@ -677,18 +372,47 @@ fun StackNavigation(
                     }
                 }
 
+
+                // Common routes, same implementation
+
+                composable(
+                    "travel/{travelId}",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravel(entry, navCont)
+                }
+
+                composable(
+                    "travel/{travelId}/action/{action}",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravel(entry, navCont)
+                }
+
+                composable("travel/{travelId}/itinerary/{itineraryId}",
+                    arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType },
+                        navArgument("itineraryId") { type = NavType.IntType }
+                    )
+                ) { entry ->
+                    RouteTravelItinerary(entry, navCont)
+                }
+
+                composable(
+                    "travel/{travelId}/fullscreen/{imageIndex}",
+                    arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType },
+                        navArgument("imageIndex") { type = NavType.IntType }
+                    )
+                ) { entry ->
+                    RouteTravelImages(entry, navCont)
+                }
+
                 composable(
                     "profile/{userId}",
                     arguments = listOf(navArgument("userId") { type = NavType.StringType })
                 ) { entry ->
-                    val id = entry.arguments?.getString("userId")
-
-                    if (id != null) {
-                        val user = AppState.myProfile.collectAsState().value
-                        val viewModel: UserInfoViewModel =
-                            viewModel(factory = ProfileViewModelFactory(userInfo=null, isOwnProfile=false, userId=id))
-                        UserProfile(vm = viewModel, true, {}, {}, navCont)
-                    }
+                    RouteUser(entry, navCont)
                 }
 
                 composable("profile/unlogged") {
@@ -696,7 +420,10 @@ fun StackNavigation(
                 }
             }
 
-        "add" ->{
+
+
+        "add" -> {
+
             LaunchedEffect(AppState.redirectPath.collectAsState().value) {
                 val path = AppState.redirectPath.value
                 if (path.isNotBlank()) {
@@ -704,17 +431,18 @@ fun StackNavigation(
                     AppState.updateRedirectPath("")
                 }
             }
-            NavHost(navController = navCont, startDestination = "add") {
-                composable("add") { backStackEntry ->
 
+            NavHost(navController = navCont, startDestination = "add") {
+
+                composable("add") { entry ->
                     val currentUser = AppState.myProfile.collectAsState().value
                     val blankTravel = getBlankTravel(currentUser)
                     val viewModel: TravelViewModel =
-                        viewModel(backStackEntry, factory = TravelViewModelFactory(blankTravel))
+                        viewModel(entry, factory = TravelViewModelFactory(blankTravel))
                     AddTravelsScreen(viewModel, navCont, "add")
                 }
 
-                composable("add/itinerary") { backStackEntry ->
+                composable("add/itinerary") { entry ->
                     val parentEntry = remember(navCont) {
                         navCont.getBackStackEntry("add")
                     }
@@ -724,7 +452,7 @@ fun StackNavigation(
                     val blankItinerary = getBlankItinerary()
                     val viewModel: ItineraryViewModel =
                         viewModel(
-                            backStackEntry,
+                            entry,
                             factory = ItineraryViewModelFactory(blankItinerary)
                         )
                     val itineraryId = travelViewModel.travelItineraryValues.collectAsState().value.size
@@ -755,9 +483,8 @@ fun StackNavigation(
                 }
 
                 composable(
-                    "add/{travelId}/copy", arguments = listOf(
-                        navArgument("travelId") { type = NavType.StringType })
-                ){entry->
+                    "add/{travelId}/copy", arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry->
                     val context = LocalContext.current
                     val id = entry.arguments?.getString("travelId")
                     val duplicator = TravelDuplicator(context)
@@ -820,18 +547,13 @@ fun StackNavigation(
                     }
                 }
 
+
+
                 composable(
                     "profile/{userId}",
                     arguments = listOf(navArgument("userId") { type = NavType.StringType })
                 ) { entry ->
-                    val id = entry.arguments?.getString("userId")
-
-                    if (id != null) {
-                        val user = AppState.myProfile.collectAsState().value
-                        val viewModel: UserInfoViewModel =
-                            viewModel(factory = ProfileViewModelFactory(userInfo=null, isOwnProfile=false, userId=id))
-                        UserProfile(vm = viewModel, true, {}, {}, navCont)
-                    }
+                    RouteUser(entry, navCont)
                 }
 
                 composable("profile/unlogged") {
@@ -844,10 +566,8 @@ fun StackNavigation(
 
         "profile" ->
             NavHost(navController = navCont, startDestination = "profile") {
+
                 composable("profile") {
-
-
-
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -856,6 +576,22 @@ fun StackNavigation(
                             ProfileTabScreenView(navCont)
                         }
                     }
+                }
+
+                composable("profile/edit"){
+                    val user = AppState.myProfile.collectAsState().value
+                    val viewModel: UserInfoViewModel =
+                        viewModel(factory = ProfileViewModelFactory(userInfo=user, isOwnProfile=true))
+
+                    viewModel.isEditing = true
+
+                    UserProfileScreen(viewModel, true, navCont)
+                }
+
+                composable("profile/account") {
+                    val accountService = AccountService()
+                    val isGoogleAccount = accountService.isGoogleAccount()
+                    EditAccountScreen(navCont, isGoogleAccount)
                 }
 
                 composable("login") {
@@ -880,71 +616,52 @@ fun StackNavigation(
                     }
                 }
 
-                composable(
-                    "profile/{userId}",
-                    arguments = listOf(navArgument("userId") { type = NavType.StringType })
-                ) { entry ->
-                    val id = entry.arguments?.getString("userId")
-                    var user: User? = null
-
-                    if (id != null) {
-                        val viewModel: UserInfoViewModel =
-                            viewModel(factory = ProfileViewModelFactory(userInfo=null, isOwnProfile=false, userId=id))
-                        UserProfile(vm = viewModel, true, {}, {}, navCont)
-                    }
-                }
-
-                composable("profile/edit"){
-                    val user = AppState.myProfile.collectAsState().value
-                    val viewModel: UserInfoViewModel =
-                        viewModel(factory = ProfileViewModelFactory(userInfo=user, isOwnProfile=true))
-
-                    viewModel.isEditing = true
-
-                    UserProfileScreen(viewModel, true, navCont)
-                }
-
-                composable(
-                    "travel/{travelId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
-                ) { entry ->
-                    val id = entry.arguments?.getString("travelId")
-                    var travel: Travel? = null
-
-                    if (id != null) {
-                        LaunchedEffect(id) {
-                            scope.launch {
-                                    travel = CommonModel.getTravelById(id)
-                            }
-                        }
-
-                        val viewModel: TravelViewModel =
-                            viewModel(factory = travel?.let { TravelViewModelFactory(it) })
-
-                        TravelProposalScreen(viewModel, navCont)
-                        Box(modifier = Modifier.padding(16.dp)) {
-                            val clickFunc = {
-                                actions.navigateBack()
-                            }
-                            ArrowBackIcon(clickFunc = clickFunc)
-                        }
-                    }
-                }
-
                 composable("complete_registration") {
                     CompleteRegistrationScreen(navCont)
-                }
-
-                composable("profile/account") {
-                    val accountService = AccountService()
-                    val isGoogleAccount = accountService.isGoogleAccount()
-                    EditAccountScreen(navCont, isGoogleAccount)
                 }
 
                 composable("profile/unlogged") {
                     UnloggedUserScreen(navCont)
                 }
+
+
+                // Common routes, same implementation
+
+                composable(
+                    "travel/{travelId}",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravel(entry, navCont)
+                }
+
+                composable("travel/{travelId}/itinerary/{itineraryId}",
+                    arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType },
+                        navArgument("itineraryId") { type = NavType.IntType }
+                    )
+                ) { entry ->
+                    RouteTravelItinerary(entry, navCont)
+                }
+
+                composable(
+                    "travel/{travelId}/fullscreen/{imageIndex}",
+                    arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType },
+                        navArgument("imageIndex") { type = NavType.IntType }
+                    )
+                ) { entry ->
+                    RouteTravelImages(entry, navCont)
+                }
+
+                composable(
+                    "profile/{userId}",
+                    arguments = listOf(navArgument("userId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteUser(entry, navCont)
+                }
             }
+
+
     }
 
     val selectedTab = AppState.currentTab.collectAsState().value
