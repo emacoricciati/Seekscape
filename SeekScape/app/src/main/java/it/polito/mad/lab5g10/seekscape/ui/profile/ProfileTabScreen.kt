@@ -48,7 +48,6 @@ fun ProfileTabScreenView(navCont: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val isLoggedIn by AppState.isLogged.collectAsState()
     val isDarkMode by AppState.isDarkMode.collectAsState()
-
     val context = LocalContext.current
 
     if (!isLoggedIn) {
@@ -276,7 +275,7 @@ fun ProfileTabScreenView(navCont: NavHostController) {
                 Switch(
                     modifier = Modifier.size(18.dp).padding(end=24.dp),
                     checked = (if(isDarkMode==null) isSystemInDarkTheme() else isDarkMode) == true,
-                    onCheckedChange = { AppState.updateIsDarkMode(it) }
+                    onCheckedChange = { AppState.updateIsDarkMode(it, context) }
                 )
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth())

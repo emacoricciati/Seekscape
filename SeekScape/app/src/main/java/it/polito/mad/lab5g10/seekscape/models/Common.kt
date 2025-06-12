@@ -2,18 +2,11 @@ package it.polito.mad.lab5g10.seekscape.models
 
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
-import android.util.Log
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import it.polito.mad.lab5g10.seekscape.LocalDateAdapter
-import it.polito.mad.lab5g10.seekscape.ProfilePicAdapter
-import it.polito.mad.lab5g10.seekscape.TravelImageAdapter
 import it.polito.mad.lab5g10.seekscape.firebase.unknown_User
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDate
 import kotlin.collections.listOf
 
 
@@ -91,9 +84,13 @@ object AppState {
     private val _isDarkMode = MutableStateFlow<Boolean?>(null)
     val isDarkMode: StateFlow<Boolean?> = _isDarkMode.asStateFlow()
 
-    fun updateIsDarkMode(new: Boolean) {
+    fun updateIsDarkMode(new: Boolean, context: Context) {
         _isDarkMode.value = new
-        //make persistant on phone
+        val sharedPreferences = context.getSharedPreferences("shared_preferences", MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean("dark_mode", new)
+            apply()
+        }
     }
 
 //------------NAVIGATION-----------------------------------------------------------------
@@ -152,6 +149,12 @@ object AppState {
     }
     fun getTravelOfTab(tab: String=_currentTab.value): Travel? {
         return _travelsTabMap.value[tab]
+    }
+
+    // Initialize data from shared preferences
+    fun initialize(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
+        updateIsDarkMode(sharedPreferences.getBoolean("dark_mode", false), context)
     }
 
 

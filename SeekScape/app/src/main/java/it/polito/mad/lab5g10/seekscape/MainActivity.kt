@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val accountService = AccountService()
+        AppState.initialize(applicationContext)
         lifecycleScope.launch {
             if (accountService.hasUser()) {
                 val userProfile = accountService.getUserProfile()
