@@ -8,6 +8,11 @@ android 14, OnePlus Nord 2T 5G (6,43 pollici)
 
 ## App Demonstration Video
 
+<a target="_blank"
+  href="https://github.com/VRatPolito/final-assignment-even-g10/blob/main/docs/assets/video_app.mp4">
+  GitHub location
+</a>
+
 <video width="600" controls>
   <source src="./assets/video_app.mp4" type="video/mp4">
 </video>
