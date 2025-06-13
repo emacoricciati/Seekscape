@@ -23,6 +23,10 @@ import com.google.firebase.auth.auth
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import android.Manifest
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
@@ -80,6 +84,7 @@ class MainActivity : ComponentActivity() {
                 //Support()
             }
         }
+        hideNavigationBar()
         handleIntent(intent)
     }
 
@@ -108,6 +113,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun hideNavigationBar() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.let {
+                it.hide(WindowInsets.Type.navigationBars())
+                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    )
+        }
+    }
+
+
 
     private fun handleIntent(intent: Intent?){
         intent?.let {

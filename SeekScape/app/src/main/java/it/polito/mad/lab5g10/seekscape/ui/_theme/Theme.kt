@@ -5,8 +5,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource.Companion.SideEffect
 import it.polito.mad.lab5g10.seekscape.models.AppState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+
 
 private val LightColorScheme = lightColorScheme(
     primary = OrangePrimaryLight,
@@ -90,6 +94,7 @@ private val DarkColorScheme = darkColorScheme(
 fun SeekScapeTheme(
     content: @Composable () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
     val darkSystemTheme: Boolean = isSystemInDarkTheme()
     val isDarkMode = AppState.isDarkMode.collectAsState().value
 
@@ -98,7 +103,12 @@ fun SeekScapeTheme(
             DarkColorScheme
         else
             LightColorScheme;
-
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = colorScheme.background,
+            darkIcons = !((isDarkMode == null && darkSystemTheme) || (isDarkMode != null && isDarkMode))
+        )
+    }
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

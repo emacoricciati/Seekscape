@@ -333,6 +333,8 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
     val currentRoute = currentNavController.currentBackStackEntry?.destination?.route
     val isLogged by AppState.isLogged.collectAsState()
     val user = AppState.myProfile.collectAsState().value
+    val isDarkMode = AppState.isDarkMode.collectAsState().value
+
 
     TopAppBar(
         title = {
@@ -354,8 +356,10 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
                     ArrowBackIcon(clickFunc = { currentNavController.popBackStack() })
                 }
             } else {
+
                 Image(
-                    painter = painterResource(id = R.drawable.icon_logo),
+                    painter = if(isDarkMode==false) {painterResource(id = R.drawable.icon_logo)}
+                    else{painterResource(id = R.drawable.icon_logo_dark_mode) },
                     contentDescription = "App Logo",
                     modifier = Modifier
                         .size(

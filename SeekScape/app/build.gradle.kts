@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.coil.compose)
     implementation(libs.gson)
+    implementation(libs.accompanist.systemuicontroller)
+
 
     testImplementation(libs.junit)
 
@@ -88,6 +90,7 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 
 
 
