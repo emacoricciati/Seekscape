@@ -322,81 +322,95 @@ fun TabSelectionCreator(
 fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: NavHostController) {
     val ownedTravels by ownedTravelViewModel.travels.collectAsState()
     val actions = remember(navController) { Actions(navController) }
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxSize()
-    ) {
-        Spacer(Modifier.height(10.dp))
-        LazyColumn(
+    if (ownedTravels.isEmpty()) {
+        Box(
             modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No owned travels found...",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
-            items(ownedTravels) {
-                val travelId by it.travelIdValue.collectAsState()
-                val creator by it.creatorValue.collectAsState()
-                val title by it.titleValue.collectAsState()
-                val description by it.descriptionValue.collectAsState()
-                val country by it.locationValue.collectAsState()
-                val priceMin by it.priceStartValue.collectAsState()
-                val priceMax by it.priceEndValue.collectAsState()
-                val status by it.statusValue.collectAsState()
-                val distance by it.distanceValue.collectAsState()
-                val startDate by it.dateStartValue.collectAsState()
-                val endDate by it.dateEndValue.collectAsState()
-                val maxPeople by it.nParticipantsValue.collectAsState()
-                val travelImages by it.imageUrisValues.collectAsState()
-                val travelTypes by it.travelTypesValues.collectAsState()
-                val travelItinerary by it.travelItineraryValues.collectAsState()
-                val travelCompanions by it.travelCompanionsValues.collectAsState()
+            Spacer(Modifier.height(10.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                items(ownedTravels) {
+                    val travelId by it.travelIdValue.collectAsState()
+                    val creator by it.creatorValue.collectAsState()
+                    val title by it.titleValue.collectAsState()
+                    val description by it.descriptionValue.collectAsState()
+                    val country by it.locationValue.collectAsState()
+                    val priceMin by it.priceStartValue.collectAsState()
+                    val priceMax by it.priceEndValue.collectAsState()
+                    val status by it.statusValue.collectAsState()
+                    val distance by it.distanceValue.collectAsState()
+                    val startDate by it.dateStartValue.collectAsState()
+                    val endDate by it.dateEndValue.collectAsState()
+                    val maxPeople by it.nParticipantsValue.collectAsState()
+                    val travelImages by it.imageUrisValues.collectAsState()
+                    val travelTypes by it.travelTypesValues.collectAsState()
+                    val travelItinerary by it.travelItineraryValues.collectAsState()
+                    val travelCompanions by it.travelCompanionsValues.collectAsState()
 
-                val travel = Travel(
-                    travelId,
-                    creator,
-                    title,
-                    description,
-                    country,
-                    priceMin,
-                    priceMax,
-                    status,
-                    OWNED,
-                    distance,
-                    startDate,
-                    endDate,
-                    maxPeople,
-                    travelImages,
-                    travelTypes,
-                    travelItinerary,
-                    travelCompanions
-                )
+                    val travel = Travel(
+                        travelId,
+                        creator,
+                        title,
+                        description,
+                        country,
+                        priceMin,
+                        priceMax,
+                        status,
+                        OWNED,
+                        distance,
+                        startDate,
+                        endDate,
+                        maxPeople,
+                        travelImages,
+                        travelTypes,
+                        travelItinerary,
+                        travelCompanions
+                    )
 
-                val onCardClick = {//da copiare per i tab
-                    actions.seeTravel(travelId)
+                    val onCardClick = {//da copiare per i tab
+                        actions.seeTravel(travelId)
+                    }
+
+
+                    var textAboveCard=""
+
+                    if(travel.status==PAST){
+                        textAboveCard="Ended " + endDate?.let { it1 ->
+                            timeAgo(
+                                it1
+                            )
+                        }
+                    } else {
+                        textAboveCard="Starting " + startDate?.let { it1 ->
+                            timeAgo(
+                                it1
+                            )
+                        }
+                    }
+
+                    TravelCard(travel, onCardClick, textAboveCard, navController)
+                    Spacer(Modifier.height(10.dp))
                 }
 
-
-                var textAboveCard=""
-
-                if(travel.status==PAST){
-                    textAboveCard="Ended " + endDate?.let { it1 ->
-                        timeAgo(
-                            it1
-                        )
-                    }
-                } else {
-                    textAboveCard="Starting " + startDate?.let { it1 ->
-                        timeAgo(
-                            it1
-                        )
-                    }
-                }
-
-                TravelCard(travel, onCardClick, textAboveCard, navController)
-                Spacer(Modifier.height(10.dp))
             }
 
         }
-
     }
 }
 
@@ -408,19 +422,38 @@ fun RequestsScreen(
     navController: NavHostController
 ) {
     val requests by requestsViewModels.requests.collectAsState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        LazyColumn(
+    if (requests.isEmpty()) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            itemsIndexed(requests) { _, req ->
-                val reqIndex = req.idValue.collectAsState().value
-                ReqMng(reqIndex, requestsViewModels, ownedTravelViewModel, action, navController)
+            Text(
+                text = "No requests found...",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                itemsIndexed(requests) { _, req ->
+                    val reqIndex = req.idValue.collectAsState().value
+                    ReqMng(
+                        reqIndex,
+                        requestsViewModels,
+                        ownedTravelViewModel,
+                        action,
+                        navController
+                    )
+                }
             }
         }
     }
