@@ -43,7 +43,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="app" android:host="profile" />
+                <data android:scheme="app" android:host="travel" />
             </intent-filter>
 
             <intent-filter>

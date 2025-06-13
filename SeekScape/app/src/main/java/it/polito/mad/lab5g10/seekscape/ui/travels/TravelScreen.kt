@@ -1,5 +1,7 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
@@ -85,7 +87,8 @@ fun TravelProposalScreen(vm: TravelViewModel, navController: NavHostController, 
                         actions.navigateToFullScreen(vm.travelIdValue.value, index)
                     },
                     actions,
-                    vm.travelIdValue.collectAsState().value
+                    vm.travelIdValue.collectAsState().value,
+                    vm.titleValue.collectAsState().value
                 )
             }
             TravelDescription(
