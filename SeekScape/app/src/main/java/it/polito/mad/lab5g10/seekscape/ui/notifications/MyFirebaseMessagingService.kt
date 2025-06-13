@@ -56,12 +56,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val contentIntent = Intent(this, MainActivity::class.java).apply{
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra("notification_Id", notificationId)
-            putExtra("notification_type", notificationType)
-            putExtra("notification_title", notificationTitle)
-            putExtra("notification_description", notificationDescr)
-            putExtra("notification_tab", notificationTab)
-            putExtra("notification_route", notificationRoute)
+            putExtra("id", notificationId)
+            putExtra("type", notificationType)
+            putExtra("title", notificationTitle)
+            putExtra("description", notificationDescr)
+            putExtra("tab", notificationTab)
+            putExtra("navRoute", notificationRoute)
         }
 
         val contentPendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
