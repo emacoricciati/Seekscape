@@ -1,6 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.firebase
 
-import android.content.Context
+import android.graphics.Path.Direction
 import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.Firebase
@@ -8,11 +8,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.storage
 import com.google.gson.Gson
-import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadDrawableToFirebase
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadImageToFirebase
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.models.DELETED
 import it.polito.mad.lab5g10.seekscape.models.DENIED
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.JOINED
@@ -341,6 +339,8 @@ class TheTravelModel() {
             query = query.whereIn("tripId", tripIds)
             query = query.whereEqualTo("refused", false)
             query = query.whereEqualTo("accepted", false)
+            query = query.orderBy("lastUpdate", Query.Direction.DESCENDING)
+
         } else {
             return emptyList()
         }
@@ -366,6 +366,7 @@ class TheTravelModel() {
         query = query.whereEqualTo("authorId", authorId)
         query = query.whereEqualTo("accepted", isAcceped)
         query = query.whereEqualTo("refused", isRefused)
+
         val requestSnapshot = query.get().await()
         val requests = requestSnapshot.documents.mapNotNull { doc ->
             try {
@@ -392,6 +393,10 @@ class TheTravelModel() {
         var query: Query = Collections.travels
         query = query.whereIn("travelId", tripIds)
         query = query.orderBy("startDate", Query.Direction.ASCENDING)
+
+        val endDate = LocalDate.now().format(firebaseFormatter)
+        query = query.whereGreaterThan("endDate", endDate)
+
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
@@ -424,6 +429,10 @@ class TheTravelModel() {
         var query: Query = Collections.travels
         query = query.whereIn("travelId", tripIds)
         query = query.orderBy("startDate", Query.Direction.ASCENDING)
+
+        val endDate = LocalDate.now().format(firebaseFormatter)
+        query = query.whereGreaterThan("endDate", endDate)
+
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
@@ -585,55 +594,23 @@ class TheTravelModel() {
 }
 
 
-class TheItineraryModel() {
-
-}
-
-class TheActivityModel() {
-
-}
-
 class TheRequestModel() {
-    suspend fun getAllRequest(): Flow<List<Request>> = callbackFlow {
-        val listener = Collections.requests.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                close(error)
-                return@addSnapshotListener
-            }
-
-            snapshot?.let {
-                launch {
-                    val requestList = it.documents.mapNotNull { doc ->
-                        val model = doc.toObject(RequestFirestoreModel::class.java)
-                        model?.toAppModel()
-                    }
-                    trySend(requestList)
-                }
-            }
-        }
-
-        awaitClose { listener.remove() }
-    }
 
     suspend fun manageRequest(request: Request, isAcceped: Boolean){
+        request.lastUpdate = LocalDate.now()
+        val reqFirestore = request.toFirestoreModel()
+
+        val reqRef = Collections.requests.document(request.id)
+        reqRef.update("responseMessage", reqFirestore.responseMessage).await()
+        reqRef.update("lastUpdate", reqFirestore.lastUpdate).await()
+        reqRef.update("accepted", isAcceped).await()
+
         if(isAcceped){
-            val reqRef = Collections.requests.document(request.id)
-            reqRef.update("responseMessage", request.responseMessage).await()
-            reqRef.update("accepted", true).await()
-
-            val travelref = Collections.travels.document(request.trip.travelId)
-            val comp = TravelCompanion(request.author, request.spots-1).toFirestoreModel()
-
+            val travelref = Collections.travels.document(reqFirestore.tripId)
+            val comp = TravelCompanionFirestoreModel(reqFirestore.authorId, request.spots-1)
             travelref.update("travelCompanions",
                 FieldValue.arrayUnion(comp)
             ).await()
-
-        } else {
-
-            val reqRef = Collections.requests.document(request.id)
-            reqRef.update("refused", true).await()
-            reqRef.update("responseMessage", request.responseMessage).await()
-
         }
     }
 
@@ -673,10 +650,8 @@ class TheRequestModel() {
             }
         }
 
-
         val travelCompanionsUpdated = travelCompanions.filter { it.userId!=userId }
         travelRef.update("travelCompanions", travelCompanionsUpdated).await()
-
     }
 
 }

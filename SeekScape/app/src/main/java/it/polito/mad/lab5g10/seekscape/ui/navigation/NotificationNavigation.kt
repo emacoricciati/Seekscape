@@ -21,13 +21,14 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         NOT_MY_PROFILE_REV ->{
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
-
         }
+
         NOT_MY_TRAVEL_REV -> {
             AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
         }
+
         NOT_LAST_MINUTE_JOIN -> {
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
@@ -39,7 +40,6 @@ fun navigateToNotificationAction(notification: NotificationItem) {
             AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
-            //ADD open travel
         }
 
         NOT_REQ_DEN -> {
@@ -54,7 +54,6 @@ fun navigateToNotificationAction(notification: NotificationItem) {
             AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
-            //ADD modal apply message
         }
 
         NOT_REMINDER -> {
@@ -73,39 +72,3 @@ fun redirectIfNeeded(navCont: NavHostController){
         navCont.navigate(redirectPath)
     }
 }
-/*
-fun navigateToNotificationAction(notification: NotificationItem) {
-    when (notification.type) {
-        NOT_ACCOUNT -> {
-        }
-        NOT_MSG -> {
-        }
-        NOT_REQ_ACC -> {
-            AppState.updateMyTravelTab("Upcoming")
-            AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-            val currentTab = notification.navRoute.split("/")[0]
-            AppState.updateCurrentTab(currentTab)
-            //ADD open travel
-        }
-
-        NOT_REQ_DEN -> {
-            AppState.updateMyTravelTab("Rejected")
-            AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-            val currentTab = notification.navRoute.split("/")[0]
-            AppState.updateCurrentTab(currentTab)
-            //ADD open travel
-        }
-
-        NOT_APPLY -> {
-            AppState.updateMyTravelTab("Requests")
-            AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
-            val currentTab = notification.navRoute.split("/")[0]
-            AppState.updateCurrentTab(currentTab)
-            //ADD modal apply message
-        }
-
-        NOT_REMINDER -> {
-        }
-    }
-}
-*/

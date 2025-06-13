@@ -44,6 +44,8 @@ import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.Reviews
+import androidx.compose.material.icons.outlined.Timelapse
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -95,7 +97,10 @@ import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NOT_ACCOUNT
 import it.polito.mad.lab5g10.seekscape.models.NOT_APPLY
+import it.polito.mad.lab5g10.seekscape.models.NOT_LAST_MINUTE_JOIN
 import it.polito.mad.lab5g10.seekscape.models.NOT_MSG
+import it.polito.mad.lab5g10.seekscape.models.NOT_MY_PROFILE_REV
+import it.polito.mad.lab5g10.seekscape.models.NOT_MY_TRAVEL_REV
 import it.polito.mad.lab5g10.seekscape.models.NOT_REMINDER
 import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_ACC
 import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_DEN
@@ -328,7 +333,6 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
     val currentRoute = currentNavController.currentBackStackEntry?.destination?.route
     val isLogged by AppState.isLogged.collectAsState()
     val user = AppState.myProfile.collectAsState().value
-    val actions = remember(currentNavController) { Actions(currentNavController) }
 
     TopAppBar(
         title = {
@@ -563,6 +567,32 @@ fun NotificationItemView(
                 )
             }
 
+            NOT_LAST_MINUTE_JOIN -> {
+                Icon(
+                    imageVector = Icons.Outlined.Timelapse,
+                    contentDescription = "Reminder",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            NOT_MY_PROFILE_REV -> {
+                Icon(
+                    imageVector = Icons.Outlined.Reviews,
+                    contentDescription = "Reviews",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            NOT_MY_TRAVEL_REV -> {
+                Icon(
+                    imageVector = Icons.Outlined.Reviews,
+                    contentDescription = "Reviews",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
             else -> {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
@@ -660,51 +690,6 @@ fun FullscreenImageViewer(
                 )
             }
 
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppNavigation() {
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Explore", "Travels", "Add", "Profile")
-    val icons = listOf(
-        Icons.Filled.Search,
-        Icons.Filled.Place,
-        Icons.Filled.AddCircleOutline,
-        Icons.Filled.AccountCircle
-    )
-
-    BottomAppBar(
-        containerColor = Color.Transparent,
-        contentColor = Color.Transparent,
-        modifier = Modifier
-            .clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
-            .background(Color.Transparent)
-            .border(
-                2.dp,
-                MaterialTheme.colorScheme.outline,
-                RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp)
-            ),
-
-        ) {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = { Icon(icons[index], contentDescription = item) },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = { selectedItem = index },
-                colors = NavigationBarItemColors(
-                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                    selectedIndicatorColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledIconColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
-                    disabledTextColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
-                )
-            )
         }
     }
 }

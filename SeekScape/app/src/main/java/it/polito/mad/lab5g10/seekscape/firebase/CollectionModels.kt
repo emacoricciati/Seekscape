@@ -16,6 +16,7 @@ import it.polito.mad.lab5g10.seekscape.models.User
 import java.io.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.text.format
 
 
 val firebaseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -397,7 +398,8 @@ data class RequestFirestoreModel(
     val accepted: Boolean = false,
     val refused: Boolean = false,
     val spots: Int = 1,
-    val responseMessage: String? = null
+    val responseMessage: String? = null,
+    val lastUpdate: String?=null
 ) : Serializable
 
 fun Request.toFirestoreModel(): RequestFirestoreModel {
@@ -409,7 +411,8 @@ fun Request.toFirestoreModel(): RequestFirestoreModel {
         accepted = this.isAccepted,
         refused = this.isRefused,
         spots = this.spots,
-        responseMessage = this.responseMessage
+        responseMessage = this.responseMessage,
+        lastUpdate = this.lastUpdate.format(firebaseFormatter)
     )
 }
 
@@ -420,18 +423,21 @@ suspend fun RequestFirestoreModel.toAppModel(): Request? {
     if (author == null) {
         Log.e("toAppModel", "author is null for request $id")
         return null
-    }else if (trip==null){
+    } else if (trip==null) {
         Log.e("toAppModel", "trip is null for request $id with tripId: ${this.tripId}")
         return null
-    }else
-    return Request(
-        id = this.id,
-        author = author,
-        trip = trip,
-        reqMessage = this.reqMessage ?: "",
-        isAccepted = this.accepted,
-        isRefused = this.refused,
-        spots = this.spots,
-        responseMessage = this.responseMessage ?: ""
-    )
+    } else {
+        return Request(
+            id = this.id,
+            author = author,
+            trip = trip,
+            reqMessage = this.reqMessage ?: "",
+            isAccepted = this.accepted,
+            isRefused = this.refused,
+            spots = this.spots,
+            responseMessage = this.responseMessage ?: "",
+            lastUpdate = LocalDate.parse(this.lastUpdate, firebaseFormatter)!!
+        )
+    }
+
 }

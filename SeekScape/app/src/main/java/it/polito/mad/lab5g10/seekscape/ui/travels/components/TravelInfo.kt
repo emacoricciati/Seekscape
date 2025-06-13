@@ -1,5 +1,9 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels.components
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,6 +35,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.R
@@ -56,6 +63,8 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.UserStarsAndNicknam
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Destinations
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import java.text.DecimalFormat
 
 
@@ -67,8 +76,9 @@ fun TravelImages(
     onOpenInFull: (Int) -> Unit = {},
     actions: Actions,
     travelId: String,
+    title: String
 ) {
-
+    val context = LocalContext.current
     val isLoggedIn by AppState.isLogged.collectAsState()
     val selectedIndex = remember { mutableStateOf(0) }
     val travelImage = imageResources[selectedIndex.value]
@@ -150,7 +160,9 @@ fun TravelImages(
                 modifier = Modifier.size(45.dp),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                onClick = { println("Button clicked!") }
+                onClick = {
+                    shareText(context, travelId, title)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Share,
@@ -491,7 +503,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if(travelItinerary==null || travelItinerary.isEmpty()){
+            if(travelItinerary.isEmpty()){
                 Text(
                     text = "no itineraries specified",
                     style = MaterialTheme.typography.bodyMedium,
@@ -664,4 +676,38 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
 }
 
 
+private fun shareText(context: Context, travelId: String, title: String) {
+    val deepLink = "app://travel/${travelId}"
 
+    /*
+    val drawable = ContextCompat.getDrawable(context, R.drawable.icon_logo)
+    val bitmap = (drawable as BitmapDrawable).bitmap
+
+    val cachePath = File(context.cacheDir, "images")
+    cachePath.mkdirs()
+    val file = File(cachePath, "logo.png")
+    FileOutputStream(file).use { out ->
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    }
+
+    val contentUri = FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.provider",
+        file
+    )
+
+     */
+
+    val shareIntent = Intent.createChooser(Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, deepLink)
+        putExtra(Intent.EXTRA_TITLE, title)
+        type="text/plain"
+
+        /*
+        data = contentUri
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+         */
+    }, null)
+    context.startActivity(shareIntent)
+}

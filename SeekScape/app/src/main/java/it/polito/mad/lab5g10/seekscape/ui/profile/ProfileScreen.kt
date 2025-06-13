@@ -79,6 +79,7 @@ import it.polito.mad.lab5g10.seekscape.models.User
 import it.polito.mad.lab5g10.seekscape.models.UserInfoViewModel
 import it.polito.mad.lab5g10.seekscape.timeAgo
 import it.polito.mad.lab5g10.seekscape.ui._common.components.ActionButton
+import it.polito.mad.lab5g10.seekscape.ui._common.components.AddLocation
 import it.polito.mad.lab5g10.seekscape.ui._common.components.ImagePickerUtils
 import it.polito.mad.lab5g10.seekscape.ui._common.components.PillButtonEditable
 import it.polito.mad.lab5g10.seekscape.ui._common.components.SelectionDialog
@@ -398,25 +399,25 @@ fun UserDetails(vm: UserInfoViewModel) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-            Text(
-                text="CITY",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text=cityValue, style = MaterialTheme.typography.bodyLarge)
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text="LANGUAGE",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text=languageValue, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text="CITY",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text=cityValue, style = MaterialTheme.typography.bodyLarge)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text="LANGUAGE",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text=languageValue, style = MaterialTheme.typography.bodyLarge)
             }
         }
         else {  //EDITING MODE
@@ -503,7 +504,7 @@ fun UserPersonality(elements: List<String>){
 
     Column(
         Modifier.fillMaxWidth()
-        .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.Start
     ){
         Row(horizontalArrangement = Arrangement.Start){
@@ -601,94 +602,115 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
     val cityValue by vm.cityValue.collectAsState()
     val languageValue by vm.languageValue.collectAsState()
     val personality by vm.personality.collectAsState()
+    val showLocationScreen = remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val theUserModel = TheUserModel()
-
-    Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        UserImageWithMenu(profilePic, 150.dp, modifier = Modifier,vm,
-            onSelectFromGallery = {
-                onRequestGalleryPermission()
-            },
-            onTakePhoto = {
-                onRequestCameraPermission()
-            }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text="$nameValue $surnameValue", style = MaterialTheme.typography.headlineMedium)
+    if (showLocationScreen.value) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+        ) {
+            AddLocation(
+                onCancel = { showLocationScreen.value = false },
+                onLocationSelected = { location ->
+                    vm.addLocation(location.name)
+                    showLocationScreen.value = false
+                },
+            )
+        }
+    }else{
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
             Column(
-                Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
+                Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Spacer(Modifier.height(20.dp))
-                Row(
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Column(horizontalAlignment = Alignment.Start) {
-                        UserPersonalInfo(vm)
+                UserImageWithMenu(profilePic, 150.dp, modifier = Modifier,vm,
+                    onSelectFromGallery = {
+                        onRequestGalleryPermission()
+                    },
+                    onTakePhoto = {
+                        onRequestCameraPermission()
                     }
-                    Spacer(Modifier.width(20.dp))
-                }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text="$nameValue $surnameValue", style = MaterialTheme.typography.headlineMedium)
+                Column(
+                    Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(20.dp))
+                    Row(
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(horizontalAlignment = Alignment.Start) {
+                            UserPersonalInfo(vm)
+                        }
+                        Spacer(Modifier.width(20.dp))
+                    }
 
-                Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(20.dp))
 
-                UserDetails(vm)
+                    UserDetails(vm)
 
-                Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.height(30.dp))
 
-                EditableUserPersonality(vm)
+                    EditableUserPersonality(vm)
 
-                Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.height(30.dp))
 
-                EditableUserDestinations(vm)
+                    EditableUserDestinations(vm,showLocationScreen)
 
-                Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.height(30.dp))
 
-                Row(Modifier.fillMaxWidth()) {
-                    ActionButton("Save") {
-                        if(vm.validate()){
-                            val user = User(
-                                userId = userId,
-                                nickname = nicknameValue,
-                                name = nameValue,
-                                surname = surnameValue,
-                                phoneNumber = "",
-                                email = "",
-                                profilePic = profilePic,
-                                bio = "",
-                                travelPreferences = listOf(),
-                                desiredDestinations = desiredDestinations,
-                                age = 0,
-                                nationality = nationalityValue,
-                                city = cityValue,
-                                language = languageValue,
-                                numTravels = 0,
-                                personality = personality,
-                                reviews = listOf(),
-                            )
-                            lifecycleOwner.lifecycleScope.launch {
-                                try {
-                                    theUserModel.updateMyProfile(user)
-                                    val myProfile = CommonModel.getUser(user.userId)
-                                    if (myProfile != null) {
-                                        AppState.updateMyProfile(myProfile)
-                                        actions.navigateBack()
+                    Row(Modifier.fillMaxWidth()) {
+                        ActionButton("Save") {
+                            if(vm.validate()){
+                                val user = User(
+                                    userId = userId,
+                                    nickname = nicknameValue,
+                                    name = nameValue,
+                                    surname = surnameValue,
+                                    phoneNumber = "",
+                                    email = "",
+                                    profilePic = profilePic,
+                                    bio = "",
+                                    travelPreferences = listOf(),
+                                    desiredDestinations = desiredDestinations,
+                                    age = 0,
+                                    nationality = nationalityValue,
+                                    city = cityValue,
+                                    language = languageValue,
+                                    numTravels = 0,
+                                    personality = personality,
+                                    reviews = listOf(),
+                                )
+                                lifecycleOwner.lifecycleScope.launch {
+                                    try {
+                                        theUserModel.updateMyProfile(user)
+                                        val myProfile = CommonModel.getUser(user.userId)
+                                        if (myProfile != null) {
+                                            AppState.updateMyProfile(myProfile)
+                                            actions.navigateBack()
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(
+                                            context,
+                                            "Error during update profile, try again later",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
-                                } catch (e: Exception) {
-                                    Toast.makeText(
-                                        context,
-                                        "Error during update profile, try again later",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 }
                             }
                         }
                     }
                 }
             }
+        }
     }
 }
 

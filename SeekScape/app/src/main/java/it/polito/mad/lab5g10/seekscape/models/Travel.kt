@@ -344,14 +344,13 @@ class TravelModel(travel: Travel?=null, travelId: String?=null) {
 class TravelViewModel(private val model: TravelModel) : ViewModel() {
     var isAddingLocation by mutableStateOf(false)
 
-    private val theTravelModel = TheTravelModel()
-
     init{
         if(!model.isTravelLoadedValue.value){
             viewModelScope.launch {
                 val travel = CommonModel.getTravelById(model.travelIdValue.value)
                 if(travel!=null){
-                    model.loadTravel(travel!!)      //spero non faccia danno
+                    AppState.setTravelToTab(travel)
+                    model.loadTravel(travel)
                 }
             }
 
@@ -542,62 +541,6 @@ class TravelViewModel(private val model: TravelModel) : ViewModel() {
     }
 
 }
-/*
-class TravelDetailScreenViewModel(
-    private val travelRepository: TheTravelModel,
-    private val travelId: String?
-): ViewModel(){
-    private val _travelViewModel = MutableStateFlow<TravelViewModel?>(null)
-    val travelViewModel: StateFlow<TravelViewModel?> = _travelViewModel.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _errorMessage = MutableStateFlow("")
-    val errorMessage: StateFlow<String> = _errorMessage.asStateFlow()
-
-    init{
-        if(travelId != null){
-            viewModelScope.launch {
-                travelRepository.getTravelById(travelId).onSuccess {
-                    if(it != null){
-                        Log.d("TRAVEL", it.toString())
-                        val model = TravelModel(it)
-                        _travelViewModel.value = TravelViewModel(model)
-                    }
-                    else{
-                        _errorMessage.value = "Travel with ID $travelId not found."
-                        Log.w("TravelDetailScreenVM", "Travel with Id $travelId not found.")
-                    }
-                }.onFailure {
-                    _errorMessage.value = "Failed to load travel details: ${it.message}"
-                    Log.e("TravelDetailScreenVM", "Error fetching travel with Id $travelId", it)
-                }
-                _isLoading.value = false
-            }
-        }
-        else{
-            _isLoading.value = true
-            _errorMessage.value = "Missing Travel Id"
-        }
-    }
-}
-
-class TravelViewModelFactoryFirebase(
-    private val travelRepository: TheTravelModel,
-    private val travelId: String?
-) : ViewModelProvider.Factory{
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TravelDetailScreenViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return TravelDetailScreenViewModel(travelRepository, travelId) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
-    }
-}
-
- */
-
 
 class TravelViewModelFactory(
     private val travel: Travel?=null,

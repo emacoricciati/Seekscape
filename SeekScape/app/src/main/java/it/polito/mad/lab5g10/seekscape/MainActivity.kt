@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
         //logIntentDetails(intent, "onCreate")
 
         val accountService = AccountService()
+        AppState.initialize(applicationContext)
         lifecycleScope.launch {
             if (accountService.hasUser()) {
                 val userProfile = accountService.getUserProfile()

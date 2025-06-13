@@ -728,9 +728,6 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                                                 Log.e("addTravel", "Error adding travel", e)
                                             }
                                         }
-//                                    newTravels = AppState.allTravels.value + travel
-//                                    AppState.updateAllTravels(newTravels)
-
                                     }
                                 }
                             },

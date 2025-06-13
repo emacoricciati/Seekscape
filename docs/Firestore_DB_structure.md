@@ -130,8 +130,9 @@
 ```json
 { //class Request
   "id": "5",
-  "author": 5, // userId 
+  "author": "5", // userId 
   "reqMessage": "please",
+  "lastUpdate": "YYYY-MM-dd",
   "isAccepted": false,
   "isRefused": false,
   "spots": 1,
@@ -269,8 +270,7 @@
   "priceMax": 250,
 
   "status":"", //evaluated from travel data
-  "statusForUser":"",//evaluated from travel data (requests or ownership)
-
+  "statusForUser":"",//evaluated from travel data & request (requests or ownership)
 
   "distance": "58 km",
   "startDate": "YYYY-MM-dd",

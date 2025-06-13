@@ -19,13 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheActivityModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheItineraryModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheRequestModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheReviewModel
-import it.polito.mad.lab5g10.seekscape.firebase.travel2update
 import it.polito.mad.lab5g10.seekscape.models.User
 import kotlinx.coroutines.launch
 
@@ -39,24 +36,11 @@ fun Support() {
     val theUserModel = remember { TheUserModel() }
     val TheReviewModel = remember { TheReviewModel() }
     val theTravelModel = remember { TheTravelModel() }
-    val theItineraryModel = remember { TheItineraryModel() }
-    val theActivityModel = remember { TheActivityModel() }
     val theRequestModel = remember { TheRequestModel() }
 
     val resetDB = ButtonInfo("RESET DB") {
         scope.launch {
             val done = CommonModel.resetDB(context)
-            done.onSuccess {
-                feedbackButton(context, "DONE")
-            }.onFailure { exception ->
-                feedbackButton(context, "FAILED", exception = exception)
-            }
-        }
-    }
-
-    val insertRequestDB = ButtonInfo("ADD REQUESTS") {
-        scope.launch {
-            val done = CommonModel.InsertRequestsDB()
             done.onSuccess {
                 feedbackButton(context, "DONE")
             }.onFailure { exception ->
@@ -124,16 +108,6 @@ fun Support() {
             }
         }
     }
-    val UpdateTravel = ButtonInfo("UPDATE TRAVEL") {
-        scope.launch {
-            val done = theTravelModel.updateTravel(travel2update)
-            done.onSuccess {
-                feedbackButton(context, "DONE")
-            }.onFailure { exception ->
-                feedbackButton(context, "FAILED", exception = exception)
-            }
-        }
-    }
 
 
     val buttonsData = listOf(
@@ -142,8 +116,6 @@ fun Support() {
         //getUser,
         //getMyProfile,
         //getTravelByID,
-        UpdateTravel,
-        insertRequestDB,
     )
 
     ButtonsFunctions(buttonsInfoList = buttonsData)

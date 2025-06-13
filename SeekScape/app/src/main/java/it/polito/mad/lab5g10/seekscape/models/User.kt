@@ -85,7 +85,8 @@ data class Request(
     val isAccepted: Boolean,
     val isRefused: Boolean,
     val spots: Int = 1,
-    var responseMessage: String? = ""
+    var responseMessage: String? = "",
+    var lastUpdate: LocalDate = LocalDate.now()
 ) : Serializable
 
 class RequestInfoModel(requestInfo: Request) {
@@ -175,74 +176,6 @@ class RequestViewModel(private val modelList: List<RequestInfoModel>) : ViewMode
         )
     }
 
-    fun acceptRequest(index: String) {
-        val req = getRequest(index)
-
-        req.updateIsAcc(true)
-//        AppState.updateRequest(
-//            index, Request(
-//                req.idValue.value,
-//                req.authorValue.value,
-//                req.tripValue.value,
-//                req.reqMessageValue.value,
-//                req.isAcceptedValue.value,
-//                req.isRefusedValue.value,
-//                req.spots.value,
-//            )
-//        )
-    }
-
-    fun refuseRequest(index: String) {
-        val req = getRequest(index)
-
-        req.updateIsRef(true)
-//        AppState.updateRequest(
-//            index, Request(
-//                req.idValue.value,
-//                req.authorValue.value,
-//                req.tripValue.value,
-//                req.reqMessageValue.value,
-//                req.isAcceptedValue.value,
-//                req.isRefusedValue.value,
-//                req.spots.value,
-//            )
-//        )
-    }
-
-    fun writeResponseMessage(index: String, message: String) {
-        val req = getRequest(index)
-
-        req.updateResponseMessage(message)
-//        AppState.updateRequest(
-//            index, Request(
-//                req.idValue.value,
-//                req.authorValue.value,
-//                req.tripValue.value,
-//                req.reqMessageValue.value,
-//                req.isAcceptedValue.value,
-//                req.isRefusedValue.value,
-//                req.spots.value,
-//                message
-//            )
-//        )
-    }
-
-    fun isJoinable(index: String): Boolean {
-        val req = getRequest(index)
-
-        val numPart = req.spots.value
-        val maxPart = req.tripValue.value.maxPeople
-
-        var part = 0
-        req.tripValue.value.travelCompanions?.forEach { c ->
-            part = part + 1 + c.extras
-        }
-
-        if (numPart + part <= maxPart!!)
-            return true
-
-        return false
-    }
 }
 
 data class UserArgs(

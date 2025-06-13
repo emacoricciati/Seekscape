@@ -2,18 +2,11 @@ package it.polito.mad.lab5g10.seekscape.models
 
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
-import android.util.Log
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import it.polito.mad.lab5g10.seekscape.LocalDateAdapter
-import it.polito.mad.lab5g10.seekscape.ProfilePicAdapter
-import it.polito.mad.lab5g10.seekscape.TravelImageAdapter
 import it.polito.mad.lab5g10.seekscape.firebase.unknown_User
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDate
 import kotlin.collections.listOf
 
 
@@ -47,6 +40,10 @@ const val TO_REVIEW = "to-review"
 
 object AppState {
 
+    //TODO initialize, fetch dark mode boolean
+
+
+
     //------------AUTHENTICATION-----------------------------------------------------------------
     private val _isLogged = MutableStateFlow<Boolean>(false)
     val isLogged: StateFlow<Boolean> = _isLogged.asStateFlow()
@@ -75,7 +72,7 @@ object AppState {
     }
 
 
-
+//----------
     private val _myProfile = MutableStateFlow<User>(unknown_User)
     val myProfile: StateFlow<User> = _myProfile.asStateFlow()
 
@@ -83,6 +80,18 @@ object AppState {
         _myProfile.value = new
     }
 
+
+    private val _isDarkMode = MutableStateFlow<Boolean?>(null)
+    val isDarkMode: StateFlow<Boolean?> = _isDarkMode.asStateFlow()
+
+    fun updateIsDarkMode(new: Boolean, context: Context) {
+        _isDarkMode.value = new
+        val sharedPreferences = context.getSharedPreferences("shared_preferences", MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean("dark_mode", new)
+            apply()
+        }
+    }
 
 //------------NAVIGATION-----------------------------------------------------------------
 
@@ -121,5 +130,33 @@ object AppState {
     fun updateMyTravelTab(new: String) {
         _myTravelTab.value = new
     }
+
+
+//------------SAVES DATA TO AVOID MULTIPLE QUERIES-----------------------------------------------------------------
+
+    private val _travelsTabMap = MutableStateFlow<MutableMap<String, Travel?>>(
+        mutableMapOf(
+            MainDestinations.HOME_ROUTE to null,
+            MainDestinations.TRAVELS_ROUTE to null,
+            MainDestinations.ADD_ROUTE to null,
+            MainDestinations.PROFILE_ROUTE to null
+        )
+    )
+    fun setTravelToTab(travel: Travel, tab: String=_currentTab.value) {
+        val updatedMap = _travelsTabMap.value.toMutableMap()
+        updatedMap[tab] = travel
+        _travelsTabMap.value = updatedMap
+    }
+    fun getTravelOfTab(tab: String=_currentTab.value): Travel? {
+        return _travelsTabMap.value[tab]
+    }
+
+    // Initialize data from shared preferences
+    fun initialize(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
+        updateIsDarkMode(sharedPreferences.getBoolean("dark_mode", false), context)
+    }
+
+
 
 }

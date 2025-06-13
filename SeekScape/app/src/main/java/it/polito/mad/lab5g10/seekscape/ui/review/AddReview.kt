@@ -1,6 +1,5 @@
 package it.polito.mad.lab5g10.seekscape.ui.review
 
-import android.content.Context.MODE_PRIVATE
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,17 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.navigation.NavHostController
-import com.google.gson.GsonBuilder
-import it.polito.mad.lab5g10.seekscape.LocalDateAdapter
-import it.polito.mad.lab5g10.seekscape.ProfilePicAdapter
-import it.polito.mad.lab5g10.seekscape.TravelImageAdapter
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.models.ProfilePic
-import it.polito.mad.lab5g10.seekscape.models.Travel
 import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
-import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModel
 import it.polito.mad.lab5g10.seekscape.models.User
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconDateRange

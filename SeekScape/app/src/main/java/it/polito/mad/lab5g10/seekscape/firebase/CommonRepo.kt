@@ -107,6 +107,25 @@ object CommonModel {
         return requests
     }
 
+    suspend fun addRequestToJoin(request: Request): Result<Void?>{
+        return try {
+            val batch = Collections.requests.firestore.batch()
+
+            val docRef = Collections.requests.document()
+            val requestFirestore = request.toFirestoreModel()
+            requestFirestore.id = docRef.id
+            batch.set(docRef, requestFirestore)
+            batch.commit().await()
+
+            println("Successfully inserted the document in the 'requests' collection.")
+            Result.success(null)
+        } catch (e: Exception) {
+            println("Error inserting document in 'requests' collection: $e")
+            Result.failure(e)
+        }
+    }
+
+
     suspend fun getUser(userId: String): User? {
         val docSnapshot = Collections.users.document(userId).get().await()
         if(docSnapshot.exists()){
@@ -305,23 +324,38 @@ object CommonModel {
 
 
 
-
-
-
-
-
-
-
 // ------------ SUPPORT ACTIVITY -----------
 
     private var user_reset_DATA: HashMap<String, String> = HashMap()
     private var travel_reset_DATA: HashMap<String, String> = HashMap()
 
     suspend fun resetDB(context: Context): Result<Void?> {
-        val defaultTravels = listOf(travel1, travel2, travel3, travel4, travel5, travel6, travel7, travel8, travel9, travel10, travel11, travel12, travel13, travel14, travel15, travel16, travel17, travel18)
-        val defaultUsers = listOf(user_ob, user_dw, user_eh, user_sl, user_me, user_ec)
-        val defaultRequest = listOf(request1, request2, request3, request4, request5, request6, request7, request8, request9, request10, request11, request12)
-
+        val defaultTravels = listOf(
+            travel1, travel2, travel3, travel4, travel5,
+            travel6, travel7, travel8, travel9, travel10,
+            travel11, travel12, travel13, travel14, travel15,
+            travel16, travel17, travel18
+        )
+        val defaultUsers = listOf(
+            user_ob, user_dw, user_eh, user_sl, user_me, user_ec
+        )
+        val defaultRequests = listOf(
+            t1_req1, t1_req2,
+            t2_req1, t2_req2, t2_req3, t2_req4,
+            t3_req1, t3_req2,
+            t5_req1, t5_req2,
+            t6_req1, t6_req2,
+            t7_req1, t7_req2,
+            t8_req1, t8_req2, t8_req3,
+            t9_req1, t9_req2,
+            t10_req1, t10_req2,
+            t11_req1, t11_req2,
+            t12_req1, t12_req2,
+            t13_req1, t13_req2, t13_req3,
+            t14_req1, t14_req2,
+            t15_req1, t15_req2, t15_req3,
+            t17_req1,
+        )
         user_reset_DATA.clear()
         travel_reset_DATA.clear()
 
@@ -343,7 +377,7 @@ object CommonModel {
         val addTravelsResult = insertDefaultTravels(defaultTravels, context)
         if (addTravelsResult.isFailure) return addTravelsResult
 
-        val insertRequestsResult = insertRequests(defaultRequest)
+        val insertRequestsResult = insertRequests(defaultRequests)
         if (insertRequestsResult.isFailure) return insertRequestsResult
 
         var new_data: HashMap<String, String> = HashMap()
@@ -359,25 +393,6 @@ object CommonModel {
         }
 
         Log.d("UPDATED_DATA_AFTER_RESET",new_data.toString())
-
-        return Result.success(null)
-    }
-
-    suspend fun InsertRequestsDB(): Result<Void?>{
-        val defaultRequest = listOf(request1, request2, request3, request4, request5, request6, request7, request8, request9, request10, request11, request12)
-
-        val deleteResult = deleteAllRequests()
-        if (deleteResult.isFailure) return deleteResult
-
-        val insertRequestsResult = insertRequests(defaultRequest)
-        if (insertRequestsResult.isFailure) return insertRequestsResult
-
-        return Result.success(null)
-    }
-
-    suspend fun InsertRequestDB(request: Request): Result<Void?>{
-        val insertRequestResult = insertRequest(request)
-        if (insertRequestResult.isFailure) return insertRequestResult
 
         return Result.success(null)
     }
@@ -415,6 +430,25 @@ object CommonModel {
             Result.success(null)
         } catch (e: Exception) {
             println("Error deleting documents in 'travels' collection: $e")
+            Result.failure(e)
+        }
+    }
+
+    private suspend fun deleteAllRequests(): Result<Void?> {
+        return try {
+            val snapshot = Collections.requests.get().await()
+            val batch = Collections.requests.firestore.batch()
+
+            for (document in snapshot.documents) {
+                batch.delete(document.reference)
+            }
+
+            batch.commit().await()
+
+            println("Successfully deleted all documents in the 'requests' collection.")
+            Result.success(null)
+        } catch (e: Exception) {
+            println("Error deleting documents in 'requests' collection: $e")
             Result.failure(e)
         }
     }
@@ -531,7 +565,6 @@ object CommonModel {
                 requestFirestore.id = docRef.id
                 requestFirestore.authorId = user_reset_DATA.get(requestFirestore.authorId).toString()
                 requestFirestore.tripId = travel_reset_DATA.get(requestFirestore.tripId).toString()
-
                 batch.set(docRef, requestFirestore)
             }
 
@@ -544,45 +577,6 @@ object CommonModel {
             Result.failure(e)
         }
     }
-
-    private suspend fun insertRequest(request: Request): Result<Void?>{
-        return try {
-            val batch = Collections.requests.firestore.batch()
-
-            val docRef = Collections.requests.document()
-            val requestFirestore = request.toFirestoreModel()
-            requestFirestore.id = docRef.id
-            batch.set(docRef, requestFirestore)
-            batch.commit().await()
-
-            println("Successfully inserted the document in the 'requests' collection.")
-            Result.success(null)
-        } catch (e: Exception) {
-            println("Error inserting document in 'requests' collection: $e")
-            Result.failure(e)
-        }
-    }
-
-
-    private suspend fun deleteAllRequests(): Result<Void?> {
-        return try {
-            val snapshot = Collections.requests.get().await()
-            val batch = Collections.requests.firestore.batch()
-
-            for (document in snapshot.documents) {
-                batch.delete(document.reference)
-            }
-
-            batch.commit().await()
-
-            println("Successfully deleted all documents in the 'requests' collection.")
-            Result.success(null)
-        } catch (e: Exception) {
-            println("Error deleting documents in 'requests' collection: $e")
-            Result.failure(e)
-        }
-    }
-
 
 }
 

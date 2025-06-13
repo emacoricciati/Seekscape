@@ -69,368 +69,353 @@ fun AddItinerary(vm: ItineraryViewModel, travelViewModel: TravelViewModel, navCo
 
     val actions = remember(navCont) { Actions(navCont) }
 
-        if (!vm.isAddingLocation){
-            Box(modifier = Modifier
-                .fillMaxSize()
+    if (!vm.isAddingLocation){
+        Box(modifier = Modifier
+            .fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             ) {
-                Column(
+
+                Text(text = "Itinerary Day", style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        Icons.Outlined.CalendarMonth,
+                        contentDescription = "Date",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text("Date")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Calendar(
+                        "start",
+                        startDate,
+                        null,
+                        modifier = Modifier.weight(1f)
+                    ) { vm.setStartDate(it) }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    if (vm.selectEndDate) {
+                        Calendar(
+                            "end",
+                            endDate,
+                            startDate,
+                            modifier = Modifier.weight(1f)
+                        ) { vm.setEndDate(it) }
+                    }
+                }
+                if (vm.startDateError.isNotBlank())
+                    Text(
+                        vm.nameError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                if (vm.endDateError.isNotBlank())
+                    Text(
+                        vm.endDateError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = vm.selectEndDate,
+                        onCheckedChange = {
+                            vm.toggleSelectEndDate()
+                            if (!vm.selectEndDate) {
+                                vm.endDateError = ""
+                                vm.setEndDate(null)
+                            }
+                        },
+                    )
+                    Text(
+                        text = "Add end date (optional)",
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+                Text(text = "Title", style = MaterialTheme.typography.titleLarge)
+                OutlinedTextField(
+                    value = nameValue,
+                    onValueChange = { vm.setName(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    placeholder = { Text("Enter your title...") },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        errorContainerColor = MaterialTheme.colorScheme.surface
+                    )
+                )
+                if (vm.nameError.isNotBlank())
+                    Text(
+                        vm.nameError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                Text(text = "Daily Description", style = MaterialTheme.typography.titleLarge)
+                OutlinedTextField(
+                    value = description ?: "",
+                    onValueChange = { vm.setDescription(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(16.dp),
+                    placeholder = { Text("Enter your description...", fontSize = 16.sp) }
+                )
+                if (vm.descriptionError.isNotBlank())
+                    Text(
+                        vm.descriptionError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+                Text(text = "Where", style = MaterialTheme.typography.titleLarge)
+                if (places.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        places.forEach {
+                            PillButtonEditable(it) { vm.removePlace(it) }
+                        }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Add location",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                ) {
+                        .clickable { vm.toggleIsAddingLocation() })
 
-                    Text(text = "Itinerary Day", style = MaterialTheme.typography.titleLarge)
-                    Spacer(Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            Icons.Outlined.CalendarMonth,
-                            contentDescription = "Date",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text("Date")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Calendar(
-                            "start",
-                            startDate,
-                            null,
-                            modifier = Modifier.weight(1f)
-                        ) { vm.setStartDate(it) }
-                        Spacer(modifier = Modifier.width(6.dp))
-                        if (vm.selectEndDate) {
-                            Calendar(
-                                "end",
-                                endDate,
-                                startDate,
-                                modifier = Modifier.weight(1f)
-                            ) { vm.setEndDate(it) }
-                        }
-                    }
-                    if (vm.startDateError.isNotBlank())
-                        Text(
-                            vm.nameError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    if (vm.endDateError.isNotBlank())
-                        Text(
-                            vm.endDateError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = vm.selectEndDate,
-                            onCheckedChange = {
-                                vm.toggleSelectEndDate()
-                                if (!vm.selectEndDate) {
-                                    vm.endDateError = ""
-                                    vm.setEndDate(null)
-                                }
-                            },
-                        )
-                        Text(
-                            text = "Add end date (optional)",
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                    )
-                    Text(text = "Title", style = MaterialTheme.typography.titleLarge)
-                    OutlinedTextField(
-                        value = nameValue,
-                        onValueChange = { vm.setName(it) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        placeholder = { Text("Enter your title...") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            errorContainerColor = MaterialTheme.colorScheme.surface
-                        )
-                    )
-                    if (vm.nameError.isNotBlank())
-                        Text(
-                            vm.nameError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    Text(text = "Daily Description", style = MaterialTheme.typography.titleLarge)
-                    OutlinedTextField(
-                        value = description ?: "",
-                        onValueChange = { vm.setDescription(it) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(150.dp)
-                            .padding(16.dp),
-                        placeholder = { Text("Enter your description...", fontSize = 16.sp) }
-                    )
-                    /*
-            TextField(
-                value = description,
-                onValueChange = { vm.setDescription(it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(16.dp)
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = RoundedCornerShape(10.dp),
-                        clip = false
-                    ),
-                placeholder = { Text("Enter your description...") },
-                shape = RoundedCornerShape(10.dp),
-                singleLine = false,
-                maxLines = 5,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    errorContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                )
-            )*/
-                    if (vm.descriptionError.isNotBlank())
-                        Text(
-                            vm.descriptionError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                    )
-                    Text(text = "Where", style = MaterialTheme.typography.titleLarge)
-                    if (places.isNotEmpty()) {
-                        Spacer(Modifier.height(8.dp))
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            places.forEach {
-                                PillButtonEditable(it) { vm.removePlace(it) }
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(8.dp))
+                if (vm.placesError.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Add location",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable { vm.toggleIsAddingLocation() })
-
-                    if (vm.placesError.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            vm.placesError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    }
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                    )
-                    Text(
-                        text = "Select activity for the day",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Tap \"Add activities\" to select activities for the day. Activities will be added to the mandatory section by default. Use the arrow beside each activity to move it to your preferred section (optional or mandatory).",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Text(
-                        text = "Add activities",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable { isAddingActivity = true })
-                    if (vm.activitiesError.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            vm.activitiesError,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    }
-                    if (isAddingActivity) {
-                        val remainingActivities =
-                            activities.filterNot { selectedActivities.contains(it) }
-                        SelectionDialog(
-                            "Activities",
-                            selectedActivities,
-                            remainingActivities,
-                            { selected -> vm.addActivities(selected) },
-                            { isAddingActivity = false }) { activity ->
-                            activtyIcons[activity.icon] ?: activtyIcons["default"]!!
-                        }
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    // selected activities (optional)
-                    Text(
-                        "Optional activities",
-                        style = MaterialTheme.typography.headlineSmall,
+                        vm.placesError,
+                        color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    val optionalActivities = selectedActivities.filter { it.optional }
-                    val mandatoryActivities = selectedActivities.filterNot { it.optional }
-                    if (optionalActivities.isNotEmpty()) {
-                        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                            selectedActivities.filter { it.optional }.map { activity ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(modifier = Modifier.weight(6f)) {
-                                        ActivityCard(
-                                            activtyIcons[activity.icon]
-                                                ?: activtyIcons["default"]!!,
-                                            activity.name,
-                                            true
-                                        ) {
-                                            vm.toggleOptional(activity)
-                                        }
-                                    }
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier
-                                            .size(22.dp)
-                                            .weight(1f)
-                                            .clickable {
-                                                vm.removeActivity(activity)
-                                            }
-                                    )
-                                }
-                                Spacer(Modifier.height(10.dp))
-                            }
-                        }
-                    } else {
-                        Spacer(Modifier.height(5.dp))
-                        Text(
-                            "No optional activities",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    // selected activities (mandatory)
-                    Text(
-                        "Mandatory activities",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                    if (mandatoryActivities.isNotEmpty()) {
-                        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                            mandatoryActivities.map { activity ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(modifier = Modifier.weight(6f)) {
-                                        ActivityCard(
-                                            activtyIcons[activity.icon]
-                                                ?: activtyIcons["default"]!!,
-                                            activity.name,
-                                            false
-                                        ) {
-                                            vm.toggleOptional(activity)
-                                        }
-                                    }
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier
-                                            .size(22.dp)
-                                            .weight(1f)
-                                            .clickable {
-                                                vm.removeActivity(activity)
-                                            }
-                                    )
-                                }
-                                Spacer(Modifier.height(10.dp))
-                            }
-                        }
-                    } else {
-                        Spacer(Modifier.height(5.dp))
-                        Text(
-                            "No mandatory activities",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    }
-                    Spacer(Modifier.height(80.dp))
                 }
-
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+                Text(
+                    text = "Select activity for the day",
+                    style = MaterialTheme.typography.titleLarge
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.background.copy(alpha = 0.1f),
-                                    MaterialTheme.colorScheme.background.copy(alpha = 1.0f)
+                        .padding(16.dp)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Tap \"Add activities\" to select activities for the day. Activities will be added to the mandatory section by default. Use the arrow beside each activity to move it to your preferred section (optional or mandatory).",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    text = "Add activities",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable { isAddingActivity = true })
+                if (vm.activitiesError.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        vm.activitiesError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                if (isAddingActivity) {
+                    val remainingActivities =
+                        activities.filterNot { selectedActivities.contains(it) }
+                    SelectionDialog(
+                        "Activities",
+                        selectedActivities,
+                        remainingActivities,
+                        { selected -> vm.addActivities(selected) },
+                        { isAddingActivity = false }) { activity ->
+                        activtyIcons[activity.icon] ?: activtyIcons["default"]!!
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                // selected activities (optional)
+                Text(
+                    "Optional activities",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                val optionalActivities = selectedActivities.filter { it.optional }
+                val mandatoryActivities = selectedActivities.filterNot { it.optional }
+                if (optionalActivities.isNotEmpty()) {
+                    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                        selectedActivities.filter { it.optional }.map { activity ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(modifier = Modifier.weight(6f)) {
+                                    ActivityCard(
+                                        activtyIcons[activity.icon]
+                                            ?: activtyIcons["default"]!!,
+                                        activity.name,
+                                        true
+                                    ) {
+                                        vm.toggleOptional(activity)
+                                    }
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .weight(1f)
+                                        .clickable {
+                                            vm.removeActivity(activity)
+                                        }
                                 )
+                            }
+                            Spacer(Modifier.height(10.dp))
+                        }
+                    }
+                } else {
+                    Spacer(Modifier.height(5.dp))
+                    Text(
+                        "No optional activities",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                // selected activities (mandatory)
+                Text(
+                    "Mandatory activities",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                if (mandatoryActivities.isNotEmpty()) {
+                    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                        mandatoryActivities.map { activity ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(modifier = Modifier.weight(6f)) {
+                                    ActivityCard(
+                                        activtyIcons[activity.icon]
+                                            ?: activtyIcons["default"]!!,
+                                        activity.name,
+                                        false
+                                    ) {
+                                        vm.toggleOptional(activity)
+                                    }
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .weight(1f)
+                                        .clickable {
+                                            vm.removeActivity(activity)
+                                        }
+                                )
+                            }
+                            Spacer(Modifier.height(10.dp))
+                        }
+                    }
+                } else {
+                    Spacer(Modifier.height(5.dp))
+                    Text(
+                        "No mandatory activities",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                Spacer(Modifier.height(80.dp))
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.1f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 1.0f)
                             )
                         )
+                    )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                        .graphicsLayer {
+                            alpha = 0.9f
+                        }
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                            )
-                            .graphicsLayer {
-                                alpha = 0.9f
-                            }
-                    ) {
-                        Button(
-                            onClick = {
-                                if (vm.validate()) {
-                                    if (itineraryId == null){
+                    Button(
+                        onClick = {
+                            if (vm.validate()) {
+                                if (itineraryId == null){
+                                val newItinerary = Itinerary(
+                                    itineraryId = nextId,
+                                    name = nameValue,
+                                    description = description,
+                                    startDate = startDate,
+                                    endDate = endDate,
+                                    places = places,
+                                    activities = selectedActivities,
+                                )
+                                travelViewModel.addItinerary(newItinerary)
+                                }
+                                else {
                                     val newItinerary = Itinerary(
-                                        itineraryId = nextId,
+                                        itineraryId = itineraryId,
                                         name = nameValue,
                                         description = description,
                                         startDate = startDate,
@@ -438,45 +423,33 @@ fun AddItinerary(vm: ItineraryViewModel, travelViewModel: TravelViewModel, navCo
                                         places = places,
                                         activities = selectedActivities,
                                     )
-                                    travelViewModel.addItinerary(newItinerary)
-                                    }
-                                    else {
-                                        val newItinerary = Itinerary(
-                                            itineraryId = itineraryId,
-                                            name = nameValue,
-                                            description = description,
-                                            startDate = startDate,
-                                            endDate = endDate,
-                                            places = places,
-                                            activities = selectedActivities,
-                                        )
-                                        val newIts = travelViewModel.travelItineraryValues.value.filter { it.itineraryId != itineraryId } + newItinerary
-                                        travelViewModel.setTravelItinerary(newIts)
-                                    }
-                                    actions.navigateBack()
+                                    val newIts = travelViewModel.travelItineraryValues.value.filter { it.itineraryId != itineraryId } + newItinerary
+                                    travelViewModel.setTravelItinerary(newIts)
                                 }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Save")
-                        }
+                                actions.navigateBack()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Save")
                     }
                 }
             }
         }
-            else {
-                Column (
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxSize()
-                ){
-                    AddLocation(
-                        onCancel = { vm.toggleIsAddingLocation() },
-                        onLocationSelected = { location -> vm.addPlace(location.name) }
-                    )
-                }
-            }
+    }
+    else {
+        Column (
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+        ){
+            AddLocation(
+                onCancel = { vm.toggleIsAddingLocation() },
+                onLocationSelected = { location -> vm.addPlace(location.name) }
+            )
+        }
+    }
 }

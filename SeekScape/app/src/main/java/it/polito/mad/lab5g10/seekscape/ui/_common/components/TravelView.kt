@@ -197,14 +197,20 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
     var text: String? = null;
     var enabled = true;
 
+    val currentTab by AppState.currentTab.collectAsState()
     val isLoggedIn by AppState.isLogged.collectAsState()
     val status by vm.statusValue.collectAsState()
     val currentTravelState by vm.statusForUser.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val actions = remember(navController) { Actions(navController) }
+
+
     val mapActions: Map<String, ()->Unit > = mapOf(
         OWNED to {
             if(status!=PAST){
+                if(currentTab!=MainDestinations.TRAVELS_ROUTE){
+                    AppState.updateCurrentTab(MainDestinations.TRAVELS_ROUTE)
+                }
                 actions.editTravel(vm.travelIdValue.value)
             }
         },
@@ -213,22 +219,29 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
             coroutineScope.launch{
                 theRequestModel.deleteRequest(vm.travelIdValue.value)
             }
-            //theRequestModel.deleteRequest(vm.travelIdValue.value);
             actions.navigateBack()
            },
         JOINED to {
             val theRequestModel = TheRequestModel()
-
             coroutineScope.launch{
                 theRequestModel.deleteRequest(vm.travelIdValue.value)
                 theRequestModel.leaveTrip(vm.travelIdValue.value)
             }
-            //theRequestModel.leaveTrip(vm.travelIdValue.value);
             actions.navigateBack()
           },
         DENIED to { println("Rejected") },
-        AVAILABLE to { actions.applyToJoin(vm.travelIdValue.value) },
-        TO_REVIEW to {actions.reviewTravel(vm.travelIdValue.value)},
+        AVAILABLE to {
+            if(currentTab!=MainDestinations.HOME_ROUTE){
+                AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+            }
+            actions.applyToJoin(vm.travelIdValue.value)
+          },
+        TO_REVIEW to {
+            if(currentTab!=MainDestinations.TRAVELS_ROUTE){
+                AppState.updateCurrentTab(MainDestinations.TRAVELS_ROUTE)
+            }
+            actions.reviewTravel(vm.travelIdValue.value)
+          },
         FULL to { println("Fully Booked") },
         PAST to { println("Past travel") },
         DELETED to { println("Deleted travel") }
@@ -294,47 +307,6 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
             else -> {}
         }
     }
-    /*
-        when (newStatus) {
-            OWNED -> {
-                text = "Edit";
-                enabled = true;
-            }
-            PENDING -> {
-                text = "Pending Approval - tap to cancel";
-                enabled = true;
-            }
-            JOINED -> {
-                text = "Leave Trip";
-                enabled = true;
-            }
-            DENIED -> {
-                text = "Rejected";
-                enabled = false;
-            }
-            AVAIABLE -> {
-                text = "Apply To Join";
-                enabled = true;
-            }
-            TO_REVIEW -> {
-                text = "Rate your experience";
-                enabled = true
-            }
-            FULL -> {
-                text = "Fully Booked";
-                enabled = false;
-            }
-            PAST -> {
-                text = "Past travel";
-                enabled = false;
-            }
-            DELETED -> {
-                text = "Deleted travel";
-                enabled = false;
-            }
-            else -> {}
-        }
-    */
 
     if(!isLoggedIn)
         text = "Sign in to apply to join"

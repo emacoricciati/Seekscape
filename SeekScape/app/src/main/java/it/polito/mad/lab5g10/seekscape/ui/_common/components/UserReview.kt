@@ -58,8 +58,6 @@ import it.polito.mad.lab5g10.seekscape.models.User
 import it.polito.mad.lab5g10.seekscape.ui._common.FullscreenImageViewer
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 
-//import it.polito.mad.lab5g10.seekscape.ui.travels.ItineraryScreen
-
 
 @Composable
 fun UserDetail(

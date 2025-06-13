@@ -1,9 +1,5 @@
 package it.polito.mad.lab5g10.seekscape.ui._common.components
 
-import android.content.Context.MODE_PRIVATE
-import android.content.Intent
-import androidx.compose.animation.core.animateValueAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,25 +44,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import androidx.core.content.edit
-import com.google.gson.GsonBuilder
-import it.polito.mad.lab5g10.seekscape.LocalDateAdapter
-import it.polito.mad.lab5g10.seekscape.ProfilePicAdapter
-import it.polito.mad.lab5g10.seekscape.TravelImageAdapter
 import it.polito.mad.lab5g10.seekscape.firebase.TheRequestModel
-import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
-import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Review
-import it.polito.mad.lab5g10.seekscape.models.Travel
-import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.User
-import it.polito.mad.lab5g10.seekscape.ui._theme.GraySecondaryLight
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -267,7 +251,6 @@ fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello 
 fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, confirm: Boolean, closeModal: ()-> Unit,){          //da sistemare che il testo che gli dovrai passare fa parte della request e sarebbe il denial message
     var text by remember { mutableStateOf("") }
     var request = vm.getRequestObject(requestId)
-    val context = LocalContext.current
     var placeHolder: String
     val theRequestModel = TheRequestModel()
     val scope = rememberCoroutineScope()

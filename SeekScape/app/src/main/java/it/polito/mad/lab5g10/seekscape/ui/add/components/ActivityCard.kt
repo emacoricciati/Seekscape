@@ -36,8 +36,10 @@ fun ActivityCard (image: ImageVector, title: String, optional: Boolean, onClick:
             contentColor = if (optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         ),
     ) {
-        Row (modifier = Modifier.fillMaxWidth().padding(5.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row (
+            modifier = Modifier.fillMaxWidth().padding(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row (modifier = Modifier.weight(3f), verticalAlignment = Alignment.CenterVertically){
                 Icon(
                     imageVector = image,
@@ -51,29 +53,29 @@ fun ActivityCard (image: ImageVector, title: String, optional: Boolean, onClick:
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(22.dp)
-                        .border(
-                            width = 2.dp,
-                            color = if(optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
-                        )
-                        .background(color = Color.Transparent, shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Icon(
-                        imageVector = if (!optional) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
-                        contentDescription = "Optional Icon",
-                        tint = if(optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
-                            .clickable {
-                                onClick()
-                            },
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(22.dp)
+                    .border(
+                        width = 2.dp,
+                        color = if(optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
                     )
-                }
+                    .background(color = Color.Transparent, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Icon(
+                    imageVector = if (!optional) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
+                    contentDescription = "Optional Icon",
+                    tint = if(optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                        .clickable {
+                            onClick()
+                        },
+                )
+            }
         }
     }
 }
