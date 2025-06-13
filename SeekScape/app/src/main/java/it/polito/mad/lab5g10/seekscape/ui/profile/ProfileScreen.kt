@@ -60,6 +60,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -307,7 +308,7 @@ fun UserPersonalInfo(vm: UserInfoViewModel) {
             Spacer(modifier = Modifier.height(12.dp))
             Row (Modifier.fillMaxWidth().padding(start = 20.dp),
                 horizontalArrangement = Arrangement.Start){
-                Text(text="Update nickname", style = MaterialTheme.typography.titleMedium)
+                Text(text="User Datails", style = MaterialTheme.typography.titleMedium)
             }
             OutlinedTextField(
                 value = nicknameValue,
@@ -421,14 +422,15 @@ fun UserDetails(vm: UserInfoViewModel) {
             }
         }
         else {  //EDITING MODE
+            val bio by vm.bioValue.collectAsState()
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ){
-                Row (Modifier.fillMaxWidth().padding(start = 5.dp),
-                    horizontalArrangement = Arrangement.Start){
-                    Text(text="Update details", style = MaterialTheme.typography.titleMedium)
-                }
+//                Row (Modifier.fillMaxWidth().padding(start = 5.dp),
+//                    horizontalArrangement = Arrangement.Start){
+//                    Text(text="Update details", style = MaterialTheme.typography.titleMedium)
+//                }
                 OutlinedTextField(
                     value = nationalityValue,
                     onValueChange = {vm.setNationality(it)},
@@ -458,6 +460,21 @@ fun UserDetails(vm: UserInfoViewModel) {
                 )
                 if(vm.languageError.isNotBlank())
                     Text(vm.languageError, color = MaterialTheme.colorScheme.error)
+
+                Spacer(modifier = Modifier.height(15.dp))
+                Row (Modifier.fillMaxWidth().padding(start = 5.dp),
+                    horizontalArrangement = Arrangement.Start){
+                    Text(text="Bio", style = MaterialTheme.typography.titleMedium)
+                }
+                OutlinedTextField(
+                    value = bio ?: "",
+                    onValueChange = { vm.setBio(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(start = 5.dp, end = 25.dp),
+                    placeholder = { Text("Enter your bio...", fontSize = 16.sp) }
+                )
             }
         }
     }
@@ -602,6 +619,7 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
     val cityValue by vm.cityValue.collectAsState()
     val languageValue by vm.languageValue.collectAsState()
     val personality by vm.personality.collectAsState()
+    val bio by vm.bioValue.collectAsState()
     val showLocationScreen = remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
@@ -643,7 +661,6 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                     Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(Modifier.height(20.dp))
                     Row(
                         verticalAlignment = Alignment.Top
                     ) {
@@ -653,19 +670,15 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                         Spacer(Modifier.width(20.dp))
                     }
 
-                    Spacer(Modifier.height(20.dp))
-
                     UserDetails(vm)
 
-                    Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.height(20.dp))
 
                     EditableUserPersonality(vm)
 
-                    Spacer(Modifier.height(30.dp))
+                    Spacer(Modifier.height(10.dp))
 
                     EditableUserDestinations(vm,showLocationScreen)
-
-                    Spacer(Modifier.height(30.dp))
 
                     Row(Modifier.fillMaxWidth()) {
                         ActionButton("Save") {
@@ -678,7 +691,7 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                                     phoneNumber = "",
                                     email = "",
                                     profilePic = profilePic,
-                                    bio = "",
+                                    bio = bio,
                                     travelPreferences = listOf(),
                                     desiredDestinations = desiredDestinations,
                                     age = 0,
