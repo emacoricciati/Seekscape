@@ -34,7 +34,7 @@ class ChatMessageModel(id: String, travel:Travel?){
 
     val isChatLoadedValue = createStateFlow(false)
     val fetchingBefore: MutableStateFlow<LocalDateTime?> = createStateFlow(null)
-    val fetchingAfter: MutableStateFlow<LocalDateTime?> = createStateFlow(LocalDateTime.now())
+    val fetchingAfter: MutableStateFlow<LocalDateTime?> = createStateFlow(null)
     val pauseFetchAfter = createStateFlow(true)
     val messagesValue = createStateFlow(listOf<ChatMessage>())
 

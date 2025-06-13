@@ -301,7 +301,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
     val travel by vm.travel.collectAsState()
     val pause by vm.pause.collectAsState()
     var text by remember{ mutableStateOf("") }
-    val isEnabled = !pause && text.isNotBlank() && travel!=null && travel!!.status!=PAST && travel!!.status!=TO_REVIEW
+    val isEnabled = !pause && travel!=null && travel!!.status!=PAST && travel!!.status!=TO_REVIEW
 
     Row(
         modifier = Modifier
@@ -316,7 +316,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
             modifier = Modifier
                 .weight(1f)
                 .heightIn(min = 56.dp),
-            maxLines = 5,
+            maxLines = 4,
             singleLine = false,
             enabled = isEnabled
         )
@@ -327,7 +327,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
                     text = ""
                 }
             },
-            enabled = isEnabled,
+            enabled = isEnabled && text.isNotBlank(),
             modifier = Modifier
                 .padding(start = 2.dp)
                 .size(56.dp)
@@ -335,7 +335,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
             Icon(
                 imageVector = Icons.Default.Send,
                 contentDescription = "Send Message",
-                tint= if(isEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                tint= if(isEnabled && text.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
             )
         }
     }
