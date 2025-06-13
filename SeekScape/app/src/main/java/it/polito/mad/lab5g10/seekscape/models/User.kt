@@ -203,7 +203,7 @@ class UserInfoModel(userInfo: User?=null, userId: String?=null) {
     val nationalityValue = createStateFlow(if(isUserLoadedValue.value) userInfo!!.nationality else "")
     val cityValue = createStateFlow(if(isUserLoadedValue.value) userInfo!!.city else "")
     val languageValue = createStateFlow(if(isUserLoadedValue.value) userInfo!!.language else "")
-
+    val bioValue = createStateFlow(if(isUserLoadedValue.value) userInfo!!.bio else "")
     val personality = createStateFlow(if(isUserLoadedValue.value) userInfo!!.personality else emptyList())
     val desiredDestinations = createStateFlow(if(isUserLoadedValue.value) userInfo!!.desiredDestinations else emptyList())
     val reviews = createStateFlow(if(isUserLoadedValue.value) userInfo!!.reviews else emptyList())
@@ -220,6 +220,7 @@ class UserInfoModel(userInfo: User?=null, userId: String?=null) {
         updateName(user.name)
         updateSurname(user.surname)
         updateProfilePic(user.profilePic)
+        updateBio(user.bio?:"")
         updateNickName(user.nickname)
         updateAge(user.age.toString())
         updateNationality(user.nationality)
@@ -252,7 +253,7 @@ class UserInfoModel(userInfo: User?=null, userId: String?=null) {
     fun updateLanguage(value: String) = languageValue.tryEmit(value)
     fun updateReviews(value: List<Review>) = reviews.tryEmit(value)
     fun updateRatingAverage(value: Double) = ratingsAverage.tryEmit(value)
-
+    fun updateBio(value: String) = bioValue.tryEmit(value)
     fun updateNumTravels(value: Int) = numTravelsValue.tryEmit(value)
 
     fun updatePersonality(value: List<String>) = personality.tryEmit(value)
@@ -398,6 +399,7 @@ class UserInfoViewModel(private val model: UserInfoModel, private val _isOwnProf
     val nationalityValue = model.nationalityValue
     val cityValue = model.cityValue
     val languageValue = model.languageValue
+    val bioValue = model.bioValue
     val personality = model.personality
     val desiredDestinations = model.desiredDestinations
     val reviews = model.reviews
@@ -414,6 +416,7 @@ class UserInfoViewModel(private val model: UserInfoModel, private val _isOwnProf
     fun setNationality(value: String) = model.updateNationality(value)
     fun setCity(value: String) = model.updateCity(value)
     fun setLanguage(value: String) = model.updateLanguage(value)
+    fun setBio(value: String) = model.updateBio(value)
 
     fun addPersonality(ps: List<String>) = model.addPersonality(ps)
     fun removePersonality(text: String) = model.removePersonality(text)

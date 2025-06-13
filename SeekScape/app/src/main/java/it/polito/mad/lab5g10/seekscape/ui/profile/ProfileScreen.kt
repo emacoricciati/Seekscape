@@ -719,6 +719,7 @@ fun PortraitLayout(vm: UserInfoViewModel, navCont: NavHostController){
     val reviews by vm.reviews.collectAsState()
     val pastExperiences by vm.trips.collectAsState()
     val actions = remember(navCont) { Actions(navCont)}
+    val bio by vm.bioValue.collectAsState()
     val theUserModel = TheUserModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -727,6 +728,20 @@ fun PortraitLayout(vm: UserInfoViewModel, navCont: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PortraitUserCard(vm)
+        if(bio!!.isNotBlank()){
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top=20.dp, bottom = 10.dp).height(0.dp),
+                color = MaterialTheme.colorScheme.outline
+            )
+            Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)){
+                Text(text="Bio", style = MaterialTheme.typography.headlineMedium)
+            }
+            Text(
+                text = bio!!,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+            )
+        }
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top=20.dp, bottom = 10.dp).height(0.dp),
             color = MaterialTheme.colorScheme.outline
@@ -780,6 +795,7 @@ fun LandscapeLayout(vm: UserInfoViewModel, navCont: NavHostController){
     val reviews by vm.reviews.collectAsState()
     val pastExperiences by vm.trips.collectAsState()
     val actions = remember(navCont) { Actions(navCont) }
+    val bio by vm.bioValue.collectAsState()
 
     Column(
         Modifier
@@ -788,6 +804,21 @@ fun LandscapeLayout(vm: UserInfoViewModel, navCont: NavHostController){
             .verticalScroll(rememberScrollState()),
     ) {
         LandscapeUserCard(vm)
+        if(bio!!.isNotBlank()){
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top=20.dp, bottom = 10.dp).height(0.dp),
+                color = MaterialTheme.colorScheme.outline
+            )
+            Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)){
+                Text(text="Bio", style = MaterialTheme.typography.headlineMedium)
+            }
+            Text(
+                text = bio!!,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+            )
+        }
+
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top=20.dp, bottom = 10.dp).height(0.dp),
             color = MaterialTheme.colorScheme.outline
@@ -799,11 +830,10 @@ fun LandscapeLayout(vm: UserInfoViewModel, navCont: NavHostController){
         Row (
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
         ){
-            if(reviews != null && (reviews as Collection<Any?>).isNotEmpty()){
+            if(reviews != null && (reviews as List<Any?>).isNotEmpty()){
                 reviews!!.map {
-//                    val user = getUserById(it.author.userId)
-//                    UserReview(user, timeAgo(it.date), it.reviewText, it.rating, navCont)
-//                    Spacer(Modifier.width(16.dp))
+                    UserReview(it.author, timeAgo(it.date), it.reviewText, it.rating, navCont)
+                    Spacer(Modifier.width(16.dp))
                 }
             }
             else{

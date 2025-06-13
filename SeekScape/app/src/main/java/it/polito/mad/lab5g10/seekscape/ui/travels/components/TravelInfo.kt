@@ -316,7 +316,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(3.dp),
         )
 
         //------------------------------- COUNTRY and DATES, PEOPLE and PRICE -------------------------------
