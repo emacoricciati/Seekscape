@@ -3,6 +3,7 @@ package it.polito.mad.lab5g10.seekscape.firebase
 import android.util.Log
 import it.polito.mad.lab5g10.seekscape.calculateAge
 import it.polito.mad.lab5g10.seekscape.models.Activity
+import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.Itinerary
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
@@ -15,11 +16,14 @@ import it.polito.mad.lab5g10.seekscape.models.TravelReview
 import it.polito.mad.lab5g10.seekscape.models.User
 import java.io.Serializable
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.text.format
 
 
 val firebaseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+val firebaseChatFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 fun imageListToFirestoreModel(travelImageList: List<TravelImage>?=null): List<String>? {
     val imgUrlList = mutableListOf<String>()
@@ -232,7 +236,8 @@ data class TravelFirestoreModel(
     var travelItinerary: List<ItineraryFirestoreModel>? = emptyList(),
     var travelCompanions: List<TravelCompanionFirestoreModel>? = emptyList(),
     var travelReviews: List<TravelReviewFirestoreModel>? = emptyList(),
-    var travelRating: Double? = null
+    var travelRating: Double? = null,
+    var travelChat: List<ChatMessageFirestoreModel>? = emptyList(),
 ) : Serializable
 
 
@@ -285,6 +290,27 @@ suspend fun TravelFirestoreModel.toAppModel(isTravelLite:Boolean = false, status
     )
 }
 
+data class ChatMessageFirestoreModel(
+    var authorId: String = "",
+    var date: String = "",
+    var text: String = ""
+) : Serializable
+
+fun ChatMessage.toFirestoreModel(): ChatMessageFirestoreModel {
+    return ChatMessageFirestoreModel(
+        authorId = this.author.userId,
+        date = this.date.format(firebaseChatFormatter),
+        text = this.text
+    )
+}
+
+suspend fun ChatMessageFirestoreModel.toAppModel(): ChatMessage {
+    return ChatMessage(
+        author = if(this.authorId=="system") system else CommonModel.getLiteUser(this.authorId)!!,
+        date = LocalDateTime.parse(this.date, firebaseChatFormatter)!!,
+        text = this.text
+    )
+}
 
 
 data class ItineraryFirestoreModel(
@@ -341,7 +367,6 @@ data class TravelReviewFirestoreModel(
     var reviewImages: List<String>? = null, // CAST TravelImage data structure ????
     var date: String  = ""// CAST of type LocalDate - String
 ) : Serializable
-
 
 
 fun TravelReview.toFirestoreModel(): TravelReviewFirestoreModel {

@@ -1,5 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels.components
 
+import android.widget.Toast
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,7 +49,9 @@ import it.polito.mad.lab5g10.seekscape.firebase.toAppModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.DENIED
 import it.polito.mad.lab5g10.seekscape.models.JOINED
+import it.polito.mad.lab5g10.seekscape.models.PAST
 import it.polito.mad.lab5g10.seekscape.models.Request
+import it.polito.mad.lab5g10.seekscape.models.TO_REVIEW
 import it.polito.mad.lab5g10.seekscape.ui._common.SquareImage
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconCost
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconDateRange
@@ -328,7 +332,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(3.dp),
+            modifier = Modifier.padding(10.dp),
         )
 
         //------------------------------- COUNTRY and DATES, PEOPLE and PRICE -------------------------------
@@ -620,11 +624,28 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
         }
 
         //------------------------------- OTHER COMPANIONS -------------------------------
-        Text(
-            text = "Other Companions",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(5.dp),
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Other Companions",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(horizontal = 5.dp),
+            )
+            if(currentTravelState==JOINED || currentTravelState==PAST || currentTravelState== TO_REVIEW){
+                Button(
+                    onClick = {
+                        actions.seeTravelChat(vm.travelIdValue.value)
+                    },
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                ) {
+                    Text("Chat")
+                }
+            }
+        }
 
         Row(
             modifier = Modifier
@@ -633,7 +654,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if(travelCompanions==null || travelCompanions.isEmpty()){
+            if(travelCompanions.isEmpty()){
                 Text(
                     text = "no companions yet",
                     style = MaterialTheme.typography.bodyMedium,

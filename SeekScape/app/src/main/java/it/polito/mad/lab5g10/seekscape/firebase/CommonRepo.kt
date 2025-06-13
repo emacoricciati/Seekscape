@@ -34,12 +34,12 @@ import java.util.UUID
 
 object CommonModel {
 
-    suspend fun getTravelById(id: String): Travel? {
+    suspend fun getTravelById(id: String, isTravelLite: Boolean=false): Travel? {
         val userId = AppState.myProfile.value.userId
         val docSnapshot = Collections.travels.document(id).get().await()
         if(docSnapshot.exists()) {
             val firestoreModel = docSnapshot.toObject(TravelFirestoreModel::class.java)
-            var travel = firestoreModel?.toAppModel()
+            var travel = firestoreModel?.toAppModel(isTravelLite=isTravelLite)
 
             if (travel == null)
                 return null
@@ -47,7 +47,7 @@ object CommonModel {
             if(userId==travel.creator.userId){
                 travel.statusForUser = OWNED
 
-            } else {
+            } else if(!isTravelLite){
                 if (travel.travelCompanions?.any { comp -> comp.user.userId == userId } == true) {
                     if (travel.status == PAST){
                         if (travel.travelReviews!=null && travel.travelReviews?.any { r -> r.author.userId == userId } == true) {
@@ -337,7 +337,7 @@ object CommonModel {
             travel16, travel17, travel18
         )
         val defaultUsers = listOf(
-            user_ob, user_dw, user_eh, user_sl, user_me, user_ec
+            user_ob, user_sl, user_dw, user_me, user_eh, user_ec
         )
         val defaultRequests = listOf(
             t1_req1, t1_req2,
@@ -504,6 +504,15 @@ object CommonModel {
                 }
                 travelFirestore.travelReviews?.forEach { travelReview ->
                     travelReview.authorId = user_reset_DATA.get(travelReview.authorId).toString()
+                }
+
+                travelFirestore.travelChat = travel.travelChat?.map {
+                    it.toFirestoreModel()
+                }
+                travelFirestore.travelChat?.forEach { msg ->
+                    if(msg.authorId!="system") {
+                        msg.authorId = user_reset_DATA.get(msg.authorId).toString()
+                    }
                 }
 
                 Log.d("InsertTravel", "Processing travel ID: ${travelFirestore.travelId}")

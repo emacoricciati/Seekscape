@@ -5,6 +5,7 @@ import java.time.LocalDate
 import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.Activity
+import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.Itinerary
 import it.polito.mad.lab5g10.seekscape.models.PAST
@@ -16,13 +17,26 @@ import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelReview
 import it.polito.mad.lab5g10.seekscape.models.User
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.String
 import kotlin.collections.listOf
 import kotlin.random.Random
 
-
 val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
+
+val system = User(
+    "system", "", "", "", "", 0, "", "", "", "", "",
+    ProfilePic.Resource(R.drawable.icon_logo),
+    "",listOf<String>(),null,null,null,null,null,0)
+
+fun getSystemMessageJoined(user: User): String {
+    return "New companion - ${user.nickname}"
+}
+fun getSystemMessageLeft(user: User): String {
+    return "Companion left - ${user.nickname}"
+}
 
 val unknown_User = User(
     "",
@@ -492,7 +506,12 @@ val travel2 = Travel(
     travelItinerary = mutableListOf(t2_i1, t2_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_ob), TravelCompanion(user_ec), TravelCompanion(user_me)),
     maxPeople = 6,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system, LocalDateTime.parse("2025-07-06 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec)),
+        ChatMessage(user_ec, LocalDateTime.parse("2025-07-06 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
+        ChatMessage(system, LocalDateTime.parse("2025-07-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
+    )
 )
 
 val t2_req1 = Request(
@@ -1082,7 +1101,12 @@ val travel9 = Travel(
     ),
     maxPeople = 8,
     travelRating = 4.25,
-    travelReviews = listOf(t9_r1, t9_r2)
+    travelReviews = listOf(t9_r1, t9_r2),
+    travelChat = listOf(
+        ChatMessage(user_ob, LocalDateTime.parse("2025-10-10 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system, LocalDateTime.parse("2025-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(user_dw, LocalDateTime.parse("2025-10-10 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
+    )
 )
 
 val t9_req1 = Request(
@@ -1323,7 +1347,13 @@ val travel12 = Travel(
         TravelCompanion(user_me)
     ),
     maxPeople = 8,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
+        ChatMessage(user_me, LocalDateTime.parse("2025-06-17 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
+        ChatMessage(user_ob, LocalDateTime.parse("2025-06-17 17:40", firebaseChatFormatter)!!, "Me too, can't wait"),
+    )
 )
 
 val t12_req1 = Request(

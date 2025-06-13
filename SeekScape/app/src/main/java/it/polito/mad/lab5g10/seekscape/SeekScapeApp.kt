@@ -76,10 +76,13 @@ fun SeekScapeApp(
             val canGoBack = currentNavController.previousBackStackEntry != null &&
                     currentDestination?.route !in tabs && !currentDestination?.route?.contains("add_location")!!
                     && !currentDestination.route?.contains("unlogged")!! && !currentDestination.route?.contains("complete_registration")!!
-            if (currentDestination?.route != "travel/{travelId}" && currentDestination?.route != "travel/{travelId}/action/{action}" && currentDestination?.route?.contains(
-                    "fullscreen"
-                ) != true && currentDestination?.route?.contains("unlogged") != true && currentDestination?.route?.contains("login") != true
-                && currentDestination?.route?.contains("signup") != true
+            if (currentDestination?.route != "travel/{travelId}" &&
+                currentDestination?.route != "travel/{travelId}/action/{action}" &&
+                currentDestination?.route != "travel/{travelId}/chat" &&
+                currentDestination?.route?.contains("fullscreen") != true &&
+                currentDestination?.route?.contains("unlogged") != true &&
+                currentDestination?.route?.contains("login") != true &&
+                currentDestination?.route?.contains("signup") != true
             ) {
                 AppTopBar(currentTitle, currentNavController, canGoBack)
             }

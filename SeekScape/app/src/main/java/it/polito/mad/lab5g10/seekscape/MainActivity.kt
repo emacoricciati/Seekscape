@@ -46,6 +46,7 @@ class MainApplication : Application() {
         Firebase.appCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance(),
         )
+
     }
 }
 
