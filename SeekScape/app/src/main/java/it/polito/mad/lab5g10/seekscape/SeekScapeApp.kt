@@ -1,7 +1,6 @@
 package it.polito.mad.lab5g10.seekscape
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
@@ -22,7 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.ui._common.AppTopBar
 import it.polito.mad.lab5g10.seekscape.ui.navigation.StackNavigation
-import it.polito.mad.lab5g10.seekscape.ui._theme.SeekScapeTheme
 import it.polito.mad.lab5g10.seekscape.ui.navigation.BottomNavigationBar
 
 @Composable

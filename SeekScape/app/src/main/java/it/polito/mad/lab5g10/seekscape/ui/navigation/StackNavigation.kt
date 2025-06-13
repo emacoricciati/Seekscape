@@ -1,5 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.ui.navigation
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.*
@@ -14,11 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import it.polito.mad.lab5g10.seekscape.cleanStack
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
@@ -216,7 +219,14 @@ fun StackNavigation(
 
                 composable(
                     "travel/{travelId}",
-                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType }),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = "app://travel/{travelId}"          //insert the url
+                            action = Intent.ACTION_VIEW
+                        }
+                    )
+
                 ) { entry ->
                     RouteTravel(entry, navCont)
                 }
