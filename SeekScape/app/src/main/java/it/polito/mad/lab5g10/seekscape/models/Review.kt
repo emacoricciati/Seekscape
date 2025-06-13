@@ -228,10 +228,6 @@ class TravelReviewViewModel(private val model: TravelReviewModel): ViewModel() {
         return textErrors.isEmpty() && ratingErrors.isEmpty()
     }
 
-
-
-
-
     fun validateReview(): Boolean {
         var errorCount = 0
 
@@ -246,8 +242,6 @@ class TravelReviewViewModel(private val model: TravelReviewModel): ViewModel() {
                 validateFunc("")
             }
         }
-
-
         return errorCount == 0
     }
 

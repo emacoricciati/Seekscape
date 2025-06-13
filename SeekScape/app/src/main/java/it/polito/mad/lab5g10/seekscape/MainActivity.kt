@@ -38,10 +38,12 @@ class MainApplication : Application() {
         super.onCreate()
         val result = FirebaseApp.initializeApp(this)
         println(">>> Firebase initialized: ${result != null}")
-
+        /*
         Firebase.appCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance(),
         )
+
+         */
     }
 }
 
@@ -76,8 +78,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeekScapeTheme {
                 NotificationPermissionRequester()
-                SeekScapeApp(initialIntent = intent)
-                //Support()
+                //SeekScapeApp(initialIntent = intent)
+                Support()
             }
         }
         handleIntent(intent)

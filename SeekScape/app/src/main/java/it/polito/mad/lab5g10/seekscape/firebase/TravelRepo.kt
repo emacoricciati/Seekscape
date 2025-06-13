@@ -1,6 +1,5 @@
 package it.polito.mad.lab5g10.seekscape.firebase
 
-import android.graphics.Path.Direction
 import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.Firebase
@@ -29,14 +28,11 @@ import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.User
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class TheTravelModel() {
     suspend fun addTravel(updatedTravel: Travel) {
@@ -605,13 +601,23 @@ class TheRequestModel() {
         reqRef.update("lastUpdate", reqFirestore.lastUpdate).await()
         reqRef.update("accepted", isAcceped).await()
 
+        val travelref = Collections.travels.document(reqFirestore.tripId)
         if(isAcceped){
-            val travelref = Collections.travels.document(reqFirestore.tripId)
             val comp = TravelCompanionFirestoreModel(reqFirestore.authorId, request.spots-1)
             travelref.update("travelCompanions",
                 FieldValue.arrayUnion(comp)
             ).await()
+
+            var chatMessageFirebase = ChatMessageFirestoreModel(
+                "system",
+                LocalDateTime.now().format(firebaseChatFormatter),
+                getSystemMessageJoined(request.author)
+            )
+            travelref.update("travelChat",
+                FieldValue.arrayUnion(chatMessageFirebase)
+            ).await()
         }
+
     }
 
     suspend fun deleteRequest(travelId: String) {
@@ -652,6 +658,16 @@ class TheRequestModel() {
 
         val travelCompanionsUpdated = travelCompanions.filter { it.userId!=userId }
         travelRef.update("travelCompanions", travelCompanionsUpdated).await()
+
+        var chatMessageFirebase = ChatMessageFirestoreModel(
+            "system",
+            LocalDateTime.now().format(firebaseChatFormatter),
+            getSystemMessageLeft(user)
+        )
+        travelRef.update("travelChat",
+            FieldValue.arrayUnion(chatMessageFirebase)
+        ).await()
+
     }
 
 }

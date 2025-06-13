@@ -494,11 +494,6 @@ fun ReqMng(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTrave
                 ownedTravelViewModel,
                 {
                     showModalBottom = false
-                    /*
-                    if(actionDone){
-                        actions.backToTravelsTab()
-                    }
-                    */
                 },
                 openTextBox,
                 confirmReq

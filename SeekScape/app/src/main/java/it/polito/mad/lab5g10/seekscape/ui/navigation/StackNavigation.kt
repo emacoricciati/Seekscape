@@ -80,6 +80,10 @@ class Actions(private val navCont: NavHostController) {
         navCont.navigate(Destinations.TRAVEL + "/${id}")
     }
 
+    val seeTravelChat: (String) -> Unit = { id ->
+        navCont.navigate(Destinations.TRAVEL + "/${id}/chat")
+    }
+
     val seeProfile: (String) -> Unit = {
         id->
         navCont.navigate(Destinations.PROFILE + "/${id}")
@@ -88,7 +92,6 @@ class Actions(private val navCont: NavHostController) {
     val applyToJoin: (String) -> Unit = { id ->
         navCont.navigate(Destinations.TRAVEL + "/${id}" + "/" + Destinations.APPLY)
     }
-
     val seeTravelItinerary: (String, Int) -> Unit = {
         idTravel, idIndex ->
         navCont.navigate(Destinations.TRAVEL + "/${idTravel}" + "/" + Destinations.ITINERARY + "/${idIndex}")
@@ -241,6 +244,13 @@ fun StackNavigation(
                 }
 
                 composable(
+                    "travel/{travelId}/chat",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravelChat(entry, navCont)
+                }
+
+                composable(
                     "travel/{travelId}/fullscreen/{imageIndex}",
                     arguments = listOf(
                         navArgument("travelId") { type = NavType.StringType },
@@ -369,6 +379,13 @@ fun StackNavigation(
                     arguments = listOf(navArgument("travelId") { type = NavType.StringType })
                 ) { entry ->
                     RouteTravel(entry, navCont)
+                }
+
+                composable(
+                    "travel/{travelId}/chat",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravelChat(entry, navCont)
                 }
 
                 composable("travel/{travelId}/itinerary/{itineraryId}",
@@ -614,6 +631,13 @@ fun StackNavigation(
                     arguments = listOf(navArgument("travelId") { type = NavType.StringType })
                 ) { entry ->
                     RouteTravel(entry, navCont)
+                }
+
+                composable(
+                    "travel/{travelId}/chat",
+                    arguments = listOf(navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
+                    RouteTravelChat(entry, navCont)
                 }
 
                 composable("travel/{travelId}/itinerary/{itineraryId}",

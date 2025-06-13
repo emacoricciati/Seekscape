@@ -20,6 +20,8 @@ import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
+import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModel
+import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelsViewModelFactory
@@ -39,6 +41,7 @@ import it.polito.mad.lab5g10.seekscape.ui.travels.ChangeModeButton
 import it.polito.mad.lab5g10.seekscape.ui.travels.MyTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.travels.TravelProposalScreen
 import it.polito.mad.lab5g10.seekscape.ui.travels.ViewItineraryScreen
+import it.polito.mad.lab5g10.seekscape.ui.travels.components.TravelChatScreen
 
 
 @Composable // "travels" and "travels/action/{action}"
@@ -104,10 +107,37 @@ fun RouteTravel(entry: NavBackStackEntry, navCont: NavHostController) {
     val action = entry.arguments?.getString("action")
 
     if (id != null) {
+        val travelTab = AppState.getTravelOfTab()
+
         val viewModel: TravelViewModel =
-            viewModel(factory = TravelViewModelFactory(travelId=id) )
+            if(travelTab!=null && id==travelTab.travelId)
+                viewModel(factory = TravelViewModelFactory(travel=travelTab) )
+            else
+                viewModel(factory = TravelViewModelFactory(travelId=id) )
 
         TravelProposalScreen(viewModel, navCont, action)
+        Box(modifier = Modifier.padding(16.dp)) {
+            val clickFunc = {
+                actions.navigateBack()
+            }
+            ArrowBackIcon(clickFunc = clickFunc)
+        }
+    }
+}
+
+@Composable // "travel/{travelId}/chat"
+fun RouteTravelChat(entry: NavBackStackEntry, navCont: NavHostController) {
+    val actions = remember(navCont) { Actions(navCont) }
+    val id = entry.arguments?.getString("travelId")
+
+    if (id != null) {
+        val travelTab = AppState.getTravelOfTab()
+        val travel: Travel? = if(travelTab!=null && id==travelTab.travelId) travelTab else null
+
+        val viewModel: ChatMessageViewModel =
+            viewModel(factory = ChatMessageViewModelFactory(travelId=id, travel=travel) )
+
+        TravelChatScreen(viewModel, navCont)
         Box(modifier = Modifier.padding(16.dp)) {
             val clickFunc = {
                 actions.navigateBack()
