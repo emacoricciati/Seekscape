@@ -1349,7 +1349,7 @@ val travel12 = Travel(
     maxPeople = 8,
     travelReviews = listOf(),
     travelChat = listOf(
-        ChatMessage(user_ob, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
         ChatMessage(system, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
         ChatMessage(user_me, LocalDateTime.parse("2025-06-17 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
         ChatMessage(user_ob, LocalDateTime.parse("2025-06-17 17:40", firebaseChatFormatter)!!, "Me too, can't wait"),

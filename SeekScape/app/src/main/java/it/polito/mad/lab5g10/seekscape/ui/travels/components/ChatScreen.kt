@@ -220,17 +220,11 @@ fun MessageBox(msg: ChatMessage, navCont: NavHostController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
     ) {
         if (!isCurrentUser) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 3.dp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    text = msg.date.format(chatHourFormat)
-                )
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -238,21 +232,22 @@ fun MessageBox(msg: ChatMessage, navCont: NavHostController) {
                             if(msg.author.userId!="system")
                                 actions.seeProfile(msg.author.userId)
                         }
+                        .padding(top=5.dp)
                 ) {
                     UserImage(
                         msg.author.profilePic,
-                        size = 40.dp,
+                        size = 30.dp,
                         msg.author.name,
                         msg.author.surname
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(5.dp))
         } else {
             Spacer(modifier = Modifier.width(30.dp))
         }
 
-        Box(
+        Column(
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colorScheme.surface,
@@ -260,40 +255,41 @@ fun MessageBox(msg: ChatMessage, navCont: NavHostController) {
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .wrapContentWidth()
-                .wrapContentHeight()
+                .wrapContentHeight(),
+            horizontalAlignment = if (isCurrentUser) Alignment.End else Alignment.Start
         ) {
             Text(
                 text = msg.text,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
+            Text(
+                text = msg.date.format(chatHourFormat),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline
+            )
         }
 
         if (isCurrentUser) {
+            Spacer(modifier = Modifier.width(5.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 3.dp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    text = msg.date.format(chatHourFormat)
-                )
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
                             actions.seeProfile(msg.author.userId)
                         }
+                        .padding(top=5.dp)
                 ) {
                     UserImage(
                         msg.author.profilePic,
-                        size = 40.dp,
+                        size = 30.dp,
                         msg.author.name,
                         msg.author.surname
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(8.dp))
-        }else{
+        } else {
             Spacer(modifier = Modifier.width(30.dp))
         }
     }

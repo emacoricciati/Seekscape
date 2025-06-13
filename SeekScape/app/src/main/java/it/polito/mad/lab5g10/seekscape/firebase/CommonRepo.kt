@@ -510,7 +510,9 @@ object CommonModel {
                     it.toFirestoreModel()
                 }
                 travelFirestore.travelChat?.forEach { msg ->
-                    msg.authorId = user_reset_DATA.get(msg.authorId).toString()
+                    if(msg.authorId!="system") {
+                        msg.authorId = user_reset_DATA.get(msg.authorId).toString()
+                    }
                 }
 
                 Log.d("InsertTravel", "Processing travel ID: ${travelFirestore.travelId}")
