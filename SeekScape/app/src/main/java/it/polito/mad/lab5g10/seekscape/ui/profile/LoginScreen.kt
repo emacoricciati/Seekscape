@@ -164,6 +164,7 @@ fun LoginScreen(navHostController: NavHostController) {
             onClick = {
                 var isError = false
                 val emailTrimmed = email.trim()
+                val passwordTrimmed = password.trim()
                 if (emailTrimmed.matches(
                         Regex(
                             "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
@@ -173,7 +174,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     emailError = "Please enter a valid email address."
                     isError = true
                 }
-                if (password.length < 6) {
+                if (passwordTrimmed.length < 6) {
                     passwordError = "Password must be at least 6 characters long."
                     isError = true
                 }
@@ -182,7 +183,7 @@ fun LoginScreen(navHostController: NavHostController) {
                 }
                 coroutineScope.launch {
                     try {
-                        val user = accountService.signIn(emailTrimmed, password)
+                        val user = accountService.signIn(emailTrimmed, passwordTrimmed)
 
                         val token = FirebaseMessaging.getInstance().token.await()
                         userModel.addTokenUserById(user.userId, token)
