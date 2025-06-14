@@ -86,10 +86,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.google.gson.GsonBuilder
 import it.polito.mad.lab5g10.seekscape.MainActivity
 import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.models.AppState
@@ -105,7 +103,6 @@ import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_DEN
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
-import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import navigateToNotificationAction
 import java.io.Serializable

@@ -87,6 +87,13 @@ object AppState {
         return notifications.isNotEmpty() && notifications.any { it.id == notificationId }
     }
 
+    fun removeNotification(notificationId: String) {
+        val user = _myProfile.value
+        val updatedNotifications = user.notifications.filter { it.id != notificationId }
+        _myProfile.value = user.copy(notifications = updatedNotifications)
+    }
+
+
     private val _actualThemeIsDark = MutableStateFlow<Boolean?>(null)
     val actualThemeIsDark: StateFlow<Boolean?> = _actualThemeIsDark.asStateFlow()
     fun updateActualThemeIsDark(new: Boolean) {

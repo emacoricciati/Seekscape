@@ -281,7 +281,7 @@ object CommonModel {
             }
 
             docRef.update("fcmTokens", updatedTokens).await()
-            Log.d("removeFcmToken", "Notification removed successfully.")
+            Log.d("removeFcmToken", "fcmTokens removed successfully.")
             Result.success(null)
         } catch (e: Exception) {
             Log.e("removeFcmToken", "Failed to remove Notification", e)
@@ -294,12 +294,10 @@ object CommonModel {
             val docRef = Collections.users.document(userId)
             val snapshot = docRef.get().await()
 
-
             val currentNotificationsRaw = snapshot.get("notifications") as? List<Map<String, Any>> ?: emptyList()
 
             val currentNotifications = currentNotificationsRaw.mapNotNull { map ->
                 try {
-                    // Convert each map to a JSON string and then deserialize
                     val json = Gson().toJson(map)
                     Gson().fromJson(json, NotificationItem::class.java)
                 } catch (e: Exception) {
@@ -311,8 +309,11 @@ object CommonModel {
             val updatedNotifications = currentNotifications.filter {
                 it.id != notificationId
             }
-
             docRef.update("notifications", updatedNotifications).await()
+
+            AppState.removeNotification(notificationId)
+
+
             Log.d("removeNotificationById", "Notification removed successfully.")
             Result.success(null)
         } catch (e: Exception) {
