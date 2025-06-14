@@ -195,11 +195,11 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -210,7 +210,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                         onValueChange = { vm.setTitle(it) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 8.dp),
                         placeholder = { Text("Enter your title...", fontSize = 16.sp) }
                     )
                     if (vm.titleError.isNotBlank()) {
@@ -232,7 +232,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 8.dp),
                         placeholder = { Text("Enter your description...", fontSize = 16.sp) }
                     )
                     if (vm.descriptionError.isNotBlank()) {
@@ -248,7 +248,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(15.dp))
 
@@ -260,12 +260,12 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp)
                         ) {
                             PillButtonEditable(location) { vm.removeLocation() }
                         }
                     } else {
-                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Box(modifier = Modifier.padding(horizontal = 12.dp)) {
                             Button(
                                 onClick = { vm.toggleIsAddingLocation() },
                                 modifier = Modifier
@@ -305,7 +305,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -328,7 +328,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 2.dp),
                     ) {
                         Calendar(
                             "start",
@@ -365,7 +365,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -390,7 +390,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -409,7 +409,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -431,7 +431,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -841,7 +841,7 @@ fun SelectNumbers(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .padding(top = 8.dp)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 8.dp)
 
         ) {
             Text(
@@ -1037,7 +1037,7 @@ fun TripRangeSlider(
         }
 
         // Range Slider clickable by the user
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Box(modifier = Modifier.padding(horizontal = 8.dp)) {
             RangeSlider(
                 value = localMin..localMax,
                 onValueChange = { range ->
@@ -1059,7 +1059,7 @@ fun TripRangeSlider(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 8.dp)
         ) {
             OutlinedTextField(
                 value = localMin.toInt().toString(),

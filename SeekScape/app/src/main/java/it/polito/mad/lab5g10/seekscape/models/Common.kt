@@ -40,9 +40,11 @@ const val TO_REVIEW = "to-review"
 
 object AppState {
 
-    //TODO initialize, fetch dark mode boolean
-
-
+    // Initialize data from shared preferences
+    fun initialize(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
+        updateIsDarkMode(sharedPreferences.getBoolean("dark_mode", false), context)
+    }
 
     //------------AUTHENTICATION-----------------------------------------------------------------
     private val _isLogged = MutableStateFlow<Boolean>(false)
@@ -80,6 +82,16 @@ object AppState {
         _myProfile.value = new
     }
 
+    fun isNotificationPresent(notificationId: String): Boolean {
+        val notifications = _myProfile.value.notifications
+        return notifications.isNotEmpty() && notifications.any { it.id == notificationId }
+    }
+
+    private val _actualThemeIsDark = MutableStateFlow<Boolean?>(null)
+    val actualThemeIsDark: StateFlow<Boolean?> = _actualThemeIsDark.asStateFlow()
+    fun updateActualThemeIsDark(new: Boolean) {
+        _actualThemeIsDark.value = new
+    }
 
     private val _isDarkMode = MutableStateFlow<Boolean?>(null)
     val isDarkMode: StateFlow<Boolean?> = _isDarkMode.asStateFlow()
@@ -150,13 +162,5 @@ object AppState {
     fun getTravelOfTab(tab: String=_currentTab.value): Travel? {
         return _travelsTabMap.value[tab]
     }
-
-    // Initialize data from shared preferences
-    fun initialize(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
-        updateIsDarkMode(sharedPreferences.getBoolean("dark_mode", false), context)
-    }
-
-
 
 }

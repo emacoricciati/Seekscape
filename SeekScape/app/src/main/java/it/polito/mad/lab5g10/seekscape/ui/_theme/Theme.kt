@@ -98,11 +98,14 @@ fun SeekScapeTheme(
     val darkSystemTheme: Boolean = isSystemInDarkTheme()
     val isDarkMode = AppState.isDarkMode.collectAsState().value
 
+    val actualThemeIsDark = (isDarkMode==null && darkSystemTheme) || (isDarkMode!=null && isDarkMode)
+    AppState.updateActualThemeIsDark(actualThemeIsDark)
     val colorScheme =
-        if ((isDarkMode==null && darkSystemTheme) || (isDarkMode!=null && isDarkMode))
+        if (actualThemeIsDark)
             DarkColorScheme
         else
             LightColorScheme;
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = colorScheme.background,

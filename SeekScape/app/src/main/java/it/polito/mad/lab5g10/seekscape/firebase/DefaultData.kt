@@ -26,10 +26,16 @@ import kotlin.random.Random
 val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 
-val system = User(
+val system_light = User(
     "system", "", "", "", "", 0, "", "", "", "", "",
     ProfilePic.Resource(R.drawable.icon_logo),
-    "",listOf<String>(),null,null,null,null,null,0)
+    "",listOf<String>(),null,null,null,null,null,0
+)
+val system_dark = User(
+    "system", "", "", "", "", 0, "", "", "", "", "",
+    ProfilePic.Resource(R.drawable.icon_logo_dark_mode),
+    "",listOf<String>(),null,null,null,null,null,0
+)
 
 fun getSystemMessageJoined(user: User): String {
     return "New companion - ${user.nickname}"
@@ -508,9 +514,9 @@ val travel2 = Travel(
     maxPeople = 6,
     travelReviews = listOf(),
     travelChat = listOf(
-        ChatMessage(system, LocalDateTime.parse("2025-07-06 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-07-06 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec)),
         ChatMessage(user_ec, LocalDateTime.parse("2025-07-06 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
-        ChatMessage(system, LocalDateTime.parse("2025-07-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-07-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
     )
 )
 
@@ -1104,7 +1110,7 @@ val travel9 = Travel(
     travelReviews = listOf(t9_r1, t9_r2),
     travelChat = listOf(
         ChatMessage(user_ob, LocalDateTime.parse("2025-10-10 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
-        ChatMessage(system, LocalDateTime.parse("2025-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
         ChatMessage(user_dw, LocalDateTime.parse("2025-10-10 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
     )
 )
@@ -1349,8 +1355,8 @@ val travel12 = Travel(
     maxPeople = 8,
     travelReviews = listOf(),
     travelChat = listOf(
-        ChatMessage(system, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
-        ChatMessage(system, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
         ChatMessage(user_me, LocalDateTime.parse("2025-06-17 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
         ChatMessage(user_ob, LocalDateTime.parse("2025-06-17 17:40", firebaseChatFormatter)!!, "Me too, can't wait"),
     )

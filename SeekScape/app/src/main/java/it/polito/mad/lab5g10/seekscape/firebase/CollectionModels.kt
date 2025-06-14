@@ -3,6 +3,7 @@ package it.polito.mad.lab5g10.seekscape.firebase
 import android.util.Log
 import it.polito.mad.lab5g10.seekscape.calculateAge
 import it.polito.mad.lab5g10.seekscape.models.Activity
+import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.Itinerary
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
@@ -18,7 +19,6 @@ import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.text.format
 
 
 val firebaseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -305,8 +305,20 @@ fun ChatMessage.toFirestoreModel(): ChatMessageFirestoreModel {
 }
 
 suspend fun ChatMessageFirestoreModel.toAppModel(): ChatMessage {
+    var user: User = unknown_User
+    if(this.authorId=="system"){
+        if(AppState.actualThemeIsDark.value == true){
+            user = system_dark
+        }else{
+            user = system_light
+        }
+    } else {
+        user=CommonModel.getLiteUser(this.authorId)!!
+    }
+
+
     return ChatMessage(
-        author = if(this.authorId=="system") system else CommonModel.getLiteUser(this.authorId)!!,
+        author = user,
         date = LocalDateTime.parse(this.date, firebaseChatFormatter)!!,
         text = this.text
     )

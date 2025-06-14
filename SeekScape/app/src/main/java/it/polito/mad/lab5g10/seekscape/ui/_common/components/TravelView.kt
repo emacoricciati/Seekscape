@@ -13,22 +13,31 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Euro
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,6 +57,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.dayMonthFormat
@@ -78,8 +88,7 @@ import java.time.LocalDate
 
 
 @Composable
-fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = null, navCont: NavHostController) {
-    Log.d("TRAVEL ID", travel.travelId.toString())
+fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = null, navCont: NavHostController, hasChat:Boolean=false) {
     val actions = remember(navCont){Actions(navCont)}
     val context = LocalContext.current
     ElevatedCard(
@@ -92,97 +101,138 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(12.dp)
+                .fillMaxSize()
         ) {
-            if (textAbove!=null){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(12.dp)
+            ) {
+                if (textAbove!=null){
+                    Text(
+                        text = textAbove,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .padding(bottom = 3.dp, start=2.dp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+
+                travel.travelImages?.firstOrNull()?.let { image ->
+                    val painter = when (image) {
+                        is TravelImage.Resource -> painterResource(id = image.resId)
+                        is TravelImage.Url -> { rememberAsyncImagePainter(model = image.value) }
+                    }
+
+                    Image(
+                        painter = painter,
+                        contentDescription = "Travel Image for ${travel.title}",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
                 Text(
-                    text = textAbove,
+                    text = travel.title ?: "Untitled Travel",
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
-                        .padding(bottom = 3.dp, start=2.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 2.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-            }
-            travel.travelImages?.firstOrNull()?.let { image ->
-                val painter = when (image) {
-                    is TravelImage.Resource -> painterResource(id = image.resId)
-                    is TravelImage.Url -> { rememberAsyncImagePainter(model = image.value) }
-                }
-
-                Image(
-                    painter = painter,
-                    contentDescription = "Travel Image for ${travel.title}",
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            Text(
-                text = travel.title ?: "Untitled Travel",
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 2.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 7.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f),
-                    horizontalAlignment = Alignment.Start
+                        .padding(horizontal = 7.dp)
                 ) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp, end = 3.dp)) {
-                        IconLocation(travel.country ?: "Unknown Location")
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp)) {
-                        IconPeopleJoined(travel.travelCompanions!!, travel.maxPeople!!)
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp, end = 3.dp)) {
-                        IconTravelType(travel)
-                    }
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    modifier = Modifier
-                        .weight(1f),
-                ) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp)) {
-                        IconDateRange(travel.startDate!!, travel.endDate!!)
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp)) {
-                        IconCost(travel.priceMin!!, travel.priceMax!!)
-                    }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        if(AppState.myProfile.collectAsState().value.userId==travel.creator.userId) {
-                            UserStarsAndNickname(AppState.myProfile.collectAsState().value, context, 36.dp, false, {actions.seeProfile(travel.creator.userId)})
-                        }else{
-                            UserStarsAndNickname(travel.creator, context, 36.dp, true, {actions.seeProfile(travel.creator.userId)})
+                    Column(
+                        modifier = Modifier
+                            .weight(1f),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp, end = 3.dp)) {
+                            IconLocation(travel.country ?: "Unknown Location")
                         }
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 6.dp)) {
+                            IconPeopleJoined(travel.travelCompanions!!, travel.maxPeople!!)
+                        }
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp, end = 3.dp)) {
+                            IconTravelType(travel)
+                        }
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        modifier = Modifier
+                            .weight(1f),
+                    ) {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp)) {
+                            IconDateRange(travel.startDate!!, travel.endDate!!)
+                        }
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp)) {
+                            IconCost(travel.priceMin!!, travel.priceMax!!)
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            if(AppState.myProfile.collectAsState().value.userId==travel.creator.userId) {
+                                UserStarsAndNickname(AppState.myProfile.collectAsState().value, context, 36.dp, false, {actions.seeProfile(travel.creator.userId)})
+                            }else{
+                                UserStarsAndNickname(travel.creator, context, 36.dp, true, {actions.seeProfile(travel.creator.userId)})
+                            }
+                        }
+                    }
+                }
+            }
+            if(hasChat){
+                FloatingActionButton(
+                    onClick = { actions.seeTravelChat(travel.travelId) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(y = 43.dp, x = (-20).dp)
+                        .zIndex(1f)
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    if(AppState.isNotificationPresent("msg_${travel.travelId}")){
+                        BadgedBox(
+                            badge = {
+                                Badge {}
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Chat,
+                                contentDescription = "See travel chat",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Chat,
+                            contentDescription = "See travel chat",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
             }

@@ -77,6 +77,7 @@ async function updateTravelStatus(docSnap) {
 
 exports.travelStatus_checkOnUpdate = onDocumentWritten("Travels/{travelId}", async (event) => {
   await updateTravelStatus(event.data.after);
+  await sendNotificationMessage(event);
   return null;
 });
 
@@ -220,6 +221,17 @@ async function addNotificationToUser(notification, userId) {
     const targetUser = targetUserSnap.data();
     const existingNotifications = targetUser.notifications || [];
 
+    if (notification.id.startsWith("msg_")) {
+      const notificationExists = existingNotifications.some(
+        (notif) => notif.id === notification.id
+      );
+      if (notificationExists) {
+        console.log(`Notification with id ${notification.id} already exists for user ${userId}.`);
+        return;
+      }
+    }
+
+
     transaction.update(targetUserRef, {
       notifications: [notification, ...existingNotifications]
     });
@@ -251,8 +263,9 @@ exports.notifications_create_my_profile_review = onDocumentWritten("Users/{userI
   const beforeReviews = before.reviews || [];
   const afterReviews = after.reviews || [];
 
-  if (afterReviews.length > beforeReviews.length) {
-    const review = afterReviews[afterReviews.length - 1];
+  const numReviews = afterReviews.length - beforeReviews.length;
+  for (i = 0; i < numReviews; i++) {
+    const review = afterReviews[i];
     const userId = after.userId;
 
     const authorDocSnap = await db.collection("Users").doc(review.authorId).get();
@@ -289,8 +302,9 @@ exports.notifications_create_my_travel_review = onDocumentWritten("Travels/{trav
   const beforeReviews = before.travelReviews || [];
   const afterReviews = after.travelReviews || [];
 
-  if (afterReviews.length > beforeReviews.length) {
-    const review = afterReviews[afterReviews.length - 1];
+  const numReviews = afterReviews.length - beforeReviews.length;
+  for (i = 0; i < numReviews; i++) {
+    const review = afterReviews[i];
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -434,6 +448,45 @@ exports.notifications_create_requestsNot = onDocumentWritten("Requests/{requestI
 
 
 
+async function sendNotificationMessage(event) {
+  const before = event.data.before?.data();
+  const after = event.data.after?.data();
+
+  if (!after || !before) return null;
+
+  const beforeMessages = before.travelChat || [];
+  const afterMessages = after.travelChat || [];
+
+  const numMessages = afterMessages.length - beforeMessages.length;
+  if (numMessages > 0) {
+    const msg = afterMessages[afterMessages.length - 1];
+
+    const notification_type = "msg";
+    const notification = {
+      id: `${notification_type}_${after.travelId}`,
+      type: notification_type,
+      title: `New messages for ${after.title || "a travel"}`,
+      description: `Stay updated with the latest news from your travel companions.`,
+      tab: "travels",
+      navRoute: `travel/${after.travelId}/chat`
+    };
+
+    if (!notification) return;
+
+    const companionIds = after.travelCompanions.map(comp => comp.userId);
+    companionIds.forEach(async companionId => {
+      if (companionId !== msg.authorId) {
+        await addNotificationToUser(notification, companionId);
+      }
+    })
+  }
+
+  return null;
+
+
+}
+
+
 // manage notification for last minute trip
 
 exports.notifications_create_last_minute_join = onSchedule("0 17 * * *", async (event) => {
@@ -529,3 +582,5 @@ async function deleteUserNotificationById(userId, notificationId) {
     console.error(`Transaction failed for user ${userId} notification ${notificationId}:`, error);
   }
 }
+
+

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -96,7 +97,12 @@ fun DenyButton(denyAction: ()->Unit){
 
 @Composable
 fun ButtonsSection(acceptAction: ()->Unit, denyAction: ()->Unit) {
-    Row() {
+    Row(
+        modifier = Modifier
+            .widthIn(min = 100.dp)
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
         ConfirmButton(acceptAction)
         Spacer(modifier = Modifier.width(8.dp))
         DenyButton(denyAction)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -65,7 +66,7 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
     var confirmPasswordError by remember { mutableStateOf("") }
     var isEmailSent by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    var selectedPrefix by remember { mutableStateOf(phonePrefixes.first()) }
+    var selectedPrefix by remember { mutableStateOf("+39") }
     var showPassword by remember { mutableStateOf(false) }
     var showNewPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
@@ -78,8 +79,12 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
     val userModel = TheUserModel()
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .padding(horizontal = 16.dp).verticalScroll(scrollState)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState)
+    ) {
         if (!isGoogleAccount) {
             Text(
                 text = "Update email",

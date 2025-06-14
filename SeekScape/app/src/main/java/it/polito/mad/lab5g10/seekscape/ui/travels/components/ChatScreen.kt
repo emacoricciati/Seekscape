@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -46,7 +47,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
+import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModel
 import it.polito.mad.lab5g10.seekscape.models.PAST
@@ -61,6 +64,8 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.IconTravelType
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserStarsAndNickname
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
+import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -68,7 +73,9 @@ import java.time.format.DateTimeFormatter
 fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController) {
     val messages by vm.messages.collectAsState()
     val travel by vm.travel.collectAsState()
+    val myProfile by AppState.myProfile.collectAsState()
     val isChatLoaded by vm.isChatLoaded.collectAsState()
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -191,6 +198,32 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
         }
         InputMessage(vm)
     }
+
+    if(travel!=null && isChatLoaded){
+        /*
+        In NotificationNavigation is set as
+        AppState.updateMyTravelTab("Upcoming")
+        AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
+        */
+        if(myProfile.userId==travel!!.creator.userId){ // I own the travel
+            AppState.updateMyTravelTab("My trips")
+            AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
+        }else if(LocalDate.now().isAfter(travel!!.endDate)){
+            AppState.updateMyTravelTab("Past")
+        }
+
+        var possibleNotificationId = "msg_${travel!!.travelId}"
+
+        LaunchedEffect(possibleNotificationId, myProfile.notifications) {
+            scope.launch {
+                if (possibleNotificationId.isNotEmpty() && myProfile.notifications.any { it.id == possibleNotificationId }) {
+                    CommonModel.removeNotificationById(myProfile.userId, possibleNotificationId)
+                }
+            }
+        }
+
+    }
+
 }
 
 

@@ -224,11 +224,12 @@ fun CreatorModeTrips(travels: List<Travel>, type: String, navController: NavHost
                         "To Review" -> text += "Waiting for a review"
                         "Past" -> text += it.endDate?.let { it1 -> timeAgo(it1) }
                     }
-
                     val onCardClick = {
                         actions.seeTravel(it.travelId)
                     }
-                    TravelCard(it, onCardClick, text, navController)
+
+                    val hasChat = type!="Pending" && type!="Rejected"
+                    TravelCard(it, onCardClick, text, navController, hasChat=hasChat)
                     Spacer(Modifier.height(10.dp))
                 }
             }
@@ -404,7 +405,7 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
                         }
                     }
 
-                    TravelCard(travel, onCardClick, textAboveCard, navController)
+                    TravelCard(travel, onCardClick, textAboveCard, navController, hasChat = true)
                     Spacer(Modifier.height(10.dp))
                 }
 

@@ -601,8 +601,8 @@ class TheRequestModel() {
         reqRef.update("lastUpdate", reqFirestore.lastUpdate).await()
         reqRef.update("accepted", isAcceped).await()
 
-        val travelref = Collections.travels.document(reqFirestore.tripId)
         if(isAcceped){
+            val travelref = Collections.travels.document(reqFirestore.tripId)
             val comp = TravelCompanionFirestoreModel(reqFirestore.authorId, request.spots-1)
             travelref.update("travelCompanions",
                 FieldValue.arrayUnion(comp)

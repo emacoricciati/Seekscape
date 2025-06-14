@@ -174,13 +174,13 @@ fun ProfileTabScreenView(navCont: NavHostController) {
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                Column {
+                Column () {
                     Text(
                         text = "Account",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
-                        text = "Change account data: email, password ...",
+                        text = "Change email, password ...",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

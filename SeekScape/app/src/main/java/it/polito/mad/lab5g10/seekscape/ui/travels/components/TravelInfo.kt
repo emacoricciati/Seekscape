@@ -17,11 +17,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -49,6 +53,7 @@ import it.polito.mad.lab5g10.seekscape.firebase.toAppModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.DENIED
 import it.polito.mad.lab5g10.seekscape.models.JOINED
+import it.polito.mad.lab5g10.seekscape.models.OWNED
 import it.polito.mad.lab5g10.seekscape.models.PAST
 import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.TO_REVIEW
@@ -633,16 +638,47 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             Text(
                 text = "Other Companions",
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(horizontal = 5.dp),
+                modifier = Modifier.padding(horizontal = 5.dp).fillMaxHeight(),
             )
-            if(currentTravelState==JOINED || currentTravelState==PAST || currentTravelState== TO_REVIEW){
-                Button(
-                    onClick = {
-                        actions.seeTravelChat(vm.travelIdValue.value)
-                    },
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                ) {
-                    Text("Chat")
+            if(currentTravelState==OWNED || currentTravelState==JOINED || currentTravelState==PAST || currentTravelState== TO_REVIEW){
+                if(AppState.isNotificationPresent("msg_${travel_id}")){
+                    BadgedBox(
+                        badge = {
+                            Badge {}
+                        }
+                    ) {
+                        Button(
+                            onClick = {
+                                actions.seeTravelChat(vm.travelIdValue.value)
+                            },
+                            modifier = Modifier
+                                .defaultMinSize(minHeight = 1.dp)
+                                .height(28.dp),
+                            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text("Chat")
+                        }
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            actions.seeTravelChat(vm.travelIdValue.value)
+                        },
+                        modifier = Modifier
+                            .defaultMinSize(minHeight = 1.dp)
+                            .height(28.dp),
+                        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text("Chat")
+                    }
                 }
             }
         }

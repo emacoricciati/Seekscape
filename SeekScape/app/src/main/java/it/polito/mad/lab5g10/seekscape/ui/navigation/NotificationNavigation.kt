@@ -18,12 +18,13 @@ import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 fun navigateToNotificationAction(notification: NotificationItem) {
     when (notification.type) {
 
-        NOT_MY_PROFILE_REV ->{
+        NOT_MY_PROFILE_REV -> {
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
         }
 
         NOT_MY_TRAVEL_REV -> {
+            AppState.updateMyTravelTab("My trips")
             AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
@@ -61,6 +62,10 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         NOT_ACCOUNT -> {
         }
         NOT_MSG -> {
+            AppState.updateMyTravelTab("Upcoming")
+            AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
+            AppState.updateCurrentTab(notification.tab)
+            AppState.updateRedirectPath(notification.navRoute)
         }
     }
 }

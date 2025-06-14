@@ -43,7 +43,7 @@ File system structure on Firebase Storage:
 | Function Name                          | Implementation  |
 |----------------------------------------|-----------------|
 | travelStatus_checkStartDay             | Scheduled, update the travel status to past if it is ended, if a request for a travel started has been ignored it is set to refused |
-| travelStatus_checkOnUpdate             | Trigger on Travels, update the travel status  |
+| travelStatus_checkOnUpdate             | Trigger on Travels, update the travel status, sends notification for new messages in the group chat |
 | notifications_create_last_minute_join  | Scheduled, filter travel proposals with incoming departure and aviable spots, eventually inserts on User document a notification of type "last_minute_join" |
 | notifications_create_my_profile_review | Trigger on Profile, eventually inserts on User document a notification of type "my_profile_review" |
 | notifications_create_my_travel_review  | Trigger on Travel, eventually inserts on the creator of the travel proposal (User document) a notification of type "my_travel_review"  |

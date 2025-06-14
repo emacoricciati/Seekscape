@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -93,7 +94,7 @@ fun TravelSmallImage(tripImage: TravelImage, userImage: ProfilePic?, name: Strin
 fun TextTravel(title: String, message: String, numSpot: Int, showModal: ()->Unit, closeTextBox: ()->Unit) {
     Column(
         modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-            .width(200.dp)
+            .fillMaxWidth()
     ) {
         Text(title,
             style = MaterialTheme.typography.titleLarge,
