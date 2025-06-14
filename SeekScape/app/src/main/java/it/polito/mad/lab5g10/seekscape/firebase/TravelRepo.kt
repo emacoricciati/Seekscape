@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadImageToFirebase
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.AppState
+import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.DENIED
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.JOINED
@@ -608,11 +609,11 @@ class TheRequestModel() {
                 FieldValue.arrayUnion(comp)
             ).await()
 
-            var chatMessageFirebase = ChatMessageFirestoreModel(
-                "system",
-                LocalDateTime.now().format(firebaseChatFormatter),
+            var chatMessageFirebase = ChatMessage(
+                system_light,
+                LocalDateTime.now(),
                 getSystemMessageJoined(request.author)
-            )
+            ).toFirestoreModel()
             travelref.update("travelChat",
                 FieldValue.arrayUnion(chatMessageFirebase)
             ).await()

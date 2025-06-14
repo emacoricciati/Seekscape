@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import it.polito.mad.lab5g10.seekscape.EncryptionUtils
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheChatModel
+import it.polito.mad.lab5g10.seekscape.firebase.getSystemMessageJoined
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
@@ -23,7 +24,9 @@ data class ChatMessage(
     var author: User,
     var date: LocalDateTime,
     var text: String,
+    var isEncrypted: Boolean = true
 ): Serializable
+
 
 
 
@@ -108,11 +111,10 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
     fun sendMessage(text: String) {
         viewModelScope.launch {
             model.updatePauseAfterFetch(true)
-            val encryptedText = EncryptionUtils.encrypt(text)
             val chatMessage = ChatMessage(
                 AppState.myProfile.value,
                 LocalDateTime.now(),
-                encryptedText
+                text
             )
             theChatModel.addMessage(model.travelId, chatMessage)
             fetchNewMessages()

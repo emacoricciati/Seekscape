@@ -298,10 +298,11 @@ data class ChatMessageFirestoreModel(
 ) : Serializable
 
 fun ChatMessage.toFirestoreModel(): ChatMessageFirestoreModel {
+    //val encryptedText = EncryptionUtils.encrypt(this.text)
     return ChatMessageFirestoreModel(
         authorId = this.author.userId,
         date = this.date.format(firebaseChatFormatter),
-        text = this.text
+        text = this.text //encryptedText
     )
 }
 
@@ -319,7 +320,8 @@ suspend fun ChatMessageFirestoreModel.toAppModel(): ChatMessage {
     return ChatMessage(
         author = user,
         date = LocalDateTime.parse(this.date, firebaseChatFormatter)!!,
-        text = EncryptionUtils.decrypt(this.text)
+        text = //EncryptionUtils.decrypt(
+         this.text//)
     )
 }
 

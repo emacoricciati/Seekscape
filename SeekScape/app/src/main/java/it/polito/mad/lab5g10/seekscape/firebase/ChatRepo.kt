@@ -3,6 +3,7 @@ package it.polito.mad.lab5g10.seekscape.firebase
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.gson.Gson
+import it.polito.mad.lab5g10.seekscape.EncryptionUtils
 import it.polito.mad.lab5g10.seekscape.firebase.toFirestoreModel
 import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
@@ -17,7 +18,6 @@ class TheChatModel() {
             val docRef = Collections.travels.document(travelId)
             val travelFirebaseSnapshot = docRef.get().await()
             if(!travelFirebaseSnapshot.exists()) return
-
             var chatMessageFirebase = chatMessage.toFirestoreModel()
             docRef.update("travelChat",
                 FieldValue.arrayUnion(chatMessageFirebase)
