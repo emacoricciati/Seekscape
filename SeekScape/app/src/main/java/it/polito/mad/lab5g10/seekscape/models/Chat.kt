@@ -126,7 +126,7 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
     private fun startPeriodicFetch() {
         viewModelScope.launch {
             while (isActive) {
-                delay(3000)
+                delay(1000)
                 if(!model.pauseFetchAfter.value) {
                     fetchNewMessages()
                 }
