@@ -64,6 +64,9 @@ class MainActivity : ComponentActivity() {
 
         val accountService = AccountService()
         AppState.initialize(applicationContext)
+
+        EncryptionUtils.generateAndStoreAESKey()
+
         lifecycleScope.launch {
             if (accountService.hasUser()) {
                 val userProfile = accountService.getUserProfile()

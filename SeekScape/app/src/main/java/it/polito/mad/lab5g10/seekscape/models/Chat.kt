@@ -3,6 +3,7 @@ package it.polito.mad.lab5g10.seekscape.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import it.polito.mad.lab5g10.seekscape.EncryptionUtils
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheChatModel
 import kotlinx.coroutines.delay
@@ -77,7 +78,10 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
             }
             val now = LocalDateTime.now()
             val messages = theChatModel.getMessages(model.travelId, before = now)
-            model.addNewMessages(messages)
+            val decryptedMessages = messages.map { msg ->
+                msg.copy(text = EncryptionUtils.decrypt(msg.text))
+            }
+            model.addNewMessages(decryptedMessages)
             model.updateChatLoaded(true)
             if(messages.isNotEmpty()){
                 model.updatefetchingAfter(messages.last().date)
@@ -97,7 +101,10 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
         viewModelScope.launch {
             model.updatePauseAfterFetch(true)
             val messages = theChatModel.getMessages(model.travelId, before = before)
-            model.addOldMessages(messages)
+            val decryptedMessages = messages.map { msg ->
+                msg.copy(text = EncryptionUtils.decrypt(msg.text))
+            }
+            model.addOldMessages(decryptedMessages)
             val beforeNew = if(messages.size==20) messages.first().date else null
             model.updatefetchingBefore(beforeNew)
             model.updatePauseAfterFetch(false)
@@ -107,10 +114,11 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
     fun sendMessage(text: String) {
         viewModelScope.launch {
             model.updatePauseAfterFetch(true)
+            val encryptedText = EncryptionUtils.encrypt(text)
             val chatMessage = ChatMessage(
                 AppState.myProfile.value,
                 LocalDateTime.now(),
-                text
+                encryptedText
             )
             theChatModel.addMessage(model.travelId, chatMessage)
             fetchNewMessages()
@@ -137,8 +145,11 @@ class ChatMessageViewModel(private val model: ChatMessageModel): ViewModel() {
                 after = model.fetchingAfter.value
             )
             if (newMessages.isNotEmpty()) {
-                model.addNewMessages(newMessages)
-                model.updatefetchingAfter(newMessages.last().date)
+                val decryptedMessages = newMessages.map { msg ->
+                    msg.copy(text = EncryptionUtils.decrypt(msg.text))
+                }
+                model.addNewMessages(decryptedMessages)
+                model.updatefetchingAfter(decryptedMessages.last().date)
             }
         }
     }

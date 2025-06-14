@@ -5,6 +5,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.util.Log
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +30,15 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
+import android.util.Base64
+import java.nio.charset.StandardCharsets
+import java.security.KeyStore
+import java.security.SecureRandom
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 
 fun <T : java.io.Serializable> getSerializableExtraCustom(intent: Intent, key: String, clazz: Class<T>): T? {
@@ -38,6 +49,65 @@ fun <T : java.io.Serializable> getSerializableExtraCustom(intent: Intent, key: S
         intent.getSerializableExtra(key) as? T
     }
 }
+
+object EncryptionUtils {
+    private const val AES_MODE = "AES/GCM/NoPadding"
+    private const val IV_SIZE = 12
+    private const val TAG_LENGTH = 128
+    private const val KEY_ALIAS = "MyChatAESKey"
+
+    fun generateAndStoreAESKey() {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        if (keyStore.containsAlias(KEY_ALIAS)) return
+
+        val keyGenerator = KeyGenerator.getInstance("AES", "AndroidKeyStore")
+        val keyGenSpec = KeyGenParameterSpec.Builder(
+            KEY_ALIAS,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+            .build()
+        keyGenerator.init(keyGenSpec)
+        keyGenerator.generateKey()
+    }
+
+    private fun getAESKey(): SecretKey {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        val entry = keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
+        return entry?.secretKey ?: throw IllegalStateException("Key not found in Keystore")
+    }
+
+    fun encrypt(text: String): String {
+        val cipher = Cipher.getInstance(AES_MODE)
+
+        cipher.init(Cipher.ENCRYPT_MODE, getAESKey())
+        val iv = cipher.iv // Initializaion Vector
+        val cipherText = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
+
+        // Combine IV and ciphertext
+        val encrypted = iv + cipherText
+        return Base64.encodeToString(encrypted, Base64.NO_WRAP)
+    }
+
+
+    fun decrypt(encryptedBase64: String): String {
+        val encrypted = Base64.decode(encryptedBase64, Base64.NO_WRAP)
+        val iv = encrypted.copyOfRange(0, IV_SIZE)
+        val cipherText = encrypted.copyOfRange(IV_SIZE, encrypted.size)
+
+        val cipher = Cipher.getInstance(AES_MODE)
+        val spec = GCMParameterSpec(TAG_LENGTH, iv)
+        cipher.init(Cipher.DECRYPT_MODE, getAESKey(), spec)
+
+        val plainText = cipher.doFinal(cipherText)
+        return String(plainText, Charsets.UTF_8)
+    }
+}
+
 
 
 fun formatDateTravel(startDAte: LocalDate, endDate: LocalDate): String {
