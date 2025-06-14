@@ -65,8 +65,10 @@ import it.polito.mad.lab5g10.seekscape.firebase.TheRequestModel
 import it.polito.mad.lab5g10.seekscape.formatDateTravel
 import it.polito.mad.lab5g10.seekscape.models.AVAILABLE
 import it.polito.mad.lab5g10.seekscape.models.AppState
+import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.DELETED
 import it.polito.mad.lab5g10.seekscape.models.DENIED
+import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.FULL
 import it.polito.mad.lab5g10.seekscape.models.JOINED
 import it.polito.mad.lab5g10.seekscape.models.OWNED
@@ -254,14 +256,21 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
     val coroutineScope = rememberCoroutineScope()
     val actions = remember(navController) { Actions(navController) }
 
+    val travelId by vm.travelIdValue.collectAsState()
+    val travelCreator by vm.creatorValue.collectAsState()
+    val travelCompanions by vm.travelCompanionsValues.collectAsState()
 
     val mapActions: Map<String, ()->Unit > = mapOf(
         OWNED to {
             if(status!=PAST){
                 if(currentTab!=MainDestinations.TRAVELS_ROUTE){
                     AppState.updateCurrentTab(MainDestinations.TRAVELS_ROUTE)
+                    AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
+                    AppState.updateMyTravelTab("My trips")
+                    AppState.updateRedirectPath("travel/${travelId}/edit")
                 }
-                actions.editTravel(vm.travelIdValue.value)
+                else
+                    actions.editTravel(vm.travelIdValue.value)
             }
         },
         PENDING to {
@@ -283,14 +292,20 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
         AVAILABLE to {
             if(currentTab!=MainDestinations.HOME_ROUTE){
                 AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+                AppState.updateRedirectPath("travel/${travelId}/applyToJoin")
             }
-            actions.applyToJoin(vm.travelIdValue.value)
+            else
+                actions.applyToJoin(vm.travelIdValue.value)
           },
         TO_REVIEW to {
             if(currentTab!=MainDestinations.TRAVELS_ROUTE){
                 AppState.updateCurrentTab(MainDestinations.TRAVELS_ROUTE)
+                AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
+                AppState.updateMyTravelTab("To Review")
+                AppState.updateRedirectPath("travel/${travelId}/review")
             }
-            actions.reviewTravel(vm.travelIdValue.value)
+            else
+                actions.reviewTravel(vm.travelIdValue.value)
           },
         FULL to { println("Fully Booked") },
         PAST to { println("Past travel") },

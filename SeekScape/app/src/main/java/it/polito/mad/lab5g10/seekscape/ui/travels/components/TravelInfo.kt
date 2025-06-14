@@ -736,35 +736,11 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
 private fun shareText(context: Context, travelId: String, title: String) {
     val deepLink = "app://travel/${travelId}"
 
-    /*
-    val drawable = ContextCompat.getDrawable(context, R.drawable.icon_logo)
-    val bitmap = (drawable as BitmapDrawable).bitmap
-
-    val cachePath = File(context.cacheDir, "images")
-    cachePath.mkdirs()
-    val file = File(cachePath, "logo.png")
-    FileOutputStream(file).use { out ->
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-    }
-
-    val contentUri = FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        file
-    )
-
-     */
-
     val shareIntent = Intent.createChooser(Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, deepLink)
         putExtra(Intent.EXTRA_TITLE, title)
         type="text/plain"
-
-        /*
-        data = contentUri
-        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-         */
     }, null)
     context.startActivity(shareIntent)
 }

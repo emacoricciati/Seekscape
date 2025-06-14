@@ -4,6 +4,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -231,7 +233,17 @@ fun StackNavigation(
                     )
 
                 ) { entry ->
-                    RouteTravel(entry, navCont)
+                    val doneFirstFetch = AppState.doneFirstFetch.collectAsState().value
+
+                    if(doneFirstFetch)
+                     RouteTravel(entry, navCont)
+                    else
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                 }
 
                 composable("travel/{travelId}/itinerary/{itineraryId}",
