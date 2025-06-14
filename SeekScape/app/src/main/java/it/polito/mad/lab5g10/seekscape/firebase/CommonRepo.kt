@@ -79,11 +79,12 @@ object CommonModel {
 
     suspend fun getPastTravels(userId: String): List<Travel> {
         val theTravelModel = TheTravelModel()
-        val ownedTravels = theTravelModel.getOwnedTravels(userId)
+        val now = LocalDate.now()
+
+        val ownedTravels = theTravelModel.getOwnedTravels(userId).filter { now.isAfter(it.endDate) }
         val pastTravels = theTravelModel.getPastTravels(null, userId);
 
-        val travels: List<Travel> = (ownedTravels+pastTravels)
-            .sortedByDescending { it.endDate ?: LocalDate.MIN }
+        val travels: List<Travel> = (ownedTravels+pastTravels).sortedByDescending { it.endDate ?: LocalDate.MIN }
 
         Log.d("OwnedTravelsDebug", "Fetched ${travels.size} owned travels")
         return travels
