@@ -1,6 +1,7 @@
 package it.polito.mad.lab5g10.seekscape.firebase
 
 import android.util.Log
+import it.polito.mad.lab5g10.seekscape.EncryptionUtils
 import it.polito.mad.lab5g10.seekscape.calculateAge
 import it.polito.mad.lab5g10.seekscape.models.Activity
 import it.polito.mad.lab5g10.seekscape.models.AppState
@@ -315,12 +316,10 @@ suspend fun ChatMessageFirestoreModel.toAppModel(): ChatMessage {
     } else {
         user=CommonModel.getLiteUser(this.authorId)!!
     }
-
-
     return ChatMessage(
         author = user,
         date = LocalDateTime.parse(this.date, firebaseChatFormatter)!!,
-        text = this.text
+        text = EncryptionUtils.decrypt(this.text)
     )
 }
 
