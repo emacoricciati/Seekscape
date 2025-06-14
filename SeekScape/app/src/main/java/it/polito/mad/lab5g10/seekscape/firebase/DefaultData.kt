@@ -1379,10 +1379,11 @@ val t12_req2 = Request(
     id = "7",
     author = user_me,
     trip = travel12,
-    isAccepted = false,
+    isAccepted = true,
     isRefused = false,
     spots = 1,
-    reqMessage = "Hey! Exploring Brazil with this group sounds like an unforgettable experience—count me in!"
+    reqMessage = "Hey! Exploring Brazil with this group sounds like an unforgettable experience—count me in!",
+    responseMessage = "Absolutely! Brazil is better with good company, welcome aboard!"
 )
 
 
