@@ -2,9 +2,11 @@ package it.polito.mad.lab5g10.seekscape.ui._common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,7 +71,7 @@ fun ActionButton(actionName: String, onClick: ()->Unit) {
 fun ConfirmButton(acceptAction: ()->Unit){
     IconButton(onClick = acceptAction,
         modifier = Modifier
-            .size(35.dp)
+            .size(30.dp)
             .background(color = Color(0xFF4CAF50), shape = CircleShape)
             .clip(CircleShape)) {
         Icon(
@@ -84,7 +86,7 @@ fun ConfirmButton(acceptAction: ()->Unit){
 fun DenyButton(denyAction: ()->Unit){
     IconButton(onClick = denyAction,
         modifier = Modifier
-            .size(35.dp)
+            .size(30.dp)
             .background(color = MaterialTheme.colorScheme.error, shape = CircleShape)
             .clip(CircleShape)) {
         Icon(
@@ -97,14 +99,14 @@ fun DenyButton(denyAction: ()->Unit){
 
 @Composable
 fun ButtonsSection(acceptAction: ()->Unit, denyAction: ()->Unit) {
-    Row(
+    Column(
         modifier = Modifier
-            .widthIn(min = 100.dp)
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.Center
+            .widthIn(min = 36.dp)
+            .padding(end = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ConfirmButton(acceptAction)
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         DenyButton(denyAction)
     }
 }

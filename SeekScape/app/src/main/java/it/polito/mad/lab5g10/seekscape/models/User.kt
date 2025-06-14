@@ -110,27 +110,25 @@ class RequestInfoModel(requestInfo: Request) {
     fun updateResponseMessage(value: String) = responseMessageValue.tryEmit(value)
 }
 
-class OwnedTravelViewModel(private val modelList: List<TravelModel>) : ViewModel() {
+class OwnedTravelViewModel() : ViewModel() {
     private val _travels = MutableStateFlow<List<TravelModel>>(emptyList())
     val travels: StateFlow<List<TravelModel>> = _travels
 
+
+    private val _fetched = MutableStateFlow<Boolean>(false)
+    val fetched: StateFlow<Boolean> = _fetched
+
+    fun setToFetch() {
+        _fetched.value=false
+    }
+
     val theTravelModel = TheTravelModel()
-
-    init {
-        _travels.value = modelList
-    }
-
-    fun updateOwnedTravels(updatedTravels: List<Travel>) {
-        _travels.value = updatedTravels.map {
-            TravelModel(it)
-        }
-    }
-
     fun refresh() {
         viewModelScope.launch {
             try {
                 val updated = theTravelModel.getOwnedTravels()
                 _travels.value = updated.map { TravelModel(it) }
+                _fetched.value = true
             } catch (e: Exception) {
                 Log.e("OwnedTravelVM", "Failed to refresh travels", e)
             }
@@ -138,20 +136,24 @@ class OwnedTravelViewModel(private val modelList: List<TravelModel>) : ViewModel
     }
 }
 
-class RequestViewModel(private val modelList: List<RequestInfoModel>) : ViewModel() {
+class RequestViewModel() : ViewModel() {
     private val _requests = MutableStateFlow<List<RequestInfoModel>>(emptyList())
     val requests: StateFlow<List<RequestInfoModel>> = _requests
 
-    val theTravelModel = TheTravelModel()
-    init {
-        _requests.value = modelList
+    private val _fetched = MutableStateFlow<Boolean>(false)
+    val fetched: StateFlow<Boolean> = _fetched
+
+    fun setToFetch() {
+        _fetched.value=false
     }
+    val theTravelModel = TheTravelModel()
 
     fun updateRequests(){
         viewModelScope.launch {
             val requestsInfo = theTravelModel.getRequestsToMyTrips()
             val requestModels: List<RequestInfoModel> = requestsInfo.map { RequestInfoModel(it) }
             _requests.value = requestModels
+            _fetched.value=true
         }
     }
 
@@ -461,15 +463,12 @@ class ProfileViewModelFactory(
 }
 
 //Factory class to instantiate ViewModel for requests
-class RequestsViewModelFactory(
-    private val requestsInfo: MutableList<Request>
-) : ViewModelProvider.Factory {
-    private val model: List<RequestInfoModel> = requestsInfo.map { RequestInfoModel(it) }
+class RequestsViewModelFactory() : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(RequestViewModel::class.java) ->
-                RequestViewModel(model) as T
+                RequestViewModel() as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -477,15 +476,11 @@ class RequestsViewModelFactory(
 }
 
 //Factory class to instantiate ViewModel for owned travels
-class OwnedTravelsViewModelFactory(
-    private val ownedTravelsInfo: List<Travel>
-) : ViewModelProvider.Factory {
-    private val model: List<TravelModel> = ownedTravelsInfo.map { TravelModel(it) }
-
+class OwnedTravelsViewModelFactory() : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(OwnedTravelViewModel::class.java) ->
-                OwnedTravelViewModel(model) as T
+                OwnedTravelViewModel() as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

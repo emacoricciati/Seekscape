@@ -74,7 +74,7 @@ object AppState {
     }
 
 
-//----------
+    //------------MY PROFILE-----------------------------------------------------------------
     private val _myProfile = MutableStateFlow<User>(unknown_User)
     val myProfile: StateFlow<User> = _myProfile.asStateFlow()
 
@@ -163,4 +163,10 @@ object AppState {
         return _travelsTabMap.value[tab]
     }
 
+
+    private val _lastSearchResults = MutableStateFlow<List<Travel>?>(null)
+    val lastSearchResults: StateFlow<List<Travel>?> = _lastSearchResults.asStateFlow()
+    fun updateLastSearchResults(new: List<Travel>) {
+        _lastSearchResults.value = new
+    }
 }

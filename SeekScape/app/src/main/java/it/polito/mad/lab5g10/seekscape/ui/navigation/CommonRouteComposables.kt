@@ -26,7 +26,6 @@ import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.ProfileViewModelFactory
-import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.RequestsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.Travel
@@ -38,7 +37,8 @@ import it.polito.mad.lab5g10.seekscape.ui._common.ArrowBackIcon
 import it.polito.mad.lab5g10.seekscape.ui._common.FullscreenImageViewer
 import it.polito.mad.lab5g10.seekscape.ui.profile.UserProfile
 import it.polito.mad.lab5g10.seekscape.ui.travels.ChangeModeButton
-import it.polito.mad.lab5g10.seekscape.ui.travels.MyTravelsScreen
+import it.polito.mad.lab5g10.seekscape.ui.travels.TabSelectionCreator
+import it.polito.mad.lab5g10.seekscape.ui.travels.TabSelectionExplorerMode
 import it.polito.mad.lab5g10.seekscape.ui.travels.TravelProposalScreen
 import it.polito.mad.lab5g10.seekscape.ui.travels.ViewItineraryScreen
 import it.polito.mad.lab5g10.seekscape.ui.travels.components.TravelChatScreen
@@ -46,42 +46,22 @@ import it.polito.mad.lab5g10.seekscape.ui.travels.components.TravelChatScreen
 
 @Composable // "travels" and "travels/action/{action}"
 fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
-    val theTravelModel = remember { TheTravelModel() }
     val action = entry.arguments?.getString("action")
-
     val currentMode = AppState.myTravelMode.collectAsState().value
 
-    // Load owned travels and requests asynchronously
-    val ownedTravelsState = produceState<List<Travel>?>(initialValue = null) {
-        Log.d("OwnedTravels", "Loading owned travels...")
-        value = theTravelModel.getOwnedTravels()
-        Log.d("OwnedTravels", "Owned travels loaded: ${value?.size ?: 0}")
-    }
-    val requestsState = produceState<List<Request>?>(initialValue = null) {
-        Log.d("RequestTab", "Loading requests...")
-        value = theTravelModel.getRequestsToMyTrips()
-        Log.d("RequestTab", "Requests loaded: ${value?.size ?: 0}")
-    }
+    val ownedTravelViewModel: OwnedTravelViewModel =
+        viewModel(factory = OwnedTravelsViewModelFactory())
 
-    if (ownedTravelsState.value != null && requestsState.value != null) {
-        val ownedTravelViewModel: OwnedTravelViewModel =
-            viewModel(factory = OwnedTravelsViewModelFactory(ownedTravelsState.value!!))
+    val requestViewModel: RequestViewModel =
+        viewModel(factory = RequestsViewModelFactory())
 
-        val requestViewModel: RequestViewModel =
-            viewModel(factory = RequestsViewModelFactory(requestsState.value!!.toMutableList()))
-
-        MyTravelsScreen(
-            ownedTravelViewModel = ownedTravelViewModel,
-            requestViewModel = requestViewModel,
-            navCont,
-            currentMode,
-            action
-        )
-    } else {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    Box {
+        when (currentMode) {
+            "Explore" -> TabSelectionExplorerMode(navCont)
+            "Creator" -> TabSelectionCreator(requestViewModel, ownedTravelViewModel, navCont, action)
         }
     }
+
     Box(Modifier.fillMaxSize()) {
         ChangeModeButton(
             {
@@ -92,7 +72,8 @@ fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
                     AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
                     AppState.updateMyTravelTab("My trips")
                 }
-            }, if (currentMode == "Creator") "Explorer" else "Creator",
+            },
+            if (currentMode == "Creator") "Explorer" else "Creator",
             modifier = Modifier
                 .padding(end = 20.dp)
                 .align(Alignment.BottomEnd)

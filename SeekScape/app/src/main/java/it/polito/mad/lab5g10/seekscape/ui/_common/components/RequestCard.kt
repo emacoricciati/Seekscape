@@ -34,7 +34,6 @@ import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
-import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 
 @Composable
@@ -59,7 +58,35 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
             verticalAlignment = Alignment.CenterVertically
         ){
             TravelSmallImage(trip.travelImages!![0], author.profilePic, author.name, author.surname)
-            TextTravel(trip.title!!, reqMess, spots, showModal, notOpenTextBox)
+
+            Column(
+                modifier = Modifier
+                    .padding(start = 3.dp, end = 3.dp)
+                    .weight(1f)
+            ) {
+                Text(trip.title!!,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text("Spot requested: $spots",
+                    style = MaterialTheme.typography.bodyLarge)
+                Text(reqMess,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                TextButton(
+                    onClick = {showModal(); notOpenTextBox()},
+                    modifier = Modifier.height(35.dp)
+                ){
+                    Text(text="Read more", style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                        color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+
             ButtonsSection({ showModal();  openTextBox(); confirmMode()}, { showModal(); openTextBox(); denyMode(); })
         }
     }
@@ -86,36 +113,6 @@ fun TravelSmallImage(tripImage: TravelImage, userImage: ProfilePic?, name: Strin
         )
         Column(modifier = Modifier.align(Alignment.BottomEnd)){
             UserImage(userImage, 40.dp, name, surname)
-        }
-    }
-}
-
-@Composable
-fun TextTravel(title: String, message: String, numSpot: Int, showModal: ()->Unit, closeTextBox: ()->Unit) {
-    Column(
-        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-            .fillMaxWidth()
-    ) {
-        Text(title,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text("Spot requested: $numSpot",
-            style = MaterialTheme.typography.bodyLarge)
-        Text(message,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        TextButton(
-            onClick = {showModal(); closeTextBox()},
-            modifier = Modifier.height(35.dp)
-        ){
-            Text(text="Read more", style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }

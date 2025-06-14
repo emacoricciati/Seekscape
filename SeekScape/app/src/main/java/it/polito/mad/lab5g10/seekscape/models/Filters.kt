@@ -38,6 +38,9 @@ data class Search (
 class SearchModel(search: Search) {
     private fun <T> createStateFlow(initialValue: T) = MutableStateFlow(initialValue)
 
+
+    val filterTriggeredValue = createStateFlow(false)
+
     val lastStartDateFirebaseFoundValue = createStateFlow("")
     val textValue = createStateFlow(search.text)
     val placeValue = createStateFlow(search.place?: "")
@@ -51,6 +54,10 @@ class SearchModel(search: Search) {
     val minCompanionsValue = createStateFlow(search.minCompanions)
     val maxCompanionsValue = createStateFlow(search.maxCompanions)
     val travelTypesValue = createStateFlow(search.travelTypes)
+
+
+    fun updateFilterTriggeredValue(value: Boolean) = filterTriggeredValue.tryEmit(value)
+
 
     fun updateLastStartDateFirebaseFound(value: String) = lastStartDateFirebaseFoundValue.tryEmit(value)
     fun updateText(value: String) = textValue.tryEmit(value)
@@ -95,7 +102,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
 
     private val _filterChangeEvent = MutableSharedFlow<Unit>()
 
-    val lastStartDateFirebaseFound: StateFlow<String> = model.lastStartDateFirebaseFoundValue
+    val filterTriggered: StateFlow<Boolean> = model.filterTriggeredValue
 
     val text: StateFlow<String> = model.textValue
     val available: StateFlow<Boolean> = model.availableValue
@@ -109,8 +116,6 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
     val minCompanions: StateFlow<Int> = model.minCompanionsValue
     val maxCompanions: StateFlow<Int> = model.maxCompanionsValue
     val travelTypes: StateFlow<List<String>> = model.travelTypesValue
-
-
 
     fun setText(newText: String) {
         model.updateText(newText)
@@ -188,7 +193,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
 
     fun fetchExploreTravels() {
         viewModelScope.launch {
-            filterTravels(null)
+            filterTravels(null, true)
         }
     }
 
@@ -198,8 +203,6 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
             .debounce(300)
             .onEach { filterTravels(null) }
             .launchIn(viewModelScope)
-
-        filterTravels(null)
     }
 
     fun toggleIsAddingLocation() {
@@ -207,6 +210,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
     }
 
     private fun triggerFilter() {
+        model.updateFilterTriggeredValue(true)
         viewModelScope.launch {
             _filterChangeEvent.emit(Unit)
         }
@@ -217,7 +221,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
         filterTravels(model.lastStartDateFirebaseFoundValue.value)
     }
 
-    private fun filterTravels(lastStartDateFirebaseFound: String?) {
+    private fun filterTravels(lastStartDateFirebaseFound: String?, isLoadBack: Boolean=false) {
         viewModelScope.launch {
             val textFilter = model.textValue.value
             val availableFilter = model.availableValue.value
@@ -246,7 +250,9 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
             var foundEnough = false
             val limitNotFound = 3
             var indexNotFound = 0
-            if(lastStartDate==null){
+            if(isLoadBack && !filterTriggered.value && AppState.lastSearchResults.value!=null){
+                _travelUiState.value = TravelUiState.Success(AppState.lastSearchResults.value!!)
+            } else if(lastStartDate==null){
                 _travelUiState.value = TravelUiState.Loading
             }
 
@@ -255,7 +261,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
                 Log.d("allTravels", "Total travels fetched from getSearchTravels(): ${filteredTravels.size}")
 
                 if(filteredTravels.isNotEmpty()){
-                    lastStartDate =filteredTravels.last().startDate!!.format(firebaseFormatter)?: ""
+                    lastStartDate = filteredTravels.last().startDate!!.format(firebaseFormatter)?: ""
                 }
 
                 val filtered = filteredTravels.filter { travel ->
@@ -321,6 +327,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
 
 
             if(lastStartDateFirebaseFound==null){
+                AppState.updateLastSearchResults(filteredTot)
                 _travelUiState.value =
                     if (filteredTot.isEmpty()) TravelUiState.Empty
                     else TravelUiState.Success(filteredTot)
@@ -331,6 +338,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
                     _travelUiState.value = TravelUiState.Success(merged)
                 }
             }
+            model.updateFilterTriggeredValue(false)
             model.updateLastStartDateFirebaseFound(lastStartDate?:"")
         }
     }
