@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import it.polito.mad.lab5g10.seekscape.cleanStack
@@ -304,13 +306,16 @@ fun StackNavigation(
                     RouteTravels(entry, navCont)
                 }
 
-                composable("travel/{travelId}/review", arguments = listOf(
-                    navArgument("travelId") { type = NavType.StringType })){entry ->
+                composable(
+                    "travel/{travelId}/review", arguments = listOf(
+                        navArgument("travelId") { type = NavType.StringType })
+                ) { entry ->
                     val id = entry.arguments?.getString("travelId")
 
                     if (id != null) {
                         val review = getBlankTravelReview(
-                            AppState.myProfile.collectAsState().value, id)
+                            AppState.myProfile.collectAsState().value, id
+                        )
                         val viewModel: TravelReviewViewModel =
                             viewModel(factory = TravelReviewViewModelFactory(review))
                         AddReviewScreen(viewModel, navCont)
@@ -327,7 +332,12 @@ fun StackNavigation(
                     if (id != null) {
 
                         val viewModel: TravelViewModel =
-                            viewModel(factory = TravelViewModelFactory(travel=null, travelId = id))
+                            viewModel(
+                                factory = TravelViewModelFactory(
+                                    travel = null,
+                                    travelId = id
+                                )
+                            )
 
                         AddTravelsScreen(viewModel, navCont, "edit")
                     }
@@ -349,8 +359,9 @@ fun StackNavigation(
                             factory = ItineraryViewModelFactory(getBlankItinerary())
                         )
 
-                    val itineraryId = travelViewModel.travelItineraryValues.collectAsState().value.size
-                    AddItinerary(viewModel, travelViewModel, navCont, itineraryId+ 1)
+                    val itineraryId =
+                        travelViewModel.travelItineraryValues.collectAsState().value.size
+                    AddItinerary(viewModel, travelViewModel, navCont, itineraryId + 1)
                 }
 
                 composable(
@@ -683,14 +694,15 @@ fun StackNavigation(
     }
 
     val selectedTab = AppState.currentTab.collectAsState().value
+    val doneFirstFetch = AppState.doneFirstFetch.collectAsState().value
     val redirectPath = AppState.redirectPath.collectAsState().value
-    LaunchedEffect(navCont, redirectPath) {
-        if (redirectPath.isNotEmpty() && selectedTab == tab) {
+
+    LaunchedEffect(navCont, redirectPath, doneFirstFetch) {
+        if (redirectPath.isNotEmpty() && selectedTab == tab && doneFirstFetch) {
             cleanStack(navCont, redirectPath)
             AppState.updateRedirectPath("")
         }
     }
-
 
     return actions
 }

@@ -67,6 +67,9 @@ class MainActivity : ComponentActivity() {
 
         EncryptionUtils.generateAndStoreAESKey()
 
+        logIntentDetails(intent, "onCreate")
+        handleIntent(intent)
+
         lifecycleScope.launch {
             if (accountService.hasUser()) {
                 val userProfile = accountService.getUserProfile()
@@ -89,7 +92,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         hideNavigationBar()
-        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -137,6 +139,8 @@ class MainActivity : ComponentActivity() {
 
 
     private fun handleIntent(intent: Intent?){
+        Log.d("ENTERING", "Entering")
+
         intent?.let {
             val notificationId = it.getStringExtra("id")
             val notificationType = it.getStringExtra("type")
@@ -155,6 +159,9 @@ class MainActivity : ComponentActivity() {
                     tab = notificationTab,
                     navRoute = notificationRoute
                 )
+
+                Log.w("NOTIFICATION ITEM", notificationItem.toString())
+
                 navigateToNotificationAction(notificationItem)
             }
             else{

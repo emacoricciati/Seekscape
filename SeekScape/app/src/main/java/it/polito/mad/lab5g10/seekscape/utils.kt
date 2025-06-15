@@ -188,7 +188,7 @@ fun getScreenTitle(string: String): String {
 }
 
 fun cleanStack(navController: NavHostController, redirectPath:String){
-    navController.navigate(redirectPath) {
+    navController.navigate(redirectPath){
         popUpTo(navController.currentDestination?.route ?: "") {
             inclusive = true
         }
