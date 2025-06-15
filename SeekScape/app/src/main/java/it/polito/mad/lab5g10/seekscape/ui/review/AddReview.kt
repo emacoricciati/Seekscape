@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModel
@@ -46,7 +47,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.IconLocation
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
 import it.polito.mad.lab5g10.seekscape.ui.add.ImagePickerWithPreview
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
-import java.time.LocalDate
+
 
 @Composable
 fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {

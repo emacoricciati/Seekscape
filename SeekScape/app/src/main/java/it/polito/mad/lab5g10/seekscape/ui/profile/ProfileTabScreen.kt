@@ -40,9 +40,7 @@ import kotlinx.coroutines.tasks.await
 
 @Composable
 fun ProfileTabScreenView(navCont: NavHostController) {
-    val scope = rememberCoroutineScope()
     val actions = remember(navCont) { Actions(navCont) }
-    val savedStateHandle = navCont.currentBackStackEntry?.savedStateHandle
     val myProfile = AppState.myProfile.collectAsState().value
     val accountService = AccountService()
     val coroutineScope = rememberCoroutineScope()

@@ -23,6 +23,8 @@ import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModel
 import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
+import it.polito.mad.lab5g10.seekscape.models.ExploreModeTravelViewModel
+import it.polito.mad.lab5g10.seekscape.models.ExploreModeTravelsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelsViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.ProfileViewModelFactory
@@ -49,6 +51,10 @@ fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
     val action = entry.arguments?.getString("action")
     val currentMode = AppState.myTravelMode.collectAsState().value
 
+
+    val exploreTravelViewModel: ExploreModeTravelViewModel =
+        viewModel(factory = ExploreModeTravelsViewModelFactory())
+
     val ownedTravelViewModel: OwnedTravelViewModel =
         viewModel(factory = OwnedTravelsViewModelFactory())
 
@@ -57,7 +63,7 @@ fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
 
     Box {
         when (currentMode) {
-            "Explore" -> TabSelectionExplorerMode(navCont)
+            "Explore" -> TabSelectionExplorerMode(exploreTravelViewModel, navCont)
             "Creator" -> TabSelectionCreator(requestViewModel, ownedTravelViewModel, navCont, action)
         }
     }

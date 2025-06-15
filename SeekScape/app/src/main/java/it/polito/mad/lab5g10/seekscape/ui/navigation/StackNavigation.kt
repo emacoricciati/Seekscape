@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -37,7 +36,6 @@ import it.polito.mad.lab5g10.seekscape.models.SearchViewModel
 import it.polito.mad.lab5g10.seekscape.models.SearchViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.Travel
 import it.polito.mad.lab5g10.seekscape.models.TravelDuplicator
-import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModel
 import it.polito.mad.lab5g10.seekscape.models.TravelReviewViewModelFactory
 import it.polito.mad.lab5g10.seekscape.models.TravelViewModel

@@ -31,7 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.ui._theme.SeekScapeTheme
-import navigateToNotificationAction
+import it.polito.mad.lab5g10.seekscape.ui.navigation.navigateToNotificationAction
 import it.polito.mad.lab5g10.seekscape.services.AccountService
 import kotlinx.coroutines.launch
 

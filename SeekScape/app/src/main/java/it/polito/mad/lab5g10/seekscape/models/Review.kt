@@ -176,8 +176,6 @@ class TravelReviewViewModel(private val model: TravelReviewModel): ViewModel() {
     }
 
 
-
-
     fun validateCompanionReviews(expectedUserIds: List<String>): Boolean {
         val textErrors = mutableMapOf<String, String>()
         val ratingErrors = mutableMapOf<String, String>()

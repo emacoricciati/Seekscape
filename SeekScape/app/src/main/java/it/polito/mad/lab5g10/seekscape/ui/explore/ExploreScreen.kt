@@ -69,6 +69,7 @@ import kotlin.math.roundToInt
 fun ExploreTravelsScreen(vm: SearchViewModel, navController: NavHostController) {
     var showDialog by remember { mutableStateOf(false) }
     val searchText by vm.text.collectAsState()
+    val isLoadingMore by vm.isLoadingMore.collectAsState()
     val actions = remember(navController) { Actions(navController) }
     var haveChanged by remember{ mutableStateOf(false) }
 
@@ -215,6 +216,15 @@ fun ExploreTravelsScreen(vm: SearchViewModel, navController: NavHostController) 
                                 navController
                             )
                             Spacer(modifier = Modifier.height(10.dp))
+                            if(index==uiState.travels.lastIndex && isLoadingMore){
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().height(28.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
                         }
                     }
                 }

@@ -42,7 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.firebase.messaging.FirebaseMessaging
+
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.getBlankUser
@@ -50,7 +50,6 @@ import it.polito.mad.lab5g10.seekscape.phonePrefixes
 import it.polito.mad.lab5g10.seekscape.services.AccountService
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -356,7 +355,9 @@ fun SignupScreen(navHostController: NavHostController) {
             Text("Register", style = MaterialTheme.typography.titleMedium)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Row (modifier = Modifier.fillMaxWidth().padding(top=10.dp), horizontalArrangement = Arrangement.Center){
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp), horizontalArrangement = Arrangement.Center){
             Text(
                 text = "Already have an account? Login",
                 style = MaterialTheme.typography.bodyMedium,

@@ -1,30 +1,29 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
+import it.polito.mad.lab5g10.seekscape.firebase.firebaseFormatter
 import it.polito.mad.lab5g10.seekscape.models.AppState
+import it.polito.mad.lab5g10.seekscape.models.ExploreModeTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.OWNED
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.PAST
-import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Travel
 import it.polito.mad.lab5g10.seekscape.models.TravelUiState
@@ -34,43 +33,28 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.RequestModal
 import it.polito.mad.lab5g10.seekscape.ui._common.components.TravelCard
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 
+
 @Composable
-fun TabSelectionExplorerMode(navController: NavHostController) {
+fun TabSelectionExplorerMode(exploreTravelViewModel: ExploreModeTravelViewModel, navController: NavHostController) {
     val tabTitles = listOf("Upcoming", "Pending", "Rejected","To Review", "Past")
     val myTravelTab by AppState.myTravelTab.collectAsState()
-    val theTravelModel = TheTravelModel()
     var selectedTabIndex by remember { mutableStateOf(tabTitles.indexOf(myTravelTab)) }
     if (selectedTabIndex == -1) {
         selectedTabIndex = 0
         AppState.updateMyTravelTab(tabTitles[0])
     }
-    var travelUiState by remember { mutableStateOf<TravelUiState>(TravelUiState.Loading) }
+    val travelUiState = exploreTravelViewModel.getUiState(myTravelTab).value
 
-    LaunchedEffect(myTravelTab) {
-        travelUiState = TravelUiState.Loading
-        try {
-            val travels = when (myTravelTab) {
-                "Upcoming" -> theTravelModel.getJoinedTravels(null)
-                "Pending" -> theTravelModel.getPendingTravels(null)
-                "Rejected" -> theTravelModel.getDeniedTravels(null)
-                "To Review" -> theTravelModel.getToReviewTravels(null)
-                "Past" -> theTravelModel.getPastTravels(null)
-                else -> emptyList()
+    LaunchedEffect(Unit) {
+        for(tab in tabTitles){
+            if(tab!=myTravelTab){
+                exploreTravelViewModel.fetchTravels(tab, null)
             }
-
-            travelUiState = if (travels.isEmpty()) {
-                TravelUiState.Empty
-            } else {
-                TravelUiState.Success(travels)
-            }
-
-            Log.d("TabDataDebug", "$myTravelTab tab: ${travels.size} travels loaded")
-
-        } catch (e: Exception) {
-            Log.e("TabDataDebug", "Error loading travels", e)
         }
     }
-
+    LaunchedEffect(myTravelTab) {
+        exploreTravelViewModel.fetchTravels(myTravelTab, null)
+    }
 
     Column  {
         ScrollableTabRow(
@@ -108,17 +92,16 @@ fun TabSelectionExplorerMode(navController: NavHostController) {
                 )
             }
             is TravelUiState.Success -> {
-                CreatorModeTrips(state.travels, myTravelTab, navController)
+                ExploreModeTrips(state.travels, myTravelTab, navController, exploreTravelViewModel)
             }
-
         }
     }
 }
 
 @Composable
-fun CreatorModeTrips(travels: List<Travel>, type: String, navController: NavHostController) {
-    val context = LocalContext.current
-    var showMessage by remember { mutableStateOf(false) }
+fun ExploreModeTrips(travels: List<Travel>, myTravelTab: String, navController: NavHostController, exploreTravelViewModel: ExploreModeTravelViewModel) {
+    val isLoadingBack = exploreTravelViewModel.getLoadingBack(myTravelTab).value
+    val isLoadingMore = exploreTravelViewModel.getLoadingMore(myTravelTab).value
     val actions = remember(navController) { Actions(navController) }
 
     Column(
@@ -126,64 +109,73 @@ fun CreatorModeTrips(travels: List<Travel>, type: String, navController: NavHost
             .padding(horizontal = 16.dp)
             .fillMaxSize()
     ) {
-        if (travels.isEmpty()) {
-            var text: String = ""
 
-            when (type) {
-                "Upcoming" -> text += "No upcoming travels..."
-                "Pending" -> text += "No pending travels..."
-                "Rejected" -> text += "No rejected travels..."
-                "To Review" -> text += "No travels to be reviewed..."
-                "Past" -> text += "No past travels..."
-            }
+        val listState = rememberLazyListState()
+        var hasTriggeredLoad by remember { mutableStateOf(false) }
+        LaunchedEffect(listState, travels.size) {
+            snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+                .collect { visibleItems ->
+                    val secondToLastIndex = travels.size - 2
+                    val isSecondToLastVisible = visibleItems.any { it.index == secondToLastIndex }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = text,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+                    if (isSecondToLastVisible && !hasTriggeredLoad) {
+                        hasTriggeredLoad = true
+                        val lastStartDate = travels.last().startDate!!.format(firebaseFormatter)
+                        exploreTravelViewModel.fetchTravels(myTravelTab, lastStartDate)
+                    }
+                }
         }
-        Spacer(Modifier.height(10.dp))
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            if (travels.isNotEmpty()) {
-                items(travels) {
-                    var text: String = ""
-
-                    when (type) {
-                        "Upcoming" -> text += "Starting " + it.startDate?.let { it1 ->
-                            timeAgo(
-                                it1
-                            )
-                        }
-
-                        "Pending" -> text += "Waiting for approval"
-                        "Rejected" -> text += "Rejected"
-                        "To Review" -> text += "Waiting for a review"
-                        "Past" -> text += it.endDate?.let { it1 -> timeAgo(it1) }
-                    }
-                    val onCardClick = {
-                        actions.seeTravel(it.travelId)
-                    }
-
-                    val hasChat = type!="Pending" && type!="Rejected"
-                    TravelCard(it, onCardClick, text, navController, hasChat=hasChat)
+            itemsIndexed(travels) { index, travel ->
+                if(index==0){
                     Spacer(Modifier.height(10.dp))
+                    if(isLoadingBack){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(28.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+                var text: String = ""
+                when (myTravelTab) {
+                    "Upcoming" -> text += "Starting " + travel.startDate?.let { it1 -> timeAgo(it1) }
+                    "Pending" -> text += "Waiting for approval"
+                    "Rejected" -> text += "Rejected"
+                    "To Review" -> text += "Waiting for a review"
+                    "Past" -> text += travel.endDate?.let { it1 -> timeAgo(it1) }
+                }
+                val onCardClick = {
+                    actions.seeTravel(travel.travelId)
+                }
+                val hasChat = myTravelTab!="Pending" && myTravelTab!="Rejected"
+                TravelCard(travel, onCardClick, text, navController, hasChat=hasChat)
+                Spacer(Modifier.height(10.dp))
+
+                if(index==travels.lastIndex && isLoadingMore){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(28.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }
     }
-
 }
+
 
 @Composable
 fun ChangeModeButton(onClick: () -> Unit, modeLabel: String, modifier: Modifier) {

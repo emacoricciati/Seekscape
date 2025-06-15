@@ -1,3 +1,4 @@
+package it.polito.mad.lab5g10.seekscape.ui.navigation
 
 import androidx.navigation.NavHostController
 import it.polito.mad.lab5g10.seekscape.models.AppState

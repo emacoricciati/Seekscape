@@ -11,7 +11,6 @@ import it.polito.mad.lab5g10.seekscape.daysBetween
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.firebase.firebaseFormatter
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -94,6 +93,10 @@ sealed class TravelUiState {
 class SearchViewModel(private val model: SearchModel) : ViewModel() {
 
     var isAddingPlace by mutableStateOf(false)
+
+    private val _isLoadingMore = MutableStateFlow<Boolean>(false)
+    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore
+
 
     private val theTravelModel = TheTravelModel()
 
@@ -222,124 +225,129 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
     }
 
     private fun filterTravels(lastStartDateFirebaseFound: String?, isLoadBack: Boolean=false) {
-        viewModelScope.launch {
-            val textFilter = model.textValue.value
-            val availableFilter = model.availableValue.value
-            val placeFilter = model.placeValue.value
-            val startDateFilter = model.startDateValue.value
-            val endDateFilter = model.endDateValue.value
-            val minDurationFilter = model.minDurationValue.value
-            val maxDurationFilter = model.maxDurationValue.value
-            val minPriceFilter = model.minPriceValue.value
-            val maxPriceFilter = model.maxPriceValue.value
-            val minCompanionsFilter = model.minCompanionsValue.value
-            val maxCompanionsFilter = model.maxCompanionsValue.value
-            val travelTypesFilter = model.travelTypesValue.value
+        if(isLoadBack && !filterTriggered.value && AppState.lastSearchResults.value!=null) {
+            _travelUiState.value = TravelUiState.Success(AppState.lastSearchResults.value!!)
 
-            val newSearch = Search(
-                text = textFilter, available = availableFilter, place = placeFilter,
-                startDate = startDateFilter, endDate = endDateFilter,
-                minDuration = minDurationFilter, maxDuration = maxDurationFilter,
-                minPrice = minPriceFilter, maxPrice = maxPriceFilter,
-                minCompanions = minCompanionsFilter, maxCompanions = maxCompanionsFilter,
-                travelTypes = travelTypesFilter
-            )
+        } else {
+            viewModelScope.launch {
+                val textFilter = model.textValue.value
+                val availableFilter = model.availableValue.value
+                val placeFilter = model.placeValue.value
+                val startDateFilter = model.startDateValue.value
+                val endDateFilter = model.endDateValue.value
+                val minDurationFilter = model.minDurationValue.value
+                val maxDurationFilter = model.maxDurationValue.value
+                val minPriceFilter = model.minPriceValue.value
+                val maxPriceFilter = model.maxPriceValue.value
+                val minCompanionsFilter = model.minCompanionsValue.value
+                val maxCompanionsFilter = model.maxCompanionsValue.value
+                val travelTypesFilter = model.travelTypesValue.value
 
-            var lastStartDate = lastStartDateFirebaseFound
-            var filteredTot = listOf<Travel>()
-            var foundEnough = false
-            val limitNotFound = 3
-            var indexNotFound = 0
-            if(isLoadBack && !filterTriggered.value && AppState.lastSearchResults.value!=null){
-                _travelUiState.value = TravelUiState.Success(AppState.lastSearchResults.value!!)
-            } else if(lastStartDate==null){
-                _travelUiState.value = TravelUiState.Loading
-            }
+                val newSearch = Search(
+                    text = textFilter, available = availableFilter, place = placeFilter,
+                    startDate = startDateFilter, endDate = endDateFilter,
+                    minDuration = minDurationFilter, maxDuration = maxDurationFilter,
+                    minPrice = minPriceFilter, maxPrice = maxPriceFilter,
+                    minCompanions = minCompanionsFilter, maxCompanions = maxCompanionsFilter,
+                    travelTypes = travelTypesFilter
+                )
 
-            while(!foundEnough && indexNotFound<=limitNotFound) {
-                val filteredTravels: List<Travel> = theTravelModel.getSearchTravels(newSearch, lastStartDate)
-                Log.d("allTravels", "Total travels fetched from getSearchTravels(): ${filteredTravels.size}")
-
-                if(filteredTravels.isNotEmpty()){
-                    lastStartDate = filteredTravels.last().startDate!!.format(firebaseFormatter)?: ""
+                var lastStartDate = lastStartDateFirebaseFound
+                var filteredTot = listOf<Travel>()
+                var foundEnough = false
+                val limitNotFound = 3
+                var indexNotFound = 0
+                if(lastStartDate==null){
+                    _travelUiState.value = TravelUiState.Loading
+                }else{
+                    _isLoadingMore.value=true
                 }
 
-                val filtered = filteredTravels.filter { travel ->
-                    var creatorNotMe = true
-                    if (AppState.isLogged.value){
-                        creatorNotMe = travel.creator.userId != AppState.myProfile.value.userId
-                    }
-                    val textMatch = textFilter.isBlank() ||
-                            travel.title?.contains(textFilter, ignoreCase = true) == true ||
-                            travel.description?.contains(textFilter, ignoreCase = true) == true
+                while(!foundEnough && indexNotFound<=limitNotFound) {
+                    val filteredTravels: List<Travel> = theTravelModel.getSearchTravels(newSearch, lastStartDate)
+                    Log.d("allTravels", "Total travels fetched from getSearchTravels(): ${filteredTravels.size}")
 
-                    val placeMatchTravel =
-                        placeFilter.isEmpty() || travel.country.equals(placeFilter, ignoreCase = true)
-                    val placeMatchItinerary = placeFilter.isEmpty() || travel.travelItinerary!!.any {
-                        it.places.any {
-                            it.equals(
-                                placeFilter,
-                                ignoreCase = true
-                            )
+                    if(filteredTravels.isNotEmpty()){
+                        lastStartDate = filteredTravels.last().startDate!!.format(firebaseFormatter)?: ""
+                    }
+
+                    val filtered = filteredTravels.filter { travel ->
+                        var creatorNotMe = true
+                        if (AppState.isLogged.value){
+                            creatorNotMe = travel.creator.userId != AppState.myProfile.value.userId
                         }
+                        val textMatch = textFilter.isBlank() ||
+                                travel.title?.contains(textFilter, ignoreCase = true) == true ||
+                                travel.description?.contains(textFilter, ignoreCase = true) == true
+
+                        val placeMatchTravel =
+                            placeFilter.isEmpty() || travel.country.equals(placeFilter, ignoreCase = true)
+                        val placeMatchItinerary = placeFilter.isEmpty() || travel.travelItinerary!!.any {
+                            it.places.any {
+                                it.equals(
+                                    placeFilter,
+                                    ignoreCase = true
+                                )
+                            }
+                        }
+                        val placeMatch = placeMatchTravel || placeMatchItinerary
+
+                        val durationMatch = if (travel.startDate != null && travel.endDate != null) {
+                            val duration = daysBetween(travel.startDate!!, travel.endDate!!)
+                            duration in minDurationFilter..maxDurationFilter
+                        } else {
+                            false// or false, depending on whether you want to allow unknown durations
+                        }
+
+                        /*
+                        val availableMatch = !availableFilter || travel.status == AVAILABLE
+
+                        val startDateMatch =
+                            startDateFilter == null || (travel.startDate != null && !travel.startDate!!.isBefore(
+                                startDateFilter
+                            ))
+                        val endDateMatch =
+                            endDateFilter == null || (travel.endDate != null && !travel.endDate!!.isAfter(
+                                endDateFilter
+                            ))
+                        */
+
+                        val priceMatch = (travel.priceMin ?: 0) >= minPriceFilter && (travel.priceMax
+                            ?: Int.MAX_VALUE) <= maxPriceFilter
+
+                        val typeMatch =
+                            travelTypesFilter.isEmpty() || travel.travelTypes?.any { it in travelTypesFilter } == true
+
+                        val companionsMatch =
+                            (travel.maxPeople ?: 0) in minCompanionsFilter..maxCompanionsFilter
+
+                        val isMatch = creatorNotMe && durationMatch && textMatch && placeMatch && companionsMatch  && typeMatch  && priceMatch//&& availableMatch && startDateMatch && endDateMatch
+                        isMatch
                     }
-                    val placeMatch = placeMatchTravel || placeMatchItinerary
 
-                    val durationMatch = if (travel.startDate != null && travel.endDate != null) {
-                        val duration = daysBetween(travel.startDate!!, travel.endDate!!)
-                        duration in minDurationFilter..maxDurationFilter
-                    } else {
-                        false// or false, depending on whether you want to allow unknown durations
+                    indexNotFound=indexNotFound+1
+                    if(filtered.isNotEmpty()){
+                        filteredTot = filteredTot + filtered
+                        foundEnough = filteredTot.size>3
                     }
-
-                    /*
-                    val availableMatch = !availableFilter || travel.status == AVAILABLE
-
-                    val startDateMatch =
-                        startDateFilter == null || (travel.startDate != null && !travel.startDate!!.isBefore(
-                            startDateFilter
-                        ))
-                    val endDateMatch =
-                        endDateFilter == null || (travel.endDate != null && !travel.endDate!!.isAfter(
-                            endDateFilter
-                        ))
-                    */
-
-                    val priceMatch = (travel.priceMin ?: 0) >= minPriceFilter && (travel.priceMax
-                        ?: Int.MAX_VALUE) <= maxPriceFilter
-
-                    val typeMatch =
-                        travelTypesFilter.isEmpty() || travel.travelTypes?.any { it in travelTypesFilter } == true
-
-                    val companionsMatch =
-                        (travel.maxPeople ?: 0) in minCompanionsFilter..maxCompanionsFilter
-
-                    val isMatch = creatorNotMe && durationMatch && textMatch && placeMatch && companionsMatch  && typeMatch  && priceMatch//&& availableMatch && startDateMatch && endDateMatch
-                    isMatch
                 }
 
-                indexNotFound=indexNotFound+1
-                if(filtered.isNotEmpty()){
-                    filteredTot = filteredTot + filtered
-                    foundEnough = filteredTot.size>3
+                if(lastStartDateFirebaseFound==null){
+                    AppState.updateLastSearchResults(filteredTot)
+                    _travelUiState.value =
+                        if (filteredTot.isEmpty()) TravelUiState.Empty
+                        else TravelUiState.Success(filteredTot)
+                } else {
+                    _isLoadingMore.value=false
+                    val current = _travelUiState.value
+                    if (current is TravelUiState.Success) {
+                        val merged = current.travels + filteredTot
+                        _travelUiState.value = TravelUiState.Success(merged)
+                    }
                 }
+                model.updateFilterTriggeredValue(false)
+                model.updateLastStartDateFirebaseFound(lastStartDate?:"")
             }
-
-
-            if(lastStartDateFirebaseFound==null){
-                AppState.updateLastSearchResults(filteredTot)
-                _travelUiState.value =
-                    if (filteredTot.isEmpty()) TravelUiState.Empty
-                    else TravelUiState.Success(filteredTot)
-            } else {
-                val current = _travelUiState.value
-                if (current is TravelUiState.Success) {
-                    val merged = current.travels + filteredTot
-                    _travelUiState.value = TravelUiState.Success(merged)
-                }
-            }
-            model.updateFilterTriggeredValue(false)
-            model.updateLastStartDateFirebaseFound(lastStartDate?:"")
         }
     }
 }

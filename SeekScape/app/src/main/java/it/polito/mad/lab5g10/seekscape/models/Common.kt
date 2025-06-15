@@ -176,4 +176,24 @@ object AppState {
     fun updateLastSearchResults(new: List<Travel>) {
         _lastSearchResults.value = new
     }
+
+    private val _travelsListTabMap = MutableStateFlow<MutableMap<String, List<Travel>?>>(
+        mutableMapOf(
+            "Upcoming" to null,
+            "Pending" to null,
+            "Rejected" to null,
+            "To Review" to null,
+            "Past" to null
+        )
+    )
+
+    fun setTravelListToTab(travels: List<Travel>, tab: String) {
+        val updatedMap = _travelsListTabMap.value.toMutableMap()
+        updatedMap[tab] = travels
+        _travelsListTabMap.value = updatedMap
+    }
+    fun getTravelListOfTab(tab: String): List<Travel>? {
+        return _travelsListTabMap.value[tab]
+    }
+
 }

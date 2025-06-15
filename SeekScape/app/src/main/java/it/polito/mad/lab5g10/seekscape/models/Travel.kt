@@ -1,7 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.models
 
 import android.content.Context
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,9 +8,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import it.polito.mad.lab5g10.seekscape.firebase.ChatMessageFirestoreModel
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.firebase.unknown_User

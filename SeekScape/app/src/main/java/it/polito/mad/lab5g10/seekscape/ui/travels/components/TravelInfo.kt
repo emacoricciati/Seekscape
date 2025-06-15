@@ -1,10 +1,8 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels.components
 
-import android.widget.Toast
+import java.text.DecimalFormat
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.Share
@@ -41,11 +38,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+
 import it.polito.mad.lab5g10.seekscape.R
 import it.polito.mad.lab5g10.seekscape.cleanStack
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
@@ -71,10 +66,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.UserReview
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserStarsAndNickname
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Destinations
-import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.text.DecimalFormat
+
 
 
 @Composable

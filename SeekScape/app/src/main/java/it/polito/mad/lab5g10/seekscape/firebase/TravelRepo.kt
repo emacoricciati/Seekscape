@@ -397,7 +397,7 @@ class TheTravelModel() {
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
-        //query = query.limit(5) //TODO: add loadMore for pagination
+        query = query.limit(5)
         val travelsSnapshot = query.get().await()
 
         val travels = travelsSnapshot.documents.mapNotNull { doc ->
@@ -433,7 +433,7 @@ class TheTravelModel() {
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
-        //query = query.limit(5) //TODO: add loadMore for pagination
+        query = query.limit(5)
         val travelsSnapshot = query.get().await()
 
         val travels = travelsSnapshot.documents.mapNotNull { doc ->
@@ -470,7 +470,7 @@ class TheTravelModel() {
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
-        //query = query.limit(5) //TODO: add loadMore for pagination
+        query = query.limit(5)
         val travelsSnapshot = query.get().await()
 
         val travels = travelsSnapshot.documents.mapNotNull { doc ->
@@ -508,7 +508,7 @@ class TheTravelModel() {
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
-        //query = query.limit(5) //TODO: add loadMore for pagination
+        query = query.limit(5)
         val travelsSnapshot = query.get().await()
 
         val travels = travelsSnapshot.documents.mapNotNull { doc ->
@@ -544,7 +544,7 @@ class TheTravelModel() {
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
-        //query = query.limit(5) //TODO: add loadMore for pagination
+        query = query.limit(5)
         val travelsSnapshot = query.get().await()
 
         val travels = travelsSnapshot.documents.mapNotNull { doc ->

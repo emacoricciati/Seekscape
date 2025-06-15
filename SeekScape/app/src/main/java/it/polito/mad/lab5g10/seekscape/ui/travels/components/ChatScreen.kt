@@ -1,6 +1,8 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels.components
 
-import androidx.compose.foundation.Image
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +43,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
+
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
@@ -54,20 +53,12 @@ import it.polito.mad.lab5g10.seekscape.models.ChatMessage
 import it.polito.mad.lab5g10.seekscape.models.ChatMessageViewModel
 import it.polito.mad.lab5g10.seekscape.models.PAST
 import it.polito.mad.lab5g10.seekscape.models.TO_REVIEW
-import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.chatHourFormat
-import it.polito.mad.lab5g10.seekscape.ui._common.components.IconCost
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconDateRange
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconLocation
-import it.polito.mad.lab5g10.seekscape.ui._common.components.IconPeopleJoined
-import it.polito.mad.lab5g10.seekscape.ui._common.components.IconTravelType
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
-import it.polito.mad.lab5g10.seekscape.ui._common.components.UserStarsAndNickname
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
-import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+
 
 @Composable
 fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController) {

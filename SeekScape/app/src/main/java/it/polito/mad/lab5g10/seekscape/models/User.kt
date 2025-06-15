@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheRequestModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,6 +130,93 @@ class OwnedTravelViewModel() : ViewModel() {
                 _fetched.value = true
             } catch (e: Exception) {
                 Log.e("OwnedTravelVM", "Failed to refresh travels", e)
+            }
+        }
+    }
+}
+
+
+class ExploreModeTravelViewModel() : ViewModel() {
+    val theTravelModel = TheTravelModel()
+
+    private val _travelUiStates = mutableStateMapOf<String, TravelUiState>(
+            "Upcoming" to TravelUiState.Loading,
+            "Pending" to TravelUiState.Loading,
+            "Rejected" to TravelUiState.Loading,
+            "To Review" to TravelUiState.Loading,
+            "Past" to TravelUiState.Loading
+    )
+    fun getUiState(tab: String): State<TravelUiState> {
+        return derivedStateOf { _travelUiStates[tab]!! }
+    }
+
+    private val _isLoadingBack = mutableStateMapOf<String, Boolean>(
+        "Upcoming" to false,
+        "Pending" to false,
+        "Rejected" to false,
+        "To Review" to false,
+        "Past" to false
+    )
+    fun getLoadingBack(tab: String): State<Boolean> {
+        return derivedStateOf { _isLoadingBack[tab]!! }
+    }
+
+    private val _isLoadingMore = mutableStateMapOf<String, Boolean>(
+        "Upcoming" to false,
+        "Pending" to false,
+        "Rejected" to false,
+        "To Review" to false,
+        "Past" to false
+    )
+    fun getLoadingMore(tab: String): State<Boolean> {
+        return derivedStateOf { _isLoadingMore[tab]!! }
+    }
+
+
+    fun fetchTravels(tab: String="", lastStartDateFirebaseFound: String?=null) {
+        if(lastStartDateFirebaseFound==null){
+            val travelSaved: List<Travel>? = AppState.getTravelListOfTab(tab)
+            if(travelSaved!=null){
+                _travelUiStates[tab] =
+                    if (travelSaved.isEmpty()) TravelUiState.Empty
+                    else TravelUiState.Success(travelSaved)
+                _isLoadingBack[tab] = true
+            } else {
+                _travelUiStates[tab] = TravelUiState.Loading
+            }
+        }else{
+            _isLoadingMore[tab] = true
+        }
+
+        viewModelScope.launch {
+            try {
+                val travels = when (tab) {
+                    "Upcoming" -> theTravelModel.getJoinedTravels(lastStartDateFirebaseFound)
+                    "Pending" -> theTravelModel.getPendingTravels(lastStartDateFirebaseFound)
+                    "Rejected" -> theTravelModel.getDeniedTravels(lastStartDateFirebaseFound)
+                    "To Review" -> theTravelModel.getToReviewTravels(lastStartDateFirebaseFound)
+                    "Past" -> theTravelModel.getPastTravels(lastStartDateFirebaseFound)
+                    else -> emptyList()
+                }
+
+                if(lastStartDateFirebaseFound==null){
+                    _isLoadingBack[tab] = false
+                    AppState.setTravelListToTab(travels, tab)
+                    _travelUiStates[tab] =
+                        if (travels.isEmpty()) TravelUiState.Empty
+                        else TravelUiState.Success(travels)
+
+                } else {
+                    _isLoadingMore[tab] = false
+                    val current = _travelUiStates[tab]
+                    if (current is TravelUiState.Success) {
+                        val merged = current.travels + travels
+                        _travelUiStates[tab] = TravelUiState.Success(merged)
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e("TabDataDebug", "Error loading travels", e)
             }
         }
     }
@@ -481,6 +567,18 @@ class OwnedTravelsViewModelFactory() : ViewModelProvider.Factory {
         return when {
             modelClass.isAssignableFrom(OwnedTravelViewModel::class.java) ->
                 OwnedTravelViewModel() as T
+
+            else -> throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
+}
+
+//Factory class to instantiate ViewModel for owned travels
+class ExploreModeTravelsViewModelFactory() : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return when {
+            modelClass.isAssignableFrom(ExploreModeTravelViewModel::class.java) ->
+                ExploreModeTravelViewModel() as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
