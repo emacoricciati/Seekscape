@@ -89,7 +89,9 @@ class Actions(private val navCont: NavHostController) {
 
     val seeProfile: (String) -> Unit = {
         id->
-        navCont.navigate(Destinations.PROFILE + "/${id}")
+        if(id!=""){
+            navCont.navigate(Destinations.PROFILE + "/${id}")
+        }
     }
 
     val applyToJoin: (String) -> Unit = { id ->

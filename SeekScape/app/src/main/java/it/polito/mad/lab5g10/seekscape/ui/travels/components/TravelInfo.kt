@@ -369,7 +369,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             ) {
                 if(AppState.myProfile.collectAsState().value.userId==creator.userId) {
                     UserStarsAndNickname(creator, context, circleIconSize, false, {actions.seeProfile(creator.userId)})
-                }else{
+                } else {
                     UserStarsAndNickname(creator, context, circleIconSize, true,  {actions.seeProfile(creator.userId)})
                 }
             }

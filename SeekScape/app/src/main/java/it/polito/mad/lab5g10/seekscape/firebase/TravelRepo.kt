@@ -504,7 +504,7 @@ class TheTravelModel() {
         val todayStr = today.format(firebaseFormatter)
         query = query.whereLessThan("endDate", todayStr)
 
-        query = query.orderBy("startDate", Query.Direction.ASCENDING)
+        query = query.orderBy("startDate", Query.Direction.DESCENDING)
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }
@@ -540,7 +540,7 @@ class TheTravelModel() {
         val todayStr = today.format(firebaseFormatter)
         query = query.whereLessThan("endDate", todayStr)
 
-        query = query.orderBy("startDate", Query.Direction.ASCENDING)
+        query = query.orderBy("startDate", Query.Direction.DESCENDING)
         if(lastStartDateFirebaseFound!=null){
             query = query.startAfter(lastStartDateFirebaseFound)
         }

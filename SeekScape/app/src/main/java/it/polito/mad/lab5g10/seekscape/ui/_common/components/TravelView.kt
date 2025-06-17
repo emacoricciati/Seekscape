@@ -111,7 +111,7 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(12.dp)
+                    .padding(end =12.dp, start=12.dp, top=8.dp, bottom=6.dp)
             ) {
                 if (textAbove!=null){
                     Text(
@@ -121,9 +121,9 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                         modifier = Modifier
                             .padding(bottom = 3.dp, start=2.dp)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                 }
 
+                Spacer(modifier = Modifier.height(4.dp))
                 travel.travelImages?.firstOrNull()?.let { image ->
                     val painter = when (image) {
                         is TravelImage.Resource -> painterResource(id = image.resId)
@@ -208,9 +208,9 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                     onClick = { actions.seeTravelChat(travel.travelId) },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .offset(y = 43.dp, x = (-20).dp)
+                        .offset(y = 40.dp, x = (-23).dp)
                         .zIndex(1f)
-                        .size(40.dp)
+                        .size(48.dp)
                         .clip(CircleShape),
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -225,7 +225,7 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                                 imageVector = Icons.Filled.Chat,
                                 contentDescription = "See travel chat",
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(26.dp)
                             )
                         }
                     } else {
@@ -233,7 +233,7 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                             imageVector = Icons.Filled.Chat,
                             contentDescription = "See travel chat",
                             tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 }

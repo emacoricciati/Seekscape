@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -248,15 +249,17 @@ fun MessageBox(msg: ChatMessage, navCont: NavHostController) {
         horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
     ) {
         if (!isCurrentUser) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.width(5.dp))
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .wrapContentSize()
                         .clickable {
                             if(msg.author.userId!="system")
                                 actions.seeProfile(msg.author.userId)
                         }
-                        .padding(top=5.dp)
                 ) {
                     UserImage(
                         msg.author.profilePic,
@@ -297,9 +300,10 @@ fun MessageBox(msg: ChatMessage, navCont: NavHostController) {
         if (isCurrentUser) {
             Spacer(modifier = Modifier.width(5.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.width(5.dp))
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .wrapContentSize()
                         .clickable {
                             actions.seeProfile(msg.author.userId)
                         }
@@ -330,7 +334,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 3.dp),
+            .padding(bottom = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
@@ -353,7 +357,7 @@ fun InputMessage(vm: ChatMessageViewModel) {
             },
             enabled = isEnabled && text.isNotBlank(),
             modifier = Modifier
-                .padding(start = 2.dp)
+                .padding(start = 2.dp, end=0.dp)
                 .size(56.dp)
         ) {
             Icon(

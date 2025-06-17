@@ -140,7 +140,8 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                 theTravelModel.deleteTravel(travelId)
             }
 
-            AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
+            AppState.updateMyTravelTab("My trips")
+            AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
             AppState.updateCurrentTab("travels")
             AppState.updateRedirectPath("travels")
         }

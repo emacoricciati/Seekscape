@@ -191,13 +191,13 @@ val user_me = User(
     personality = listOf("Extrovert", "Adventurous", "Tech-savy"),
     reviews = listOf(
         Review(
-            LocalDate.parse("18/02/2025", formatter)!!,
+            LocalDate.parse("18/06/2025", formatter)!!,
             "Marcus brought so much energy to the trip. He’s outgoing, full of ideas, and always looking for the next exciting thing. Never a dull moment with him around!",
             4.7,
             user_dw
         ),
         Review(
-            LocalDate.parse("10/06/2024", formatter)!!,
+            LocalDate.parse("10/06/2025", formatter)!!,
             "Super fun and fearless traveler. Marcus will turn a normal day into an adventure. Great vibe and easy to get along with.",
             4.5,
             user_sl
@@ -235,7 +235,7 @@ val user_eh = User(
             user_me
         ),
         Review(
-            LocalDate.parse("05/08/2024", formatter)!!,
+            LocalDate.parse("05/12/2024", formatter)!!,
             "I loved traveling with Emily! She’s responsible and always prepared. It was a really grounding experience. Would absolutely do a nature trip together again.",
             4.6,
             user_dw
@@ -426,14 +426,18 @@ val travel1 = Travel(
     ),
     priceMin = 200,
     priceMax = 250,
-    status = AVAILABLE,
+    status = PAST,
     distance = "58 km",
     startDate = LocalDate.parse("20/03/2025", formatter)!!,
     endDate = LocalDate.parse("30/03/2025", formatter)!!,
     travelItinerary = mutableListOf(t1_i1, t1_i2, t1_i3, t1_i4),
     travelCompanions = mutableListOf(TravelCompanion(user_ec), TravelCompanion(user_eh, 1)),
     maxPeople = 5,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-01-25 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_eh)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-02-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec))
+    )
 )
 
 val t1_req1 = Request(
@@ -618,11 +622,14 @@ val travel3 = Travel(
     travelItinerary = mutableListOf(t3_i1, t3_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_eh), TravelCompanion(user_ec)),
     maxPeople = 8,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec))
+    )
 )
 
 val t3_req1 = Request(
-    lastUpdate = LocalDate.parse("16/07/2025", formatter)!!,
+    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
     id = "1",
     author = user_ec,
     trip = travel3,
@@ -696,7 +703,8 @@ val travel4 = Travel(
     travelItinerary = mutableListOf(t4_i1, t4_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_eh)),
     maxPeople = 7,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf()
 )
 
 
@@ -750,7 +758,10 @@ val travel5 = Travel(
     travelItinerary = mutableListOf(t5_i1, t5_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_ec), TravelCompanion(user_eh, 1)),
     maxPeople = 5,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_eh))
+    )
 )
 
 val t5_req1 = Request(
@@ -819,14 +830,18 @@ val travel6 = Travel(
     ),
     priceMin = 500,
     priceMax = 1000,
-    status = AVAILABLE,
+    status = PAST,
     distance = "200 km",
     startDate = LocalDate.parse("15/05/2025", formatter)!!,
     endDate = LocalDate.parse("22/05/2025", formatter)!!,
     travelItinerary = mutableListOf(t6_i1, t6_i2),
-    travelCompanions = mutableListOf(TravelCompanion(user_dw), TravelCompanion(user_sl)),
-    maxPeople = 5,
-    travelReviews = listOf()
+    travelCompanions = mutableListOf(TravelCompanion(user_dw), TravelCompanion(user_sl), TravelCompanion(user_eh, 1)),
+    maxPeople = 4,
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-04-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_sl)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-04-22 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_eh))
+    )
 )
 
 val t6_req1 = Request(
@@ -849,6 +864,18 @@ val t6_req2 = Request(
     isAccepted = true,
     isRefused = false,
     spots = 1,
+    reqMessage = "I love grece, please let's go together",
+    responseMessage = "We will have fun",
+)
+
+val t6_req3 = Request(
+    lastUpdate = LocalDate.parse("22/04/2025", formatter)!!,
+    id = "1",
+    author = user_eh,
+    trip = travel6,
+    isAccepted = true,
+    isRefused = false,
+    spots = 2,
     reqMessage = "I love grece, please let's go together",
     responseMessage = "We will have fun",
 )
@@ -902,7 +929,10 @@ val travel7 = Travel(
     travelItinerary = mutableListOf(t7_i1, t7_i2),
     travelCompanions = mutableListOf(TravelCompanion(user_me), TravelCompanion(user_dw, 3)),
     maxPeople = 8,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw))
+    )
 )
 
 
@@ -984,11 +1014,17 @@ val travel8 = Travel(
         TravelCompanion(user_dw)
     ),
     maxPeople = 18,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-11 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_me)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-14 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_sl)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-17 17:22", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(user_dw, LocalDateTime.parse("2025-06-17 17:25", firebaseChatFormatter)!!, "Hey everybody!")
+    )
 )
 
 val t8_req1 = Request(
-    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    lastUpdate = LocalDate.parse("11/06/2025", formatter)!!,
     id = "",
     author = user_me,
     trip = travel8,
@@ -1000,7 +1036,7 @@ val t8_req1 = Request(
 )
 
 val t8_req2 = Request(
-    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    lastUpdate = LocalDate.parse("14/06/2025", formatter)!!,
     id = "",
     author = user_sl,
     trip = travel8,
@@ -1012,7 +1048,7 @@ val t8_req2 = Request(
 )
 
 val t8_req3 = Request(
-    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    lastUpdate = LocalDate.parse("17/06/2025", formatter)!!,
     id = "",
     author = user_dw,
     trip = travel8,
@@ -1109,9 +1145,9 @@ val travel9 = Travel(
     travelRating = 4.25,
     travelReviews = listOf(t9_r1, t9_r2),
     travelChat = listOf(
-        ChatMessage(user_ob, LocalDateTime.parse("2025-10-10 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
-        ChatMessage(system_light, LocalDateTime.parse("2025-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
-        ChatMessage(user_dw, LocalDateTime.parse("2025-10-10 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
+        ChatMessage(user_ob, LocalDateTime.parse("2024-10-10 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system_light, LocalDateTime.parse("2024-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(user_dw, LocalDateTime.parse("2024-10-10 17:20", firebaseChatFormatter)!!, "I have great plans for this trip"),
     )
 )
 
@@ -1195,7 +1231,11 @@ val travel10 = Travel(
         TravelCompanion(user_ec)
     ),
     maxPeople = 4,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2024-10-10 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_ob)),
+        ChatMessage(system_light, LocalDateTime.parse("2024-10-10 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec))
+    )
 )
 
 val t10_req1 = Request(
@@ -1275,7 +1315,10 @@ val travel11 = Travel(
         TravelCompanion(user_ec)
     ),
     maxPeople = 6,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_ec))
+    )
 )
 
 val t11_req1 = Request(
@@ -1441,7 +1484,11 @@ val travel13 = Travel(
         TravelCompanion(user_sl)
     ),
     maxPeople = 9,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_sl))
+    )
 )
 
 val t13_req1 = Request(
@@ -1577,7 +1624,10 @@ val travel14 = Travel(
         TravelCompanion(user_dw, 2)
     ),
     maxPeople = 6,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw))
+    )
 )
 
 val t14_req1 = Request(
@@ -1672,7 +1722,11 @@ val travel15 = Travel(
         TravelCompanion(user_sl, 1)
     ),
     maxPeople = 5,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf(
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-16 12:03", firebaseChatFormatter)!!, getSystemMessageJoined(user_dw)),
+        ChatMessage(system_light, LocalDateTime.parse("2025-06-17 15:30", firebaseChatFormatter)!!, getSystemMessageJoined(user_sl))
+    )
 )
 
 val t15_req1 = Request(
@@ -1688,7 +1742,7 @@ val t15_req1 = Request(
 )
 
 val t15_req2 = Request(
-    lastUpdate = LocalDate.parse("16/06/2025", formatter)!!,
+    lastUpdate = LocalDate.parse("17/06/2025", formatter)!!,
     id = "9",
     author = user_sl,
     trip = travel15,
@@ -1774,7 +1828,8 @@ val travel16 = Travel(
         TravelCompanion(user_eh)
     ),
     maxPeople = 4,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf()
 )
 
 
@@ -1831,7 +1886,8 @@ val travel17 = Travel(
         TravelCompanion(user_ob)
     ),
     maxPeople = 4,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf()
 )
 
 val t17_req1 = Request(
@@ -1898,6 +1954,7 @@ val travel18 = Travel(
         TravelCompanion(user_me)
     ),
     maxPeople = 3,
-    travelReviews = listOf()
+    travelReviews = listOf(),
+    travelChat = listOf()
 )
 

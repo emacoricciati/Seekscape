@@ -71,20 +71,6 @@ fun ExploreTravelsScreen(vm: SearchViewModel, navController: NavHostController) 
     val searchText by vm.text.collectAsState()
     val isLoadingMore by vm.isLoadingMore.collectAsState()
     val actions = remember(navController) { Actions(navController) }
-    var haveChanged by remember{ mutableStateOf(false) }
-
-
-    LaunchedEffect(navController) {
-        navController.currentBackStackEntryFlow.collect{
-            haveChanged = true
-        }
-    }
-    LaunchedEffect(haveChanged) {
-        if (haveChanged) {
-            vm.fetchExploreTravels()
-            haveChanged = false
-        }
-    }
 
     if (!vm.isAddingPlace) {
         Column(

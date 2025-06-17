@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SwapCalls
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -187,9 +189,14 @@ fun ChangeModeButton(onClick: () -> Unit, modeLabel: String, modifier: Modifier)
         Button(
             onClick = onClick,
             modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .padding(vertical = 30.dp)
+                .wrapContentWidth()
+                .padding(bottom = 10.dp)
         ) {
+            Icon(
+                imageVector = Icons.Default.SwapCalls,
+                contentDescription = "Change Mode",
+                modifier = Modifier.padding(end = 8.dp, start=0.dp)
+            )
             Text("$modeLabel mode", style = MaterialTheme.typography.titleMedium)
         }
     }

@@ -81,7 +81,7 @@ fun RouteTravels(entry: NavBackStackEntry, navCont: NavHostController) {
             },
             if (currentMode == "Creator") "Explorer" else "Creator",
             modifier = Modifier
-                .padding(end = 20.dp)
+                .padding(end = 18.dp)
                 .align(Alignment.BottomEnd)
         )
     }

@@ -346,7 +346,7 @@ object CommonModel {
             t2_req1, t2_req2, t2_req3, t2_req4,
             t3_req1, t3_req2,
             t5_req1, t5_req2,
-            t6_req1, t6_req2,
+            t6_req1, t6_req2, t6_req3,
             t7_req1, t7_req2,
             t8_req1, t8_req2, t8_req3,
             t9_req1, t9_req2,
