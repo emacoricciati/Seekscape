@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -508,17 +509,29 @@ fun StackNavigation(
                     val context = LocalContext.current
                     val id = entry.arguments?.getString("travelId")
                     val duplicator = TravelDuplicator(context)
+                    val isLoading = remember { mutableStateOf(true) }
                     if (id != null) {
-                        val newTravel = produceState<Travel?>(initialValue = null) {
+                        val newTravel = produceState<Travel?>(initialValue = null){
                             value = duplicator.duplicateTravel(id)
+                            isLoading.value = false
                         }
 
-                        newTravel.value?.let {
-                            val viewModel = viewModel<TravelViewModel>(
-                                viewModelStoreOwner = entry,
-                                factory = TravelViewModelFactory(it)
-                            )
-                            AddTravelsScreen(viewModel, navCont, "copy")
+                        if(isLoading.value){
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        else{
+                            newTravel.value?.let {
+                                val viewModel = viewModel<TravelViewModel>(
+                                    viewModelStoreOwner = entry,
+                                    factory = TravelViewModelFactory(it)
+                                )
+                                AddTravelsScreen(viewModel, navCont, "copy")
+                            }
                         }
                     }
                 }
