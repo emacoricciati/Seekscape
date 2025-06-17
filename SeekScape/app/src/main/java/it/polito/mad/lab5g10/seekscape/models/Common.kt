@@ -125,7 +125,7 @@ object AppState {
     private val _currentTab = MutableStateFlow<String>(MainDestinations.HOME_ROUTE)
     val currentTab: StateFlow<String> = _currentTab.asStateFlow()
     fun updateCurrentTab(new: String) {
-        if(_doneFirstFetch.value && tabs.contains(new) && new!=_currentTab.value){
+        if(tabs.contains(new) && new!=_currentTab.value){
             _currentTab.value = new
         }
     }

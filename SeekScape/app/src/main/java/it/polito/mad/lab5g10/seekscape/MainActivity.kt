@@ -139,8 +139,6 @@ class MainActivity : ComponentActivity() {
 
 
     private fun handleIntent(intent: Intent?){
-        Log.d("ENTERING", "Entering")
-
         intent?.let {
             val notificationId = it.getStringExtra("id")
             val notificationType = it.getStringExtra("type")
@@ -159,8 +157,6 @@ class MainActivity : ComponentActivity() {
                     tab = notificationTab,
                     navRoute = notificationRoute
                 )
-
-                Log.w("NOTIFICATION ITEM", notificationItem.toString())
 
                 navigateToNotificationAction(notificationItem)
             }
