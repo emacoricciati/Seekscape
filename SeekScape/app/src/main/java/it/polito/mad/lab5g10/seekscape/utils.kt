@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 import android.util.Base64
+import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import java.nio.charset.StandardCharsets
 import java.security.KeyStore
 import java.security.SecureRandom
@@ -219,3 +220,15 @@ val phonePrefixes = listOf(
     "+972", "+973", "+974", "+975", "+976", "+977", "+992", "+993", "+994", "+995",
     "+996", "+998"
 )
+
+fun getMainDestination(path: String): String? {
+    val parts = path.split("/")
+    if (parts.isEmpty()){
+        return null
+    }
+    val screen = parts[0]
+    return when (screen){
+        "travel" -> MainDestinations.HOME_ROUTE
+        else -> MainDestinations.HOME_ROUTE
+    }
+}

@@ -1,6 +1,7 @@
 package it.polito.mad.lab5g10.seekscape
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
@@ -22,10 +23,12 @@ import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.ui._common.AppTopBar
 import it.polito.mad.lab5g10.seekscape.ui.navigation.StackNavigation
 import it.polito.mad.lab5g10.seekscape.ui.navigation.BottomNavigationBar
+import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 
 @Composable
 fun SeekScapeApp(
-    initialIntent: Intent?
+    initialIntent: Intent?,
+    dynamicRoute: String? = null,
 ) {
     val tabs = AppState.tabs
     val navControllers = tabs.associateWith { rememberNavController() }
@@ -37,6 +40,20 @@ fun SeekScapeApp(
     val currentTitle = getScreenTitle(currentDestination?.route ?: "SeekScape")
     val isLoggedIn by AppState.isLogged.collectAsState()
     val loggedStatusChanged by AppState.loggedStatusChanged.collectAsState()
+
+
+    LaunchedEffect (dynamicRoute){
+        dynamicRoute?.let {
+            val mainDest = getMainDestination(dynamicRoute)
+            if (mainDest != null) {
+                Log.d("SeekScapeApp", "Navigating to main destination: $mainDest")
+                AppState.updateCurrentTab(mainDest)
+                AppState.updateRedirectPath(dynamicRoute)
+            } else {
+                Log.e("SeekScapeApp", "Unknown dynamic route: $dynamicRoute")
+            }
+        }
+    }
 
     LaunchedEffect(loggedStatusChanged, isLoggedIn) {
         if(loggedStatusChanged){
@@ -82,13 +99,15 @@ fun SeekScapeApp(
                 currentDestination?.route?.contains("fullscreen") != true &&
                 currentDestination?.route?.contains("unlogged") != true &&
                 currentDestination?.route?.contains("login") != true &&
-                currentDestination?.route?.contains("signup") != true
+                currentDestination?.route?.contains("signup") != true &&
+                currentDestination?.route?.contains("reset_email_completed") != true
             ) {
                 AppTopBar(currentTitle, currentNavController, canGoBack)
             }
         },
         bottomBar = {
-            if (currentDestination?.route?.contains("fullscreen") != true) {
+            if (currentDestination?.route?.contains("fullscreen") != true &&
+                currentDestination?.route?.contains("reset_email_completed") != true) {
                 BottomNavigationBar(
                     currentRoute = selectedTab,
                     onTabSelected = {

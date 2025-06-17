@@ -247,6 +247,8 @@ fun UserProfile(vm: UserInfoViewModel, isOwnProfile: Boolean, onRequestCameraPer
     val myProfile by AppState.myProfile.collectAsState()
     val profileUserId by vm.idValue.collectAsState()
 
+    Log.d("ProfileScreen", "UserProfile waiting")
+
     if(isUserLoadedValue){
         Column(Modifier.fillMaxSize()) {
             Spacer(Modifier.height(10.dp))

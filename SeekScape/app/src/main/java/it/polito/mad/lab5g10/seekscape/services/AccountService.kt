@@ -2,6 +2,7 @@ package it.polito.mad.lab5g10.seekscape.services
 
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.userProfileChangeRequest
@@ -52,7 +53,12 @@ class AccountService {
     }
 
     suspend fun updateEmail(newEmail: String) {
-        Firebase.auth.currentUser!!.verifyBeforeUpdateEmail(newEmail).await()
+        Firebase.auth.currentUser!!.verifyBeforeUpdateEmail(newEmail, ActionCodeSettings.newBuilder()
+            .setUrl("https://lab5g10.page.link/verifyEmail")
+            .setHandleCodeInApp(true)
+            .setAndroidPackageName("it.polito.mad.lab5g10.seekscape", true, null)
+            .build()
+        ).await()
     }
 
     suspend fun updatePassword(newPassword: String) {

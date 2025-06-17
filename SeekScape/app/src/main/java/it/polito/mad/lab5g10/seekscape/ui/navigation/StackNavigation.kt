@@ -55,6 +55,7 @@ import it.polito.mad.lab5g10.seekscape.ui.explore.ExploreTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.EditAccountScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.NotificationScreenView
 import it.polito.mad.lab5g10.seekscape.ui.profile.ProfileTabScreenView
+import it.polito.mad.lab5g10.seekscape.ui.profile.ResetEmailCompletedScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.SignupScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.UserProfileScreen
 import it.polito.mad.lab5g10.seekscape.ui.review.AddReviewScreen
@@ -285,6 +286,10 @@ fun StackNavigation(
 
                 composable("profile/unlogged") {
                     UnloggedUserScreen(navCont)
+                }
+
+                composable("profile/reset_email_completed"){
+                    ResetEmailCompletedScreen(navCont)
                 }
             }
 

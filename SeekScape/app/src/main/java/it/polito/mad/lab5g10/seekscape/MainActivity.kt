@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+
 import com.google.firebase.auth.auth
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
@@ -26,6 +28,7 @@ import android.Manifest
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import it.polito.mad.lab5g10.seekscape.models.AppState
@@ -51,6 +54,35 @@ class MainApplication : Application() {
 }
 
 class MainActivity : ComponentActivity() {
+
+    private val dynamicLinkRouteState = mutableStateOf<String?>(null)
+    private fun getDynamicLinks(intent: Intent){
+        Log.d("MainActivity", "getDynamicLinks called with intent: $intent")
+        FirebaseDynamicLinks.getInstance()
+            .getDynamicLink(intent)
+            .addOnSuccessListener { pendingDynamicLinkData ->
+                pendingDynamicLinkData?.link?.let { uri ->
+                    val path = uri.path
+                    val id = uri.getQueryParameter("id")
+
+                    Log.d("MainActivity", "Dynamic link URI: $uri")
+
+                    val route = when (path) {
+                        "/travel" -> "travel/$id"
+                        "/profile/reset_email_completed" -> path.removePrefix("/")
+                        else -> null
+                    }
+                    dynamicLinkRouteState.value = route
+                    Log.d("MainActivity", "Dynamic link route set to: $route")
+                // Handle the dynamic link here
+                } ?: run {
+                    Log.d("MainActivity", "No dynamic link found")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("MainActivity", "getDynamicLink:onFailure", e)
+            }
+    }
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +96,7 @@ class MainActivity : ComponentActivity() {
 
         val accountService = AccountService()
         AppState.initialize(applicationContext)
+        getDynamicLinks(intent)
 
         EncryptionUtils.generateAndStoreAESKey()
 
@@ -87,11 +120,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeekScapeTheme {
                 NotificationPermissionRequester()
-                SeekScapeApp(initialIntent = intent)
+                SeekScapeApp(initialIntent = intent, dynamicRoute = dynamicLinkRouteState.value)
                 //Support()
             }
         }
         hideNavigationBar()
+//        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {

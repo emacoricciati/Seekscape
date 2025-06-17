@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.dynamic.links)
 
     implementation(libs.google.play.services.base)
     implementation(libs.google.play.services.auth)
