@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="lab5g10.page.link"
+                    android:host="seekscapeapp.page.link"
                     android:scheme="https"/>
             </intent-filter>
 

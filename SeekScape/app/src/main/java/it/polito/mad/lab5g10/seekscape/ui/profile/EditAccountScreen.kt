@@ -165,7 +165,7 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Request sent! Please check your email for a verification link. In case you don't receive it, please check your spam folder. If you entered the wrong email, please submit a new request.",
+                        text = "Request sent! Please check your email for a verification link and follow the instructions to complete the email update.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

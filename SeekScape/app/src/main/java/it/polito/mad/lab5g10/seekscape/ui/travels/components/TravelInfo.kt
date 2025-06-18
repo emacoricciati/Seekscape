@@ -737,7 +737,7 @@ private fun shareText(context: Context, travelId: String, title: String) {
 
 
 //    val deepLink = "app://travel/${travelId}"
-    val deepLink = "https://lab5g10.page.link/?link=https://lab5g10.page.link/travel?id=${travelId}&apn=it.polito.mad.lab5g10.seekscape"
+    val deepLink = "https://seekscapeapp.page.link/?link=https://seekscapeapp.page.link/travel?id=${travelId}&apn=it.polito.mad.lab5g10.seekscape"
 
     val shareIntent = Intent.createChooser(Intent().apply {
         action = Intent.ACTION_SEND

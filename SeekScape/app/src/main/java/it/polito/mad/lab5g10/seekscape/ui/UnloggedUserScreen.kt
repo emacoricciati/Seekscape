@@ -45,7 +45,7 @@ fun UnloggedUserScreen(navHostController: NavHostController){
         // Jetpack compose Button to navigate to login screen
         Button(
             onClick = {
-                uriHandler.openUri("https://lab5g10.page.link/share")
+                AppState.updateCurrentTab(MainDestinations.PROFILE_ROUTE)
             },
             modifier = Modifier
                 .fillMaxWidth()

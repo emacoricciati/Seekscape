@@ -59,8 +59,8 @@ class AccountService {
     suspend fun updateEmail(newEmail: String) {
         val id = AppState.myProfile.value.userId
         val dynamicLink = Firebase.dynamicLinks.createDynamicLink()
-            .setLink("https://lab5g10.page.link/profile/reset_email_completed?uid=$id&email=$newEmail".toUri())
-            .setDomainUriPrefix("https://lab5g10.page.link")
+            .setLink("https://seekscapeapp.page.link/profile/reset_email_completed?uid=$id&email=$newEmail".toUri())
+            .setDomainUriPrefix("https://seekscapeapp.page.link")
             .setAndroidParameters(
                 DynamicLink.AndroidParameters.Builder("it.polito.mad.lab5g10.seekscape").build()
             )
@@ -73,7 +73,7 @@ class AccountService {
                 null   // minimumVersion
             )
             .setHandleCodeInApp(true)
-            .setDynamicLinkDomain("lab5g10.page.link")
+            .setDynamicLinkDomain("seekscapeapp.page.link")
             .build()
         Firebase.auth.currentUser!!.verifyBeforeUpdateEmail(newEmail, actionCodeSettings).await()
     }
