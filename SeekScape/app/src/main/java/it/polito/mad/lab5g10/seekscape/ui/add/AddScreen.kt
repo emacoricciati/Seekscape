@@ -76,6 +76,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.AddLocation
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 @Composable
 fun ConfirmationDialog(
@@ -1046,8 +1047,8 @@ fun TripRangeSlider(
                 onValueChange = { range ->
                     // coerceAtMost is used to be sure that range.start is at most equal to range.endInclusive
                     // coerceAtLeast is used as coerceAtMost but opposite
-                    localMin = range.start.coerceAtMost(localMax)
-                    localMax = range.endInclusive.coerceAtLeast(localMin)
+                    localMin = range.start.roundToInt().toFloat().coerceAtMost(localMax)
+                    localMax = range.endInclusive.roundToInt().toFloat().coerceAtLeast(localMin)
                     onRangeSelected(localMin.toInt()..localMax.toInt())
                 },
                 //This parameter is used to set the range that you can select
