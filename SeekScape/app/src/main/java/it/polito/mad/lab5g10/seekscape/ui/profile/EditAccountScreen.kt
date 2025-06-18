@@ -1,5 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.ui.profile
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -132,9 +133,9 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                         try {
                             isEmailSent = false
                             accountService.updateEmail(email)
-                            userModel.updateEmail(userId, email)
                             isEmailSent = true
                         } catch (e: Exception) {
+                            Log.e("EditAccountScreen", "Error updating email: ${e.message}")
                             val errorMessage = "Failed to update email, please try again."
                             Toast.makeText(
                                 context,

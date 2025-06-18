@@ -6,6 +6,7 @@ import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.dynamiclinks.DynamicLink
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.User
@@ -13,6 +14,9 @@ import it.polito.mad.lab5g10.seekscape.models.getBlankUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import androidx.core.net.toUri
+import com.google.firebase.dynamiclinks.dynamicLinks
+import it.polito.mad.lab5g10.seekscape.models.AppState
 
 data class SignInResult(
     val user: User,
@@ -53,12 +57,25 @@ class AccountService {
     }
 
     suspend fun updateEmail(newEmail: String) {
-        Firebase.auth.currentUser!!.verifyBeforeUpdateEmail(newEmail, ActionCodeSettings.newBuilder()
-            .setUrl("https://lab5g10.page.link/verifyEmail")
+        val id = AppState.myProfile.value.userId
+        val dynamicLink = Firebase.dynamicLinks.createDynamicLink()
+            .setLink("https://lab5g10.page.link/profile/reset_email_completed?uid=$id&email=$newEmail".toUri())
+            .setDomainUriPrefix("https://lab5g10.page.link")
+            .setAndroidParameters(
+                DynamicLink.AndroidParameters.Builder("it.polito.mad.lab5g10.seekscape").build()
+            )
+            .buildDynamicLink()
+        val actionCodeSettings = ActionCodeSettings.newBuilder()
+            .setUrl(dynamicLink.uri.toString())
+            .setAndroidPackageName(
+                "it.polito.mad.lab5g10.seekscape",
+                true,  // installIfNotAvailable
+                null   // minimumVersion
+            )
             .setHandleCodeInApp(true)
-            .setAndroidPackageName("it.polito.mad.lab5g10.seekscape", true, null)
+            .setDynamicLinkDomain("lab5g10.page.link")
             .build()
-        ).await()
+        Firebase.auth.currentUser!!.verifyBeforeUpdateEmail(newEmail, actionCodeSettings).await()
     }
 
     suspend fun updatePassword(newPassword: String) {

@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.gson)
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.firebase.appcheck.debug)
 
 
     testImplementation(libs.junit)

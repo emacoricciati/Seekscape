@@ -288,8 +288,17 @@ fun StackNavigation(
                     UnloggedUserScreen(navCont)
                 }
 
-                composable("profile/reset_email_completed"){
-                    ResetEmailCompletedScreen(navCont)
+                composable(
+                    route = "profile/reset_email_completed?uid={uid}&email={email}",
+                    arguments = listOf(
+                        navArgument("uid") { type = NavType.StringType; defaultValue = "" },
+                        navArgument("email") { type = NavType.StringType; defaultValue = "" }
+                    )
+                ) { backStackEntry ->
+                    val uid = backStackEntry.arguments?.getString("uid") ?: ""
+                    val email = backStackEntry.arguments?.getString("email") ?: ""
+
+                    ResetEmailCompletedScreen(navCont, uid, email)
                 }
             }
 

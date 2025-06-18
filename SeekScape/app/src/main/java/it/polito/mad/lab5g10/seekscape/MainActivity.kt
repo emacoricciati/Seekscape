@@ -31,6 +31,8 @@ import android.view.WindowInsetsController
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.ui._theme.SeekScapeTheme
@@ -55,6 +57,8 @@ class MainApplication : Application() {
 
 class MainActivity : ComponentActivity() {
 
+
+
     private val dynamicLinkRouteState = mutableStateOf<String?>(null)
     private fun getDynamicLinks(intent: Intent){
         Log.d("MainActivity", "getDynamicLinks called with intent: $intent")
@@ -64,12 +68,16 @@ class MainActivity : ComponentActivity() {
                 pendingDynamicLinkData?.link?.let { uri ->
                     val path = uri.path
                     val id = uri.getQueryParameter("id")
+                    val email = uri.getQueryParameter("email")
+                    val uid = uri.getQueryParameter("uid")
+
+                    Log.d("MainActivity", "email: $email")
 
                     Log.d("MainActivity", "Dynamic link URI: $uri")
 
                     val route = when (path) {
                         "/travel" -> "travel/$id"
-                        "/profile/reset_email_completed" -> path.removePrefix("/")
+                        "/profile/reset_email_completed" -> "profile/reset_email_completed?uid=$uid&email=$email"
                         else -> null
                     }
                     dynamicLinkRouteState.value = route
@@ -86,6 +94,17 @@ class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        if (BuildConfig.DEBUG) {
+            FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+                DebugAppCheckProviderFactory.getInstance()
+            )
+        } else {
+            FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+            )
+        }
+
         auth = Firebase.auth
 
         super.onCreate(savedInstanceState)

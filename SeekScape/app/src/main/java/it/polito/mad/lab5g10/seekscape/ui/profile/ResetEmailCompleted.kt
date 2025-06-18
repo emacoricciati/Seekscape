@@ -1,5 +1,6 @@
 package it.polito.mad.lab5g10.seekscape.ui.profile
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -13,15 +14,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,7 +38,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
+import it.polito.mad.lab5g10.seekscape.models.AppState
+import it.polito.mad.lab5g10.seekscape.services.AccountService
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
+import kotlinx.coroutines.launch
 
 @Composable
 fun AnimatedCheckmark(
@@ -49,7 +57,7 @@ fun AnimatedCheckmark(
     LaunchedEffect(Unit) {
         pathProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
         )
     }
 
@@ -86,42 +94,87 @@ fun AnimatedCheckmark(
 }
 
 @Composable
-fun ResetEmailCompletedScreen(navCont: NavHostController) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+fun ResetEmailCompletedScreen(navCont: NavHostController, uid: String, email: String) {
+
+
+    var isLoading by remember { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(uid, email) {
+        Log.d("ResetEmailCompletedScreen", "uid: $uid, email: $email")
+
+        isLoading = true
+        try {
+            val userModel = TheUserModel()
+            userModel.updateEmail(uid, email)
+        } catch (e: Exception) {
+            Log.e("ResetEmailCompletedScreen", "Error updating email", e)
+            isError = true
+        } finally {
+            isLoading = false
+        }
+    }
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-
-            Spacer(modifier = Modifier.height(1.dp))
-
+            CircularProgressIndicator()
+        }
+    }
+    else {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
             Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedCheckmark()
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Operation completed",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+                    Spacer(modifier = Modifier.height(1.dp))
 
-            Button(
-                onClick = { navCont.navigate(MainDestinations.HOME_ROUTE)},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Text(
-                    text = "Close",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (isError){
+                            Text(
+                                text = "Error while updating email",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        }
+                        else {
+                            AnimatedCheckmark()
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                text = "Operation completed",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
+                    }
+
+                Button(
+                    onClick = {
+                        if (!isError){
+                            coroutineScope.launch {
+                                val accountService = AccountService()
+                                accountService.signOut()
+                                AppState.setUserAsUnlogged()
+                            }
+                        }
+                            navCont.navigate(MainDestinations.HOME_ROUTE) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    Text(
+                        text = "Go back",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
     }
