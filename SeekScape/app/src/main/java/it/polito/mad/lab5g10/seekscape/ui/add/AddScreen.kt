@@ -79,8 +79,8 @@ import java.time.LocalDate
 
 @Composable
 fun ConfirmationDialog(
-    title: String = "Delete travel proposal",
-    text: String = "Are you sure to delete the travel proposal?",
+    title: String,
+    text: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     showDialog: Boolean
@@ -151,6 +151,8 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     .fillMaxSize()
             ) {
                 ConfirmationDialog(
+                    title= "Delete travel proposal",
+                    text= "Are you sure to delete the travel proposal?",
                     onConfirm = {
                         deleteTravelProposal(vm.travelIdValue.value)
                         showDialog = false

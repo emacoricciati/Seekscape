@@ -111,7 +111,6 @@ fun UserReview(
             Modifier.padding(16.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
             Row (
                 modifier = Modifier
                     .fillMaxSize()

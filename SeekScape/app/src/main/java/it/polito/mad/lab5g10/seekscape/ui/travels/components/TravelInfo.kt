@@ -84,8 +84,8 @@ fun TravelImages(
     val selectedIndex = remember { mutableStateOf(0) }
     val travelImage = imageResources[selectedIndex.value]
     val imagePainter = when (val image = travelImage) {
-        is TravelImage.Resource -> painterResource(id = image.resId)  // For drawable resources
-        is TravelImage.Url -> rememberAsyncImagePainter(image.value)  // For image URLs
+        is TravelImage.Resource -> painterResource(id = image.resId)
+        is TravelImage.Url -> rememberAsyncImagePainter(image.value)
     }
     Box(
         modifier = modifier
@@ -509,7 +509,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                     text = "no itineraries specified",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
-                        .height(100.dp)
+                        .height(80.dp)
                         .padding(16.dp),
                 )
             } else {
@@ -604,11 +604,15 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             }
             Spacer(Modifier.height(10.dp))
             Row (
-                Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
+                Modifier.horizontalScroll(rememberScrollState())
             ){
-                travelReviews.map {
-                    UserReview(it.author, timeAgo(it.date), it.travelReviewText!!, it.rating, navCont, it.reviewImages)
-                    Spacer(Modifier.width(16.dp))
+                var addPadding = false
+                for (rev in travelReviews) {
+                    if(addPadding){
+                        Spacer(Modifier.width(10.dp))
+                    }
+                    UserReview(rev.author, timeAgo(rev.date), rev.travelReviewText!!, rev.rating, navCont, rev.reviewImages)
+                    addPadding=true
                 }
             }
 
@@ -621,6 +625,8 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
         }
 
         //------------------------------- OTHER COMPANIONS -------------------------------
+
+        val hasChat = currentTravelState==OWNED || currentTravelState==JOINED || currentTravelState==PAST || currentTravelState==TO_REVIEW
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -632,7 +638,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(horizontal = 5.dp).fillMaxHeight(),
             )
-            if(currentTravelState==OWNED || currentTravelState==JOINED || currentTravelState==PAST || currentTravelState== TO_REVIEW){
+            if(hasChat){
                 if(AppState.isNotificationPresent("msg_${travel_id}")){
                     BadgedBox(
                         badge = {
@@ -674,7 +680,9 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                 }
             }
         }
-
+        if(!hasChat){
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()

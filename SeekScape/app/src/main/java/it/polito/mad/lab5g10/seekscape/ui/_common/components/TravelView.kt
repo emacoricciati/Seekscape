@@ -43,8 +43,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,6 +82,7 @@ import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.User
+import it.polito.mad.lab5g10.seekscape.ui.add.ConfirmationDialog
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
@@ -248,18 +251,15 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
 fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: NavHostController) {
     var text: String? = null;
     var enabled = true;
-
     val currentTab by AppState.currentTab.collectAsState()
     val isLoggedIn by AppState.isLogged.collectAsState()
     val status by vm.statusValue.collectAsState()
-    val currentTravelState by vm.statusForUser.collectAsState()
+    val statusForUser by vm.statusForUser.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val actions = remember(navController) { Actions(navController) }
-
     val travelId by vm.travelIdValue.collectAsState()
-    val travelCreator by vm.creatorValue.collectAsState()
-    val travelCompanions by vm.travelCompanionsValues.collectAsState()
-
+    var showDialog by remember { mutableStateOf(false) }
+    
     val mapActions: Map<String, ()->Unit > = mapOf(
         OWNED to {
             if(status!=PAST){
@@ -274,19 +274,10 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
             }
         },
         PENDING to {
-            val theRequestModel = TheRequestModel()
-            coroutineScope.launch{
-                theRequestModel.deleteRequest(vm.travelIdValue.value)
-            }
-            actions.navigateBack()
+            showDialog=true
            },
         JOINED to {
-            val theRequestModel = TheRequestModel()
-            coroutineScope.launch{
-                theRequestModel.deleteRequest(vm.travelIdValue.value)
-                theRequestModel.leaveTrip(vm.travelIdValue.value)
-            }
-            actions.navigateBack()
+            showDialog=true
           },
         DENIED to { println("Rejected") },
         AVAILABLE to {
@@ -320,8 +311,8 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
         newStatus = JOINED
     }
     println(newStatus)
-    if(currentTravelState!="") {
-        when (currentTravelState) {
+    if(statusForUser!="") {
+        when (statusForUser) {
             OWNED -> {
                 if(status!=PAST){
                     text = "Edit";
@@ -334,10 +325,38 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
             PENDING -> {
                 text = "Pending Approval - tap to cancel";
                 enabled = true;
+
+                ConfirmationDialog(
+                    title= "Delete request to join",
+                    text= "Are you sure to delete this request to join the travel?",
+                    onConfirm = {
+                        val theRequestModel = TheRequestModel()
+                        coroutineScope.launch{
+                            theRequestModel.deleteRequest(vm.travelIdValue.value)
+                        }
+                        actions.navigateBack()
+                    },
+                    onDismiss = { showDialog = false },
+                    showDialog = showDialog
+                )
             }
             JOINED -> {
                 text = "Leave Trip";
                 enabled = true;
+                ConfirmationDialog(
+                    title= "Leave this trip",
+                    text= "Are you sure you want to leave this trip?",
+                    onConfirm = {
+                        val theRequestModel = TheRequestModel()
+                        coroutineScope.launch{
+                            theRequestModel.deleteRequest(vm.travelIdValue.value)
+                            theRequestModel.leaveTrip(vm.travelIdValue.value)
+                        }
+                        actions.navigateBack()
+                    },
+                    onDismiss = { showDialog = false },
+                    showDialog = showDialog
+                )
             }
             DENIED -> {
                 text = "Rejected";
@@ -378,7 +397,8 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
 
     if(text==null)
         return;
-
+    
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -412,7 +432,7 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
                     onClick = {
                         if(isLoggedIn){
                             coroutineScope.launch {
-                                mapActions[if (currentTravelState == "") newStatus else currentTravelState]?.invoke()
+                                mapActions[if (statusForUser == "") newStatus else statusForUser]?.invoke()
                             }
                         } else {
                             AppState.updateCurrentTab(MainDestinations.PROFILE_ROUTE)
