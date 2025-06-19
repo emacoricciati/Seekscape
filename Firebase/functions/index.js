@@ -214,41 +214,41 @@ async function addNotificationToUser(notification, userId) {
   console.log(`userId: ${userId}, notification composed:`, notification);
 
   const targetUserRef = db.collection("Users").doc(userId);
-
-  const targetUserSnap = await transaction.get(targetUserRef);
-  if (!targetUserSnap.exists) return;
-
-  const targetUser = targetUserSnap.data();
-  if (!targetUser || !targetUser.notificationSettings) return;
-  const notSettings = targetUser.notificationSettings;
-
-  if (
-    (!notSettings.apply && (notification.type === "manage_apply")) ||
-    (!notSettings.applyAnswer && (notification.type === "request_accepted" || notification.type === "request_denied")) ||
-    (!notSettings.lastMinute && (notification.type === "last_minute_join")) ||
-    (!notSettings.msg && (notification.type === "msg")) ||
-    (!notSettings.review && (notification.type === "my_profile_review" || notification.type === "my_travel_review"))
-  ) return;
-
-  const existingNotifications = targetUser.notifications || [];
   await db.runTransaction(async (transaction) => {
+    const targetUserSnap = await transaction.get(targetUserRef);
+    if (!targetUserSnap.exists) return;
 
-    if (notification.id.startsWith("msg_")) {
-      const notificationExists = existingNotifications.some(
-        (notif) => notif.id === notification.id
-      );
-      if (notificationExists) {
-        console.log(`Notification with id ${notification.id} already exists for user ${userId}.`);
-        return;
+    const targetUser = targetUserSnap.data();
+    if (!targetUser || !targetUser.notificationSettings) return;
+    const notSettings = targetUser.notificationSettings;
+
+    if (
+      (!notSettings.apply && (notification.type === "manage_apply")) ||
+      (!notSettings.applyAnswer && (notification.type === "request_accepted" || notification.type === "request_denied")) ||
+      (!notSettings.lastMinute && (notification.type === "last_minute_join")) ||
+      (!notSettings.msg && (notification.type === "msg")) ||
+      (!notSettings.review && (notification.type === "my_profile_review" || notification.type === "my_travel_review"))
+    ) return;
+
+    const existingNotifications = targetUser.notifications || [];
+
+
+      if (notification.id.startsWith("msg_")) {
+        const notificationExists = existingNotifications.some(
+          (notif) => notif.id === notification.id
+        );
+        if (notificationExists) {
+          console.log(`Notification with id ${notification.id} already exists for user ${userId}.`);
+          return;
+        }
       }
-    }
 
 
-    transaction.update(targetUserRef, {
-      notifications: [notification, ...existingNotifications]
-    });
+      transaction.update(targetUserRef, {
+        notifications: [notification, ...existingNotifications]
+      });
 
-    console.log(`Notification of type '${notification.type}' added to user ${userId}`);
+      console.log(`Notification of type '${notification.type}' added to user ${userId}`);
   });
 }
 
