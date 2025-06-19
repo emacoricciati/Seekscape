@@ -85,6 +85,13 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "Manage your account",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+
         if (!isGoogleAccount) {
             Text(
                 text = "Update email",
@@ -275,7 +282,6 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
         }
         if (!isGoogleAccount) {
 
-
             Spacer(Modifier.height(30.dp))
             Text(
                 text = "Update password",
@@ -435,7 +441,7 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                 Text("Update Password", style = MaterialTheme.typography.titleMedium)
             }
         }
-
+        Spacer(modifier = Modifier.height(4.dp))
     }
 
 }

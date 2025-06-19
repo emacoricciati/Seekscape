@@ -24,3 +24,11 @@ data class NotificationItem(
     val navRoute: String = ""
 ) : Serializable
 
+
+data class UserNotificationSettings(
+    val apply: Boolean = true,
+    val applyAnswer: Boolean = true,
+    val msg: Boolean = true,
+    val lastMinute: Boolean = true,
+    val review: Boolean = true,
+) : Serializable

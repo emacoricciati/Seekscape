@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
 import it.polito.mad.lab5g10.seekscape.models.User
+import it.polito.mad.lab5g10.seekscape.models.UserNotificationSettings
 import kotlinx.coroutines.tasks.await
 
 class TheUserModel() {
@@ -131,6 +132,19 @@ class TheUserModel() {
             println("User with ID ${user.userId} successfully updated (suspend)!")
         } catch (e: Exception) {
             println("Error updating user with ID ${user.userId} (suspend): $e")
+        }
+    }
+
+
+    suspend fun updateNotificationSettings(userId: String, notificationSettings: UserNotificationSettings): Result<Void?> {
+        return try {
+            Collections.users.document(userId)
+                .update("notificationSettings", notificationSettings).await()
+            println("UserNotificationSettings for user with ID $userId successfully updated (suspend)!")
+            Result.success(null)
+        } catch (e: Exception) {
+            println("Error updating UserNotificationSettings for user with ID $userId (suspend): $e")
+            Result.failure(e)
         }
     }
 

@@ -16,6 +16,7 @@ import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.models.TravelReview
 import it.polito.mad.lab5g10.seekscape.models.User
+import it.polito.mad.lab5g10.seekscape.models.UserNotificationSettings
 import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -128,7 +129,8 @@ data class UserFirestoreModel(
     var reviews: List<ReviewFirestoreModel>? = emptyList(), // CAST Review - ReviewFirestoreModel
     var desiredDestinations: List<String>? = null,
     var numTravels: Int =0,
-    var notifications: List<NotificationItem>? = emptyList() // NotificationItem does not need casting
+    var notifications: List<NotificationItem>? = emptyList(), // NotificationItem does not need casting
+    var notificationSettings:UserNotificationSettings? = UserNotificationSettings()
 ) : Serializable
 
 
@@ -152,7 +154,8 @@ fun User.toFirestoreModel(): UserFirestoreModel {
         reviews = this.reviews?.map { it.toFirestoreModel() },
         desiredDestinations = this.desiredDestinations,
         numTravels = this.numTravels,
-        notifications = this.notifications
+        notifications = this.notifications,
+        notificationSettings = this.notificationSettings?: UserNotificationSettings()
     )
 }
 
@@ -176,7 +179,8 @@ suspend fun UserFirestoreModel.toAppModel(isMyProfile:Boolean = false): User {
         reviews = this.reviews?.map { it.toAppModel() },
         desiredDestinations = this.desiredDestinations,
         numTravels = this.numTravels,
-        notifications = if (isMyProfile) this.notifications ?: listOf() else listOf()
+        notifications = if (isMyProfile) this.notifications ?: listOf() else listOf(),
+        notificationSettings = this.notificationSettings
     )
 }
 

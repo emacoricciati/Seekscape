@@ -32,6 +32,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -64,6 +65,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,6 +85,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.MainActivity
 import it.polito.mad.lab5g10.seekscape.R
+import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.NOT_ACCOUNT
 import it.polito.mad.lab5g10.seekscape.models.NOT_APPLY
@@ -98,6 +101,7 @@ import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import it.polito.mad.lab5g10.seekscape.ui.navigation.navigateToNotificationAction
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.time.Instant
 import java.time.LocalDate
@@ -493,7 +497,8 @@ fun NotificationPopup(
 @Composable
 fun NotificationItemView(
     notification: NotificationItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    canDelete:Boolean=false
 ) {
     Row(
         modifier = Modifier
@@ -557,7 +562,6 @@ fun NotificationItemView(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-
             NOT_LAST_MINUTE_JOIN -> {
                 Icon(
                     imageVector = Icons.Outlined.Timelapse,
@@ -608,6 +612,29 @@ fun NotificationItemView(
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        if(canDelete){
+            val myProfile = AppState.myProfile.collectAsState().value
+            val scope = rememberCoroutineScope()
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .clickable {
+                        scope.launch {
+                            CommonModel.removeNotificationById(
+                                myProfile.userId,
+                                notification.id
+                            )
+                        }
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Cancel notification",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }

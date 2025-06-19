@@ -82,6 +82,11 @@ object AppState {
         _myProfile.value = new
     }
 
+    fun updateMyProfileNotSettings(notificationSettings: UserNotificationSettings){
+        val user = _myProfile.value
+        _myProfile.value = user.copy(notificationSettings = notificationSettings)
+    }
+
     fun isNotificationPresent(notificationId: String): Boolean {
         val notifications = _myProfile.value.notifications
         return notifications.isNotEmpty() && notifications.any { it.id == notificationId }

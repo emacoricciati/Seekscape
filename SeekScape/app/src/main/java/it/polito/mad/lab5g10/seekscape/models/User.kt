@@ -36,7 +36,8 @@ data class User(
     val requests: List<Request>? = emptyList(),
     var desiredDestinations: List<String>?,
     val numTravels: Int,
-    val notifications: List<NotificationItem> = listOf<NotificationItem>()
+    val notifications: List<NotificationItem> = listOf<NotificationItem>(),
+    var notificationSettings: UserNotificationSettings? = null
 ) : Serializable
 
 fun getBlankUser(): User {

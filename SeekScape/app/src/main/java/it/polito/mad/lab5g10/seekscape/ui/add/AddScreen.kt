@@ -545,20 +545,20 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                                             )
                                         }
                                         //Delete itinerry
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(4.dp)
-                                                    .clickable {
-                                                        vm.removeItinerary(itinerary)
-                                                    }
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Filled.Close,
-                                                    contentDescription = "Close Itinerary",
-                                                    tint = MaterialTheme.colorScheme.onBackground,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                            }
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .clickable {
+                                                    vm.removeItinerary(itinerary)
+                                                }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Close,
+                                                contentDescription = "Close Itinerary",
+                                                tint = MaterialTheme.colorScheme.onBackground,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
 
                                     }
                                 }

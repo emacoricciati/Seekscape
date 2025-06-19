@@ -86,13 +86,13 @@ fun ProfileTabScreenView(navCont: NavHostController) {
                 UserImage(myProfile.profilePic, size = 120.dp, myProfile.name, myProfile.surname)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = myProfile.name + " " + myProfile.surname,
-                        color = Color.Black,
-                        style = MaterialTheme.typography.displayLarge,
-                    )
-                }
+                Text(
+                    text = myProfile.name + " " + myProfile.surname,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.displayLarge,
+                )
             }
+        }
 
         Column(
             modifier = Modifier
@@ -198,7 +198,7 @@ fun ProfileTabScreenView(navCont: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        //TODO navigate to edit profile
+                        actions.navigateTo("profile/notifications")
                     }
                     .padding(vertical = 8.dp, horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,

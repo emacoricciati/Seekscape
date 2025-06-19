@@ -53,6 +53,7 @@ import it.polito.mad.lab5g10.seekscape.ui.add.AddItinerary
 import it.polito.mad.lab5g10.seekscape.ui.add.AddTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.explore.ExploreTravelsScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.EditAccountScreen
+import it.polito.mad.lab5g10.seekscape.ui.profile.NotificationScreenView
 import it.polito.mad.lab5g10.seekscape.ui.profile.ProfileTabScreenView
 import it.polito.mad.lab5g10.seekscape.ui.profile.SignupScreen
 import it.polito.mad.lab5g10.seekscape.ui.profile.UserProfileScreen
@@ -628,6 +629,11 @@ fun StackNavigation(
                     val isGoogleAccount = accountService.isGoogleAccount()
                     EditAccountScreen(navCont, isGoogleAccount)
                 }
+
+                composable("profile/notifications") {
+                    NotificationScreenView(navCont)
+                }
+
 
                 composable("login") {
                     Surface(
