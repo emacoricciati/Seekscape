@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import com.google.gson.Gson
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.uploadImageToFirebase
@@ -593,33 +594,68 @@ class TheTravelModel() {
 
 class TheRequestModel() {
 
-    suspend fun manageRequest(request: Request, isAcceped: Boolean){
+    suspend fun manageRequest(request: Request, isAcceped: Boolean): List<String> {
+        val requestIds=mutableListOf<String>(request.id)
+        val batch = Firebase.firestore.batch()
+
         request.lastUpdate = LocalDate.now()
         val reqFirestore = request.toFirestoreModel()
-
         val reqRef = Collections.requests.document(request.id)
-        reqRef.update("responseMessage", reqFirestore.responseMessage).await()
-        reqRef.update("lastUpdate", reqFirestore.lastUpdate).await()
-        reqRef.update("accepted", isAcceped).await()
+        batch.update(reqRef, "responseMessage", reqFirestore.responseMessage)
+        batch.update(reqRef, "lastUpdate", reqFirestore.lastUpdate)
 
-        if(isAcceped){
-            val travelref = Collections.travels.document(reqFirestore.tripId)
-            val comp = TravelCompanionFirestoreModel(reqFirestore.authorId, request.spots-1)
-            travelref.update("travelCompanions",
-                FieldValue.arrayUnion(comp)
-            ).await()
+        if(isAcceped) {
+            batch.update(reqRef, "accepted", true)
+            val travelRef = Collections.travels.document(reqFirestore.tripId)
+            val comp = TravelCompanionFirestoreModel(reqFirestore.authorId, request.spots - 1)
+            batch.update(travelRef, "travelCompanions", FieldValue.arrayUnion(comp))
 
             var chatMessageFirebase = ChatMessage(
                 system_light,
                 LocalDateTime.now(),
                 getSystemMessageJoined(request.author)
             ).toFirestoreModel()
-            travelref.update("travelChat",
-                FieldValue.arrayUnion(chatMessageFirebase)
-            ).await()
+            batch.update(travelRef, "travelChat", FieldValue.arrayUnion(chatMessageFirebase))
+
+            val travelDocSnap = Collections.travels.document(reqFirestore.tripId).get().await()
+            if (travelDocSnap.exists()) {
+                val firestoreModel = travelDocSnap.toObject(TravelFirestoreModel::class.java)
+                var numJoined = 0
+                firestoreModel!!.travelCompanions!!.forEach { c ->
+                    numJoined = numJoined + 1 + c.extras
+                }
+                val spotsLeft = firestoreModel!!.maxPeople?.minus(numJoined)
+                if(spotsLeft!=null && spotsLeft>=0){
+                    var query: Query = Collections.requests
+                    query = query.whereEqualTo("tripId", reqFirestore.tripId)
+                    query = query.whereEqualTo("refused", false)
+                    query = query.whereEqualTo("accepted", false)
+                    query = query.whereGreaterThan("spots", spotsLeft)
+
+                    val requestSnapshots = query.get().await()
+
+
+                    for (document in requestSnapshots.documents) {
+                        val docId = document.id
+                        if(docId==request.id) continue;
+                        requestIds.add(docId)
+
+                        val reqRef = document.reference
+                        batch.update(reqRef, "refused", true)
+                        batch.update(reqRef, "responseMessage", "The travel no longer has enough spots for your request")
+                        batch.update(reqRef, "lastUpdate", reqFirestore.lastUpdate)
+                    }
+
+                }
+            }
+        } else {
+            batch.update(reqRef, "refused", true)
         }
 
+        batch.commit().await()
+        return requestIds
     }
+
 
     suspend fun deleteRequest(travelId: String) {
         val user : User = AppState.myProfile.value

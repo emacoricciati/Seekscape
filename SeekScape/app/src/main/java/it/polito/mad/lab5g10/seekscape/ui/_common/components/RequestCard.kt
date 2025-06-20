@@ -92,7 +92,7 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
                 }
             }
 
-            ButtonsSection({ showModal();  openTextBox(); confirmMode()}, { showModal(); openTextBox(); denyMode(); })
+            ButtonsSectionCard({ showModal();  openTextBox(); confirmMode()}, { showModal(); openTextBox(); denyMode(); })
         }
     }
 }

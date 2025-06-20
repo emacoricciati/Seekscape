@@ -248,8 +248,8 @@ class RequestViewModel() : ViewModel() {
         return _requests.value.first { it.idValue.value == requestId }
     }
 
-    fun removeReqFromList(requestId: String){
-        _requests.value = _requests.value.filter { it.idValue.value!=requestId }
+    fun removeReqFromList(requestIds: List<String>){
+        _requests.value = _requests.value.filter { !requestIds.contains(it.idValue.value) }
     }
 
     fun getRequestObject(requestId: String): Request {

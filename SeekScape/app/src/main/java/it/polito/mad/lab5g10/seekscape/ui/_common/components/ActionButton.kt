@@ -99,7 +99,7 @@ fun DenyButton(denyAction: ()->Unit){
 }
 
 @Composable
-fun ButtonsSection(acceptAction: ()->Unit, denyAction: ()->Unit) {
+fun ButtonsSectionCard(acceptAction: ()->Unit, denyAction: ()->Unit) {
     Column(
         modifier = Modifier
             .widthIn(min = 36.dp)
@@ -108,6 +108,15 @@ fun ButtonsSection(acceptAction: ()->Unit, denyAction: ()->Unit) {
     ) {
         ConfirmButton(acceptAction)
         Spacer(modifier = Modifier.height(10.dp))
+        DenyButton(denyAction)
+    }
+}
+
+@Composable
+fun ButtonsSection(acceptAction: ()->Unit, denyAction: ()->Unit) {
+    Row() {
+        ConfirmButton(acceptAction)
+        Spacer(modifier = Modifier.width(8.dp))
         DenyButton(denyAction)
     }
 }

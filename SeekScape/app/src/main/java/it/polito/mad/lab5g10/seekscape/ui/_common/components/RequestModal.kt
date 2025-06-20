@@ -50,6 +50,7 @@ import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Review
 import it.polito.mad.lab5g10.seekscape.models.User
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +74,6 @@ fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: 
             sheetState.hide()
         }
         closeModal()
-
     }
 
     ModalBottomSheet(
@@ -90,7 +90,8 @@ fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: 
                 onClick = closeModal,
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(CircleShape)) {
+                    .clip(CircleShape)
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Close modal",
@@ -311,8 +312,8 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
             AcceptButton {
                 request.responseMessage=text
                 scope.launch{
-                    theRequestModel.manageRequest(request, true)
-                    vm.removeReqFromList(requestId)
+                    val requestsIds = theRequestModel.manageRequest(request, true)
+                    vm.removeReqFromList(requestsIds)
                     closeModal()
                 }
             }
@@ -320,8 +321,8 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
             DeclineButton {
                 request.responseMessage=text
                 scope.launch{
-                    theRequestModel.manageRequest(request, false)
-                    vm.removeReqFromList(requestId)
+                    val requestsIds = theRequestModel.manageRequest(request, false)
+                    vm.removeReqFromList(requestsIds)
                     closeModal()
                 }
             }

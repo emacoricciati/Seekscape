@@ -398,7 +398,6 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
     if(text==null)
         return;
     
-    
     Box(
         modifier = Modifier
             .fillMaxSize()

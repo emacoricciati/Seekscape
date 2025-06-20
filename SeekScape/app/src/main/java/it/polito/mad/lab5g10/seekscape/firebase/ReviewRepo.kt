@@ -15,7 +15,6 @@ import kotlinx.coroutines.tasks.await
 
 class TheReviewModel() {
 
-
     suspend fun addReviews(travelReview: TravelReview?, userReviews: MutableMap<String, Review>): Result<Pair<Result<Void?>?, List<Result<Void?>>>> {
         return try {
 
