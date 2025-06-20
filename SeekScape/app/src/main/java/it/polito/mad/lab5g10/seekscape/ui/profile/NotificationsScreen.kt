@@ -3,15 +3,11 @@ package it.polito.mad.lab5g10.seekscape.ui.profile
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,15 +15,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.ChangeCircle
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.GroupAdd
-import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Reviews
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Timelapse
@@ -94,7 +84,7 @@ fun NotificationScreenView(navCont: NavHostController) {
             text = "Manage your notifications",
             style = MaterialTheme.typography.headlineMedium
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Column(
             modifier = Modifier
@@ -383,14 +373,12 @@ fun NotificationScreenView(navCont: NavHostController) {
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
         }
-        Spacer(modifier = Modifier.height(10.dp))
 
         Box(modifier = Modifier.weight(1f)){
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .height(200.dp)
                     .padding(16.dp)
                     .border(2.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10.dp)),
                 shape = RoundedCornerShape(10.dp),

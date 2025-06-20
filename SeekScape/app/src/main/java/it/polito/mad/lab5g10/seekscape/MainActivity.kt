@@ -57,8 +57,6 @@ class MainApplication : Application() {
 
 class MainActivity : ComponentActivity() {
 
-
-
     private val dynamicLinkRouteState = mutableStateOf<String?>(null)
     private fun getDynamicLinks(intent: Intent){
         Log.d("MainActivity", "getDynamicLinks called with intent: $intent")

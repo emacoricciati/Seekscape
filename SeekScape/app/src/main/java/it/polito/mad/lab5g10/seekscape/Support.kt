@@ -49,73 +49,8 @@ fun Support() {
         }
     }
 
-    val insertUser = ButtonInfo("INSERT USER") {
-        val user = User(
-            userId = "2",
-            nickname = "olivia",
-            name = "Olivia",
-            surname = "Bennett",
-            phoneNumber = "N/A",
-            email = "olivia.bennett@example.com",
-            bio = "I’m a regular traveler who enjoys nature and peaceful destinations. I like to travel independently and live like a local with a focus on eco-travel and self-discovery.",
-            travelPreferences = mutableListOf("Eco-friendly accommodations", "Access to nature", "Affordable and sustainable travel options"),
-            desiredDestinations = mutableListOf("Canada", "Nature destinations"),
-            age = 19,
-            nationality = "Canadian",
-            city = "Toronto, Canada",
-            language = "English",
-            numTravels = 5,
-            personality = listOf("Introvert", "Nature-lover", "Budget-concious")
-        )
-
-        scope.launch {
-            val done = theUserModel.addNewUser(user)
-            done.onSuccess {
-                feedbackButton(context, "DONE")
-            }.onFailure { exception ->
-                feedbackButton(context, "FAILED", exception = exception)
-            }
-        }
-    }
-    val getTravelByID = ButtonInfo("get travel by id") {
-        scope.launch {
-            val done = CommonModel.getTravelById("RJbqzskdMqi9NLkP0hvj")
-            if (done!=null){
-                feedbackButton(context, "DONE")
-            }else{
-                feedbackButton(context, "FAILED")
-            }
-        }
-    }
-    val getUser = ButtonInfo("GET USER") {
-        scope.launch {
-            val done = CommonModel.getUser("Xj7MvQaxsLcYU6whg7sB")
-            if (done!=null){
-                feedbackButton(context, "DONE")
-            }else{
-                feedbackButton(context, "FAILED")
-            }
-        }
-    }
-
-    val getMyProfile = ButtonInfo("GET MY PROFILE") {
-        scope.launch {
-            val done = theUserModel.getMyProfile("Xj7MvQaxsLcYU6whg7sB")
-            if (done!=null){
-                feedbackButton(context, "DONE")
-            }else{
-                feedbackButton(context, "FAILED")
-            }
-        }
-    }
-
-
     val buttonsData = listOf(
         resetDB,
-        //insertUser,
-        //getUser,
-        //getMyProfile,
-        //getTravelByID,
     )
 
     ButtonsFunctions(buttonsInfoList = buttonsData)

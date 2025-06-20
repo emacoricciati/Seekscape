@@ -419,10 +419,6 @@ fun UserDetails(vm: UserInfoViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ){
-//                Row (Modifier.fillMaxWidth().padding(start = 5.dp),
-//                    horizontalArrangement = Arrangement.Start){
-//                    Text(text="Update details", style = MaterialTheme.typography.titleMedium)
-//                }
                 OutlinedTextField(
                     value = nationalityValue,
                     onValueChange = {vm.setNationality(it)},

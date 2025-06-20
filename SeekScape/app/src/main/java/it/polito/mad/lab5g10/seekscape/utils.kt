@@ -1,45 +1,27 @@
 package it.polito.mad.lab5g10.seekscape
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Log
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.edit
 import androidx.navigation.NavHostController
-import com.google.firebase.Firebase
 import it.polito.mad.lab5g10.seekscape.firebase.firebaseFormatter
-import com.google.firebase.messaging.FirebaseMessaging
-import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.firebase.CommonModel.getUser
-import it.polito.mad.lab5g10.seekscape.models.Travel
-import it.polito.mad.lab5g10.seekscape.models.User
-import it.polito.mad.lab5g10.seekscape.ui.navigation.SeekScapeNavController
 import java.io.File
 import java.io.FileOutputStream
-import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 import android.util.Base64
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
-import java.nio.charset.StandardCharsets
 import java.security.KeyStore
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 
 fun <T : java.io.Serializable> getSerializableExtraCustom(intent: Intent, key: String, clazz: Class<T>): T? {

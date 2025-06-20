@@ -599,7 +599,7 @@ fun NotificationItemView(
         }
 
         Spacer(modifier = Modifier.width(8.dp))
-        Column {
+        Column (modifier = Modifier.weight(1f)){
             notification.title?.let {
                 Text(
                     text = it,
@@ -620,7 +620,7 @@ fun NotificationItemView(
             val scope = rememberCoroutineScope()
             Box(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .width(28.dp)
                     .clickable {
                         scope.launch {
                             CommonModel.removeNotificationById(
@@ -634,7 +634,7 @@ fun NotificationItemView(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Cancel notification",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }

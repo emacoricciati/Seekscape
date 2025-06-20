@@ -198,7 +198,7 @@ fun SelectNumberSpots(
                 expanded = showDropdown,
                 onDismissRequest = { showDropdown = false }
             ) {
-                (1..(maxCompanion-1)).forEach { number ->
+                (1..(maxCompanion)).forEach { number ->
                     DropdownMenuItem(
                         text = { Text(number.toString()) },
                         onClick = {
