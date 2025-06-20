@@ -393,9 +393,10 @@ object CommonModel {
             if(travel==null) continue;
             new_data.put(travel.title!!, entry.value)
         }
-
-        Log.d("UPDATED_DATA_AFTER_RESET",new_data.toString())
-
+        println("\n\n\n-----------------------------------------------------------------------\n")
+        println("UPDATED_DATA_AFTER_RESET")
+        println(new_data.toString())
+        println("\n-----------------------------------------------------------------------\n\n\n")
         return Result.success(null)
     }
 
