@@ -227,16 +227,19 @@ fun TextBox(vm: SingleRequestViewModel, name: String){
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
         )
-    ){
+    ) {
         TextField(
             value = text,
             onValueChange = { text = it
                             vm.setReqMessage(text)
                             },
-            placeholder = { Text("Hi ${name} I'd like to join your group...",
-                style = MaterialTheme.typography.bodyMedium,
-                color = GraySecondaryLight
-            ) },
+            placeholder = {
+                Text(
+                    text="Hi ${name} I'd like to join your group...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = GraySecondaryLight
+                )
+              },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

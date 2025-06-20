@@ -310,9 +310,12 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
                         false// or false, depending on whether you want to allow unknown durations
                     }
 
-                    /*
-                    val availableMatch = !availableFilter || travel.status == AVAILABLE
 
+                    var availableMatch = true
+                    if (availableFilter && AppState.isLogged.value){
+                        availableMatch = !travel.travelCompanions!!.any{ it.user.userId == AppState.myProfile.value.userId }
+                    }
+                    /*
                     val startDateMatch =
                         startDateFilter == null || (travel.startDate != null && !travel.startDate!!.isBefore(
                             startDateFilter

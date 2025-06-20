@@ -184,7 +184,6 @@ class TheTravelModel() {
 
 
     suspend fun getSearchTravels(search: Search, lastStartDateFirebaseFound:String?): List<Travel> {
-        val user = AppState.myProfile.value
         val today = LocalDate.now()
 
         var query: Query = Collections.travels
