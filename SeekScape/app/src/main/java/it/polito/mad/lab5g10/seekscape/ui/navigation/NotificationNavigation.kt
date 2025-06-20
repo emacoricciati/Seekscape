@@ -17,6 +17,7 @@ import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 
 
 fun navigateToNotificationAction(notification: NotificationItem) {
+
     when (notification.type) {
 
         NOT_MY_PROFILE_REV -> {
@@ -25,6 +26,7 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         }
 
         NOT_MY_TRAVEL_REV -> {
+            AppState.setTravelToTab(null, notification.tab)
             AppState.updateMyTravelTab("My trips")
             AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
@@ -32,11 +34,13 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         }
 
         NOT_LAST_MINUTE_JOIN -> {
+            AppState.setTravelToTab(null, notification.tab)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
         }
 
         NOT_REQ_ACC -> {
+            AppState.setTravelToTab(null, notification.tab)
             println(notification.navRoute)
             AppState.updateMyTravelTab("Upcoming")
             AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
@@ -45,6 +49,7 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         }
 
         NOT_REQ_DEN -> {
+            AppState.setTravelToTab(null, notification.tab)
             AppState.updateMyTravelTab("Rejected")
             AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
@@ -59,6 +64,7 @@ fun navigateToNotificationAction(notification: NotificationItem) {
         }
 
         NOT_MSG -> {
+            AppState.setTravelToTab(null, notification.tab)
             AppState.updateMyTravelTab("Upcoming")
             AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)

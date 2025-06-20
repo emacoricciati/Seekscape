@@ -166,7 +166,7 @@ object AppState {
             MainDestinations.PROFILE_ROUTE to null
         )
     )
-    fun setTravelToTab(travel: Travel, tab: String=_currentTab.value) {
+    fun setTravelToTab(travel: Travel?, tab: String=_currentTab.value) {
         val updatedMap = _travelsTabMap.value.toMutableMap()
         updatedMap[tab] = travel
         _travelsTabMap.value = updatedMap

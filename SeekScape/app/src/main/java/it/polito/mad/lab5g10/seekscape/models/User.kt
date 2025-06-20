@@ -118,6 +118,10 @@ class OwnedTravelViewModel() : ViewModel() {
     private val _fetched = MutableStateFlow<Boolean>(false)
     val fetched: StateFlow<Boolean> = _fetched
 
+
+    private val _isLoadingBack = MutableStateFlow<Boolean>(false)
+    val isLoadingBack: StateFlow<Boolean> = _isLoadingBack
+
     fun setToFetch() {
         _fetched.value=false
     }
@@ -126,9 +130,13 @@ class OwnedTravelViewModel() : ViewModel() {
     fun refresh() {
         viewModelScope.launch {
             try {
+                if(_fetched.value==true){
+                    _isLoadingBack.value=true
+                }
                 val updated = theTravelModel.getOwnedTravels()
                 _travels.value = updated.map { TravelModel(it) }
                 _fetched.value = true
+                _isLoadingBack.value=false
             } catch (e: Exception) {
                 Log.e("OwnedTravelVM", "Failed to refresh travels", e)
             }
@@ -230,6 +238,9 @@ class RequestViewModel() : ViewModel() {
     private val _fetched = MutableStateFlow<Boolean>(false)
     val fetched: StateFlow<Boolean> = _fetched
 
+    private val _isLoadingBack = MutableStateFlow<Boolean>(false)
+    val isLoadingBack: StateFlow<Boolean> = _isLoadingBack
+
     fun setToFetch() {
         _fetched.value=false
     }
@@ -237,10 +248,14 @@ class RequestViewModel() : ViewModel() {
 
     fun updateRequests(){
         viewModelScope.launch {
+            if(_fetched.value==true){
+                _isLoadingBack.value=true
+            }
             val requestsInfo = theTravelModel.getRequestsToMyTrips()
             val requestModels: List<RequestInfoModel> = requestsInfo.map { RequestInfoModel(it) }
             _requests.value = requestModels
             _fetched.value=true
+            _isLoadingBack.value=false
         }
     }
 

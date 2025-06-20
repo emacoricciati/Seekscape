@@ -266,6 +266,7 @@ fun TabSelectionCreator(
 fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: NavHostController) {
     val ownedTravels by ownedTravelViewModel.travels.collectAsState()
     val fetched by ownedTravelViewModel.fetched.collectAsState()
+    val isLoadingBack by ownedTravelViewModel.isLoadingBack.collectAsState()
     LaunchedEffect(Unit) {
         ownedTravelViewModel.refresh()
     }
@@ -302,23 +303,23 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    items(ownedTravels) {
-                        val travelId by it.travelIdValue.collectAsState()
-                        val creator by it.creatorValue.collectAsState()
-                        val title by it.titleValue.collectAsState()
-                        val description by it.descriptionValue.collectAsState()
-                        val country by it.locationValue.collectAsState()
-                        val priceMin by it.priceStartValue.collectAsState()
-                        val priceMax by it.priceEndValue.collectAsState()
-                        val status by it.statusValue.collectAsState()
-                        val distance by it.distanceValue.collectAsState()
-                        val startDate by it.dateStartValue.collectAsState()
-                        val endDate by it.dateEndValue.collectAsState()
-                        val maxPeople by it.nParticipantsValue.collectAsState()
-                        val travelImages by it.imageUrisValues.collectAsState()
-                        val travelTypes by it.travelTypesValues.collectAsState()
-                        val travelItinerary by it.travelItineraryValues.collectAsState()
-                        val travelCompanions by it.travelCompanionsValues.collectAsState()
+                    itemsIndexed(ownedTravels) { index, travel ->
+                        val travelId by travel.travelIdValue.collectAsState()
+                        val creator by travel.creatorValue.collectAsState()
+                        val title by travel.titleValue.collectAsState()
+                        val description by travel.descriptionValue.collectAsState()
+                        val country by travel.locationValue.collectAsState()
+                        val priceMin by travel.priceStartValue.collectAsState()
+                        val priceMax by travel.priceEndValue.collectAsState()
+                        val status by travel.statusValue.collectAsState()
+                        val distance by travel.distanceValue.collectAsState()
+                        val startDate by travel.dateStartValue.collectAsState()
+                        val endDate by travel.dateEndValue.collectAsState()
+                        val maxPeople by travel.nParticipantsValue.collectAsState()
+                        val travelImages by travel.imageUrisValues.collectAsState()
+                        val travelTypes by travel.travelTypesValues.collectAsState()
+                        val travelItinerary by travel.travelItineraryValues.collectAsState()
+                        val travelCompanions by travel.travelCompanionsValues.collectAsState()
 
                         val travel = Travel(
                             travelId,
@@ -360,7 +361,18 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
                                 )
                             }
                         }
-
+                        if(isLoadingBack && index==0){
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(28.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                         TravelCard(travel, onCardClick, textAboveCard, navController, hasChat = true)
                         Spacer(Modifier.height(10.dp))
                     }
@@ -382,6 +394,8 @@ fun RequestsScreen(
 ) {
     val requests by requestsViewModels.requests.collectAsState()
     val fetched by requestsViewModels.fetched.collectAsState()
+    val isLoadingBack by requestsViewModels.isLoadingBack.collectAsState()
+
     LaunchedEffect(Unit) {
         requestsViewModels.updateRequests()
     }
@@ -417,7 +431,19 @@ fun RequestsScreen(
                         .fillMaxWidth()
                         .padding(top = 10.dp)
                 ) {
-                    itemsIndexed(requests) { _, req ->
+                    itemsIndexed(requests) { index, req ->
+                        if(isLoadingBack && index==0){
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(28.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                         val reqIndex = req.idValue.collectAsState().value
                         ReqMng(
                             reqIndex,
