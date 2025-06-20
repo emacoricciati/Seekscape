@@ -178,7 +178,7 @@ object AppState {
 
     private val _lastSearchResults = MutableStateFlow<List<Travel>?>(null)
     val lastSearchResults: StateFlow<List<Travel>?> = _lastSearchResults.asStateFlow()
-    fun updateLastSearchResults(new: List<Travel>) {
+    fun updateLastSearchResults(new: List<Travel>?) {
         _lastSearchResults.value = new
     }
 

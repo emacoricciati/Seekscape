@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
+import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.SingleRequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Travel
@@ -295,7 +296,7 @@ fun ConfirmRequestButton(vm: SingleRequestViewModel, navCont: NavHostController)
                             "Request sent",
                             Toast.LENGTH_SHORT
                         ).show()
-
+                        AppState.updateLastSearchResults(null)
                         navCont.previousBackStackEntry?.savedStateHandle?.set("updated_travel", true)
                         actions.backToHome()
                     }
