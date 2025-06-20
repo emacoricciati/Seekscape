@@ -163,7 +163,7 @@ fun NotificationScreenView(navCont: NavHostController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Notifications for apply",
+                        text = "Notify for apply",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -210,7 +210,7 @@ fun NotificationScreenView(navCont: NavHostController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Notifications for accept/decline",
+                        text = "Notify for accept/decline",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -257,7 +257,7 @@ fun NotificationScreenView(navCont: NavHostController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Notifications for messages",
+                        text = "Notify for messages",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -304,7 +304,7 @@ fun NotificationScreenView(navCont: NavHostController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Notifications for reviews",
+                        text = "Notify for reviews",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -349,7 +349,7 @@ fun NotificationScreenView(navCont: NavHostController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Notifications last minute",
+                        text = "Notify last minute",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -371,7 +371,6 @@ fun NotificationScreenView(navCont: NavHostController) {
                 )
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
-
         }
 
         Box(modifier = Modifier.weight(1f)){

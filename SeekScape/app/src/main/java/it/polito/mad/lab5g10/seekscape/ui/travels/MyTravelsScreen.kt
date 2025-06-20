@@ -26,6 +26,7 @@ import it.polito.mad.lab5g10.seekscape.models.ExploreModeTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.OWNED
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.PAST
+import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.Travel
 import it.polito.mad.lab5g10.seekscape.models.TravelUiState
@@ -445,13 +446,16 @@ fun RequestsScreen(
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                         val reqIndex = req.idValue.collectAsState().value
-                        ReqMng(
-                            reqIndex,
-                            requestsViewModels,
-                            ownedTravelViewModel,
-                            action,
-                            navController
-                        )
+                        val req = requestsViewModels.getRequestObject(reqIndex)
+                        if(req!=null){
+                            ReqMng(
+                                req,
+                                requestsViewModels,
+                                ownedTravelViewModel,
+                                action,
+                                navController
+                            )
+                        }
                     }
                 }
             }
@@ -461,22 +465,20 @@ fun RequestsScreen(
 
 
 @Composable
-fun ReqMng(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, action:String?, navController: NavHostController) {
+fun ReqMng(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, action:String?, navController: NavHostController) {
     var showModalBottom by remember { mutableStateOf(false) }
     var openTextBox by remember { mutableStateOf(false) }
     var confirmReq by remember { mutableStateOf(false) }
-    val isAccepted by vm.getRequest(index).isAcceptedValue.collectAsState()
-    val isRefused by vm.getRequest(index).isRefusedValue.collectAsState()
     var actionDone by remember { mutableStateOf(false) }
 
-    if (!isAccepted && !isRefused) {
+    if (!req.isAccepted && !req.isRefused) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 15.dp)
         ) {
             RequestCard(
-                index,
+                req,
                 vm,
                 ownedTravelViewModel,
                 { showModalBottom = true },
@@ -488,7 +490,7 @@ fun ReqMng(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTrave
 
         if (showModalBottom) {
             RequestModal(
-                index,
+                req,
                 vm,
                 ownedTravelViewModel,
                 {
@@ -501,7 +503,6 @@ fun ReqMng(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTrave
     }
 
     if(!actionDone && action!=null && action.startsWith("SHOW_APPLY_")){
-        val req = vm.getRequestObject(index)
         val actionMatch = "SHOW_APPLY_${req.trip.travelId}_${req.author.userId}"
         if(actionMatch==action){
             showModalBottom = true

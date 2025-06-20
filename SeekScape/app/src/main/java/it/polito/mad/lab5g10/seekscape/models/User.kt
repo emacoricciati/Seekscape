@@ -259,16 +259,21 @@ class RequestViewModel() : ViewModel() {
         }
     }
 
-    fun getRequest(requestId: String): RequestInfoModel{
-        return _requests.value.first { it.idValue.value == requestId }
+    fun getRequest(requestId: String): RequestInfoModel?{
+        val requests: List<RequestInfoModel> = _requests.value.filter { it.idValue.value == requestId }
+        if(requests.size==1){
+            return requests.first()
+        }
+        return null
     }
 
     fun removeReqFromList(requestIds: List<String>){
         _requests.value = _requests.value.filter { !requestIds.contains(it.idValue.value) }
     }
 
-    fun getRequestObject(requestId: String): Request {
-        val requestInfoModel:RequestInfoModel = getRequest(requestId)
+    fun getRequestObject(requestId: String): Request? {
+        val requestInfoModel:RequestInfoModel? = getRequest(requestId)
+        if(requestInfoModel==null) return null;
         return Request(
             requestInfoModel.idValue.value,
             requestInfoModel.authorValue.value,

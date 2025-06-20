@@ -31,15 +31,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import it.polito.mad.lab5g10.seekscape.models.OwnedTravelViewModel
 import it.polito.mad.lab5g10.seekscape.models.ProfilePic
+import it.polito.mad.lab5g10.seekscape.models.Request
 import it.polito.mad.lab5g10.seekscape.models.RequestViewModel
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 
 @Composable
-fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, showModal: ()->Unit, openTextBox: ()->Unit, notOpenTextBox: ()->Unit, confirmMode: ()->Unit, denyMode: ()->Unit){
-    val author by vm.getRequest(index).authorValue.collectAsState()
-    val trip by vm.getRequest(index).tripValue.collectAsState()
-    val reqMess by vm.getRequest(index).reqMessageValue.collectAsState()
-    val spots by vm.getRequest(index).spots.collectAsState()
+fun RequestCard(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, showModal: ()->Unit, openTextBox: ()->Unit, notOpenTextBox: ()->Unit, confirmMode: ()->Unit, denyMode: ()->Unit){
 
     ElevatedCard(
         modifier = Modifier
@@ -55,7 +52,7 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TravelSmallImage(trip.travelImages!![0], author.profilePic, author.name, author.surname)
+            TravelSmallImage(req.trip.travelImages!![0], req.author.profilePic, req.author.name, req.author.surname)
 
             Column(
                 modifier = Modifier
@@ -63,17 +60,17 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
                     .weight(1f)
             ) {
                 Text(
-                    text=trip.title!!,
+                    text=req.trip.title!!,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text="Spot requested: $spots",
+                    text="Spot requested: ${req.spots}",
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text=reqMess,
+                    text=req.reqMessage,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -100,7 +97,8 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
 @Composable
 fun TravelSmallImage(tripImage: TravelImage, userImage: ProfilePic?, name: String, surname: String){
     Box(
-        modifier = Modifier.size(90.dp)
+        modifier = Modifier
+            .size(90.dp)
             .padding(start = 5.dp, top = 5.dp)
     ) {
         val painter = when (tripImage) {

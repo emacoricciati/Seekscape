@@ -54,15 +54,10 @@ import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, closeModal: ()-> Unit, openState: Boolean, confirmState: Boolean) {
+fun RequestModal(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, closeModal: ()-> Unit, openState: Boolean, confirmState: Boolean) {
     var openTextBox by remember { mutableStateOf(openState) }
     var confirm by remember { mutableStateOf(confirmState) }
     val scope = rememberCoroutineScope()
-
-    val author by vm.getRequest(requestId).authorValue.collectAsState()
-    val trip by vm.getRequest(requestId).tripValue.collectAsState()
-    val spots by vm.getRequest(requestId).spots.collectAsState()
-    val reqMes by vm.getRequest(requestId).reqMessageValue.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -107,12 +102,12 @@ fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: 
         ) {
             Column() {
                 Row(modifier = Modifier.fillMaxWidth()){
-                    Text(trip.title!!,
+                    Text(req.trip.title!!,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-                UserInfo(author, spots)
+                UserInfo(req.author, req.spots)
                 HorizontalDivider(
                     modifier =  Modifier.fillMaxWidth()
                         .padding(start = 5.dp, end = 5.dp, bottom = 20.dp)
@@ -122,11 +117,11 @@ fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: 
                         modifier = Modifier.fillMaxWidth()
                             .verticalScroll(rememberScrollState())
                     ){
-                        Text(reqMes, style = MaterialTheme.typography.bodyMedium)
+                        Text(req.reqMessage, style = MaterialTheme.typography.bodyMedium)
                     }
 
                 } else {
-                    EditableTextBox(requestId, vm, ownedTravelViewModel, confirm, onDismiss)
+                    EditableTextBox(req.id, vm, ownedTravelViewModel, confirm, onDismiss)
                 }
 
             }
@@ -310,7 +305,7 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
     ){
         if(confirm){
             AcceptButton {
-                request.responseMessage=text
+                request!!.responseMessage=text
                 scope.launch{
                     val requestsIds = theRequestModel.manageRequest(request, true)
                     vm.removeReqFromList(requestsIds)
@@ -319,7 +314,7 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
             }
         } else {
             DeclineButton {
-                request.responseMessage=text
+                request!!.responseMessage=text
                 scope.launch{
                     val requestsIds = theRequestModel.manageRequest(request, false)
                     vm.removeReqFromList(requestsIds)
