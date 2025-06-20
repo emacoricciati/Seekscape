@@ -233,22 +233,22 @@ async function addNotificationToUser(notification, userId) {
     const existingNotifications = targetUser.notifications || [];
 
 
-      if (notification.id.startsWith("msg_")) {
-        const notificationExists = existingNotifications.some(
-          (notif) => notif.id === notification.id
-        );
-        if (notificationExists) {
-          console.log(`Notification with id ${notification.id} already exists for user ${userId}.`);
-          return;
-        }
+    if (notification.id.startsWith("msg_")) {
+      const notificationExists = existingNotifications.some(
+        (notif) => notif.id === notification.id
+      );
+      if (notificationExists) {
+        console.log(`Notification with id ${notification.id} already exists for user ${userId}.`);
+        return;
       }
+    }
 
 
-      transaction.update(targetUserRef, {
-        notifications: [notification, ...existingNotifications]
-      });
+    transaction.update(targetUserRef, {
+      notifications: [notification, ...existingNotifications]
+    });
 
-      console.log(`Notification of type '${notification.type}' added to user ${userId}`);
+    console.log(`Notification of type '${notification.type}' added to user ${userId}`);
   });
 }
 
@@ -472,7 +472,7 @@ async function sendNotificationMessage(event) {
   const numMessages = afterMessages.length - beforeMessages.length;
   if (numMessages > 0) {
     const msg = afterMessages[afterMessages.length - 1];
-
+    if (msg.authorId === "system") return null;
     const notification_type = "msg";
     const notification = {
       id: `${notification_type}_${after.travelId}`,
