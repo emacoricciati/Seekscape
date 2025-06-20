@@ -304,13 +304,13 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
     )
     var newStatus = status
     val currentUser = AppState.myProfile.collectAsState().value
+
     if (currentUser.userId == vm.creatorValue.value.userId){
         newStatus = OWNED
-    }
-    else if (currentUser.userId in vm.travelCompanionsValues.value.map { it.user.userId }){
+    } else if (currentUser.userId in vm.travelCompanionsValues.value.map { it.user.userId }){
         newStatus = JOINED
     }
-    println(newStatus)
+
     if(statusForUser!="") {
         when (statusForUser) {
             OWNED -> {

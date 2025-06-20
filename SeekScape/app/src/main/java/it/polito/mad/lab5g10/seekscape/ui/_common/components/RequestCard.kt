@@ -54,7 +54,7 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             TravelSmallImage(trip.travelImages!![0], author.profilePic, author.name, author.surname)
 
             Column(
@@ -62,14 +62,18 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
                     .padding(start = 3.dp, end = 3.dp)
                     .weight(1f)
             ) {
-                Text(trip.title!!,
+                Text(
+                    text=trip.title!!,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text("Spot requested: $spots",
-                    style = MaterialTheme.typography.bodyLarge)
-                Text(reqMess,
+                Text(
+                    text="Spot requested: $spots",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text=reqMess,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -77,11 +81,14 @@ fun RequestCard(index: String, vm: RequestViewModel, ownedTravelViewModel: Owned
                 TextButton(
                     onClick = {showModal(); notOpenTextBox()},
                     modifier = Modifier.height(35.dp)
-                ){
-                    Text(text="Read more", style = MaterialTheme.typography.bodySmall,
+                ) {
+                    Text(
+                        text="Read more",
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline,
-                        color = MaterialTheme.colorScheme.onBackground)
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
 

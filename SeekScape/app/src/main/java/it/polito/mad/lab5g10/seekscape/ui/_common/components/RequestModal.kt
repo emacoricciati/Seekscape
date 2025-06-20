@@ -225,13 +225,13 @@ fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello 
 
     Row(
         modifier = Modifier.padding(bottom = 5.dp),
-        horizontalArrangement = Arrangement.Start)
-    {
+        horizontalArrangement = Arrangement.Start
+    ) {
         UserImage(author.profilePic, 70.dp, author.name, author.surname)
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(start = 5.dp, top = 5.dp)
-        ){
+        ) {
             Text(
                 text=author.name+ " " + author.surname,
                 style = MaterialTheme.typography.bodyLarge,
@@ -240,7 +240,7 @@ fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello 
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-            ){
+            ) {
                 Text(
                     text=String.format("%.1f", avgRating),
                     style = MaterialTheme.typography.bodyLarge,
