@@ -24,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -204,6 +203,7 @@ fun CompleteRegistrationScreen(navCont: NavHostController) {
                     EditableUserPersonality(vm)
                     EditableUserDestinations(vm, showLocationScreen)
                 }
+
                 Button(
                     onClick = {
                         var isError = false
@@ -246,13 +246,13 @@ fun CompleteRegistrationScreen(navCont: NavHostController) {
                                     inclusive = false
                                 )
                                 AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
-                            }
-                            catch (e: Exception){
-                             Toast.makeText(
-                                context,
-                                "Error completing registration, please try again later",
-                                Toast.LENGTH_SHORT
-                            ).show()
+
+                            } catch (e: Exception){
+                                Toast.makeText(
+                                    context,
+                                    "Error completing registration, please try again later",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
 

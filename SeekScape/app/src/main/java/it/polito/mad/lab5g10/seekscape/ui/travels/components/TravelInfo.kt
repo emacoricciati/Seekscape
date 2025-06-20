@@ -101,12 +101,15 @@ fun TravelImages(
                 ),
                 clip = false
             )
-            .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = 35.dp,
-                bottomEnd = 35.dp
-            ))
+            .background(
+                MaterialTheme.colorScheme.background,
+                shape = RoundedCornerShape(
+                    topStart = 0.dp,
+                    topEnd = 0.dp,
+                    bottomStart = 35.dp,
+                    bottomEnd = 35.dp
+                )
+            )
     ) {
 
         Image(
@@ -254,9 +257,7 @@ fun TravelImages(
                 }
             }
         }
-
     }
-
 }
 
 
@@ -303,7 +304,6 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
     val context = LocalContext.current
     val currentTravelState by vm.statusForUser.collectAsState()
     val actions = remember(navCont){Actions(navCont)}
-
     var requestFetched:Request? by remember { mutableStateOf(null) }
 
     val travel_id by vm.travelIdValue.collectAsState()
@@ -469,8 +469,8 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                     Text(text = textBtn, style = MaterialTheme.typography.bodySmall)
                 }
             }
-
         }
+
         if (showDialog && requestFetched!=null) {
             ShowResponseModal(requestFetched!!, creator, travel_id) {
                 showDialog = false
@@ -487,7 +487,6 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
             color = MaterialTheme.colorScheme.outline
         )
         Spacer(modifier = Modifier.height(8.dp))
-
 
 
         //------------------------------- ITINERARY -------------------------------
@@ -513,9 +512,7 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                         .padding(16.dp),
                 )
             } else {
-                for (itinerary in travelItinerary.sortedBy {
-                    it.startDate
-                }) {
+                for (itinerary in travelItinerary.sortedBy {it.startDate}) {
                     Box(
                         modifier = Modifier
                             .width(150.dp)
@@ -727,7 +724,6 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(80.dp))
     }
 }
@@ -735,9 +731,9 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
 
 private fun shareText(context: Context, travelId: String, title: String) {
 
-
+    val apn = "it.polito.mad.lab5g10.seekscape"
 //    val deepLink = "app://travel/${travelId}"
-    val deepLink = "https://seekscapeapp.page.link/?link=https://seekscapeapp.page.link/travel?id=${travelId}&apn=it.polito.mad.lab5g10.seekscape"
+    val deepLink = "https://seekscapeapp.page.link/?link=https://seekscapeapp.page.link/travel?id=${travelId}&apn=${apn}"
 
     val shareIntent = Intent.createChooser(Intent().apply {
         action = Intent.ACTION_SEND

@@ -102,7 +102,6 @@ fun ProfileTabScreenView(navCont: NavHostController) {
         ) {
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
-
             //EDIT PROFILE
             Row(
                 modifier = Modifier
@@ -292,8 +291,8 @@ fun ProfileTabScreenView(navCont: NavHostController) {
                                 CommonModel.removeFcmToken(AppState.myProfile.value.userId, token)
                                 AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
                                 AppState.setUserAsUnlogged()
-                            }
-                            catch (e: Exception){
+
+                            } catch (e: Exception){
                                 Toast.makeText(
                                     context,
                                     "Error during log-out, try again later",

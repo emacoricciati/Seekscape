@@ -11,7 +11,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -23,7 +22,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import it.polito.mad.lab5g10.seekscape.cleanStack
@@ -107,16 +105,6 @@ class Actions(private val navCont: NavHostController) {
     val editTravel: (String) -> Unit = { id ->
         navCont.navigate(Destinations.TRAVEL + "/${id}" + "/" + Destinations.EDIT)
     }
-
-    /*
-    val addItineraryfromCopy: (String) -> Unit = { id ->
-        navCont.navigate(Destinations.TRAVEL + "/" + id + "/" + Destinations.COPY + "/" + Destinations.ITINERARY)
-    }
-
-    val editItineraryfromCopy: (String, Int) -> Unit = { travelId, itineraryId ->
-        navCont.navigate(Destinations.TRAVEL + "/" +  travelId + "/" +  Destinations.COPY + "/" + Destinations.ITINERARY + "/" + itineraryId + "/" + Destinations.EDIT)
-    }
-    */
 
     val navigateToCopyTravelItinerary: (String) -> Unit = { travelId ->
         navCont.navigate(Destinations.ADD + "/${travelId}" + "/" + Destinations.COPY + "/" + Destinations.ITINERARY)

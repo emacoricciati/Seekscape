@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -45,10 +44,8 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.messaging.FirebaseMessaging
 import it.polito.mad.lab5g10.seekscape.authentication.GoogleButton
-import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.models.Travel
 import it.polito.mad.lab5g10.seekscape.services.AccountService
 import it.polito.mad.lab5g10.seekscape.services.SignInResult
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
@@ -93,9 +90,11 @@ fun LoginScreen(navHostController: NavHostController) {
     }
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .verticalScroll(scrollState)
-        .padding(horizontal = 20.dp, vertical = 55.dp)) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .padding(horizontal = 20.dp, vertical = 55.dp)
+    ) {
 
         Text(text = "Sign in to your account", style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(15.dp))
@@ -273,6 +272,7 @@ fun LoginScreen(navHostController: NavHostController) {
                         }
                         actions.navigateTo("complete_registration")
                     }
+
                 } catch (e: Exception) {
                     Toast.makeText(
                         context,

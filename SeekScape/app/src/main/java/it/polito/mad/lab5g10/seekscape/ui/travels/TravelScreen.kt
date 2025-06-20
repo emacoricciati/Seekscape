@@ -32,7 +32,6 @@ fun TravelProposalScreen(vm: TravelViewModel, navController: NavHostController, 
     val actions = remember(navController) {
         Actions(navController)
     }
-    val creator = vm.creatorValue.collectAsState()
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
     val scope = rememberCoroutineScope()
 
@@ -96,8 +95,8 @@ fun TravelProposalScreen(vm: TravelViewModel, navController: NavHostController, 
                 action
             )
         }
-        TravelButton(vm, onButtonClick = {
-        }, navController)
+
+        TravelButton(vm, onButtonClick = {}, navController)
 
 
         val currentTab by AppState.currentTab.collectAsState()

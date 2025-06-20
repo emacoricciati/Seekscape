@@ -60,7 +60,6 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
     var page by remember { mutableStateOf(0)}
     val travel by vm.travel.collectAsState()
 
-
     if (travel == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -68,7 +67,8 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
         ) {
             CircularProgressIndicator()
         }
-    }else{
+
+    } else {
 
         val currentTravel = travel!!
         val organizer = TravelCompanion(user = currentTravel.creator)
@@ -205,9 +205,9 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
             ) {
                 Button(
                     onClick = {
-                        if(page>0){
+                        if(page>0) {
                             page--
-                        }else{
+                        } else {
                             actions.navigateBack()
                         }
                     },
@@ -256,7 +256,6 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
 
                 }
             }
-
 
         }
     }

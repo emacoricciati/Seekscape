@@ -12,18 +12,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheRequestModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
-import it.polito.mad.lab5g10.seekscape.firebase.TheReviewModel
-import it.polito.mad.lab5g10.seekscape.models.User
 import kotlinx.coroutines.launch
 
 data class ButtonInfo(val text: String, val onClick: () -> Unit)
@@ -33,10 +27,6 @@ data class ButtonInfo(val text: String, val onClick: () -> Unit)
 fun Support() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val theUserModel = remember { TheUserModel() }
-    val TheReviewModel = remember { TheReviewModel() }
-    val theTravelModel = remember { TheTravelModel() }
-    val theRequestModel = remember { TheRequestModel() }
 
     val resetDB = ButtonInfo("RESET DB") {
         scope.launch {

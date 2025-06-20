@@ -103,8 +103,6 @@ private fun checkCameraPermission(
         else -> {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
-
-
     }
 }
 
@@ -145,6 +143,7 @@ private fun showRationaleDialog(context: Context, message: String, onConfirm: ()
         .show()
 }
 
+
 private fun openCamera(vm: UserInfoViewModel, context: Context, launcher: ActivityResultLauncher<Intent>) {
     val photoFile = ImagePickerUtils.createImageFile(context)
     val photoUri = FileProvider.getUriForFile(
@@ -172,7 +171,6 @@ fun UserProfileScreen(
     isOwnProfile: Boolean,
     navCont: NavHostController
 ){
-
     val context = LocalContext.current
 
     // Intent Launchers
@@ -268,7 +266,7 @@ fun UserProfile(vm: UserInfoViewModel, isOwnProfile: Boolean, onRequestCameraPer
             }
         }
 
-    }else{
+    } else {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -295,11 +293,13 @@ fun UserPersonalInfo(vm: UserInfoViewModel) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(text="$nameValue $surnameValue", style = MaterialTheme.typography.headlineMedium)
             Text(text=nicknameValue, style = MaterialTheme.typography.bodyLarge)
-        }
-        else{                   //EDITING MODE
+
+        } else {                   //EDITING MODE
             Spacer(modifier = Modifier.height(12.dp))
-            Row (Modifier.fillMaxWidth().padding(start = 20.dp),
-                horizontalArrangement = Arrangement.Start){
+            Row (
+                modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
                 Text(text="User Datails", style = MaterialTheme.typography.titleMedium)
             }
             OutlinedTextField(
@@ -369,7 +369,8 @@ fun UserDetails(vm: UserInfoViewModel) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text="AGE",
+                Text(
+                    text="AGE",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -418,7 +419,7 @@ fun UserDetails(vm: UserInfoViewModel) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-            ){
+            ) {
                 OutlinedTextField(
                     value = nationalityValue,
                     onValueChange = {vm.setNationality(it)},
@@ -450,8 +451,10 @@ fun UserDetails(vm: UserInfoViewModel) {
                     Text(vm.languageError, color = MaterialTheme.colorScheme.error)
 
                 Spacer(modifier = Modifier.height(15.dp))
-                Row (Modifier.fillMaxWidth().padding(start = 5.dp),
-                    horizontalArrangement = Arrangement.Start){
+                Row (
+                    modifier = Modifier.fillMaxWidth().padding(start = 5.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
                     Text(text="Bio", style = MaterialTheme.typography.titleMedium)
                 }
                 OutlinedTextField(
@@ -486,14 +489,14 @@ fun EditableUserPersonality(vm: UserInfoViewModel){
         FlowRow (
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        ) {
             personality.forEach {
                 PillButtonEditable(it) { vm.removePersonality(it) }
             }
         }
         TextButton(
             onClick = { showDialog = true}
-        ){
+        ) {
             Text(text="select more", style = MaterialTheme.typography.bodySmall)
         }
 
@@ -511,7 +514,7 @@ fun UserPersonality(elements: List<String>){
         Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Row(horizontalArrangement = Arrangement.Start){
             Text(text="Personality", style = MaterialTheme.typography.titleMedium)
         }
@@ -519,7 +522,7 @@ fun UserPersonality(elements: List<String>){
         FlowRow (
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        ) {
             elements.forEach {
                 PillButton(it)
             }
@@ -534,7 +537,7 @@ fun UserDestinations(elements: List<String>?){
         Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Row(horizontalArrangement = Arrangement.Start){
             Text(text="Most desired destinations", style = MaterialTheme.typography.titleMedium)
         }
@@ -543,7 +546,7 @@ fun UserDestinations(elements: List<String>?){
             FlowRow (
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
-            ){
+            ) {
                 elements.forEach {
                     PillButton(it)
                 }
@@ -564,7 +567,7 @@ fun EditableUserDestinations(vm: UserInfoViewModel, showScreen: MutableState<Boo
         Modifier.fillMaxWidth()
             .padding(start = 26.dp),
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Row(horizontalArrangement = Arrangement.Start){
             Text(text="Most desired destinations", style = MaterialTheme.typography.titleMedium)
         }
@@ -573,18 +576,18 @@ fun EditableUserDestinations(vm: UserInfoViewModel, showScreen: MutableState<Boo
             FlowRow (
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
-            ){
+            ) {
                 desiredDestinations?.forEach {
                     PillButtonEditable(it) { vm.removeLocation(it) }
                 }
             }
-        }
-        else {
+
+        } else {
             Text("No desired destinations found", style = MaterialTheme.typography.titleMedium)
         }
         TextButton(
             onClick = { showScreen.value = true }
-        ){
+        ) {
             Text(text="select more", style = MaterialTheme.typography.bodySmall)
         }
     }
@@ -610,7 +613,6 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
     val bio by vm.bioValue.collectAsState()
     val showLocationScreen = remember { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
     val theUserModel = TheUserModel()
     if (showLocationScreen.value) {
         Column(
@@ -626,7 +628,8 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                 },
             )
         }
-    }else{
+
+    } else {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -635,7 +638,8 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                 Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                UserImageWithMenu(profilePic, 150.dp, modifier = Modifier,vm,
+                UserImageWithMenu(
+                    profilePic, 150.dp, modifier = Modifier,vm,
                     onSelectFromGallery = {
                         onRequestGalleryPermission()
                     },
@@ -721,8 +725,6 @@ fun PortraitLayout(vm: UserInfoViewModel, navCont: NavHostController){
     val pastExperiences by vm.trips.collectAsState()
     val actions = remember(navCont) { Actions(navCont)}
     val bio by vm.bioValue.collectAsState()
-    val theUserModel = TheUserModel()
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
@@ -753,14 +755,13 @@ fun PortraitLayout(vm: UserInfoViewModel, navCont: NavHostController){
         Spacer(Modifier.height(10.dp))
         Row (
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
-        ){
+        ) {
             if(reviews != null && (reviews as List<Any?>).isNotEmpty()){
                 reviews!!.map {
                     UserReview(it.author, timeAgo(it.date), it.reviewText, it.rating, navCont)
                     Spacer(Modifier.width(16.dp))
                 }
-            }
-            else{
+            } else{
                 Text("No reviews found", style = MaterialTheme.typography.titleMedium)
             }
         }
@@ -774,21 +775,19 @@ fun PortraitLayout(vm: UserInfoViewModel, navCont: NavHostController){
         Spacer(Modifier.height(16.dp))
         Row (
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
-        ){
+        ) {
             if(pastExperiences!=null && (pastExperiences as List<Travel?>).isNotEmpty()){
                 pastExperiences!!.map {
                     PastExperienceCard(it!!, {actions.seeTravel(it.travelId)})
                     Spacer(Modifier.width(16.dp))
                 }
-            }else{
+            } else {
                 Text("No past experiences found", style = MaterialTheme.typography.titleMedium)
             }
 
         }
         Spacer(Modifier.height(16.dp))
-
     }
-
 }
 
 @Composable
@@ -830,14 +829,14 @@ fun LandscapeLayout(vm: UserInfoViewModel, navCont: NavHostController){
         Spacer(Modifier.height(10.dp))
         Row (
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
-        ){
+        ) {
             if(reviews != null && (reviews as List<Any?>).isNotEmpty()){
                 reviews!!.map {
                     UserReview(it.author, timeAgo(it.date), it.reviewText, it.rating, navCont)
                     Spacer(Modifier.width(16.dp))
                 }
-            }
-            else{
+
+            } else{
                 Text("No reviews found", style = MaterialTheme.typography.titleMedium)
             }
         }
@@ -851,14 +850,15 @@ fun LandscapeLayout(vm: UserInfoViewModel, navCont: NavHostController){
         Spacer(Modifier.height(16.dp))
         Row (
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp)
-        ){
+        ) {
 
             if(pastExperiences!=null && (pastExperiences as List<Travel?>).isNotEmpty()){
                 pastExperiences!!.map {
                     PastExperienceCard(it!!, {actions.seeTravel(it.travelId)})
                     Spacer(Modifier.width(16.dp))
                 }
-            }else{
+
+            } else {
                 Text("No past experiences found", style = MaterialTheme.typography.titleMedium)
             }
 
@@ -873,8 +873,7 @@ fun PresentationPanel(vm: UserInfoViewModel, navCont: NavHostController) {
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     if (isLandscape){
         LandscapeLayout(vm, navCont)
-    }
-    else {
+    } else {
         PortraitLayout(vm, navCont)
     }
 }

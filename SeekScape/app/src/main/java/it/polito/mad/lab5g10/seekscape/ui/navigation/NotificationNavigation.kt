@@ -58,23 +58,14 @@ fun navigateToNotificationAction(notification: NotificationItem) {
             AppState.updateRedirectPath(notification.navRoute)
         }
 
-        NOT_REMINDER -> {
-        }
-        NOT_ACCOUNT -> {
-        }
         NOT_MSG -> {
             AppState.updateMyTravelTab("Upcoming")
             AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
         }
-    }
-}
 
-fun redirectIfNeeded(navCont: NavHostController){
-    val redirectPath = AppState.redirectPath.value
-    if(redirectPath!=""){
-        AppState.updateRedirectPath("")
-        navCont.navigate(redirectPath)
+        NOT_REMINDER -> {}
+        NOT_ACCOUNT -> {}
     }
 }

@@ -43,11 +43,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
-import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.getBlankUser
-import it.polito.mad.lab5g10.seekscape.phonePrefixes
 import it.polito.mad.lab5g10.seekscape.services.AccountService
+import it.polito.mad.lab5g10.seekscape.ui._common.phonePrefixes
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import kotlinx.coroutines.launch
 
@@ -67,7 +66,7 @@ fun SignupScreen(navHostController: NavHostController) {
     val accountService = AccountService()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val userModel = TheUserModel()
+
     val actions = remember(navHostController) { Actions(navHostController) }
     var nicknameError by remember { mutableStateOf("") }
     var fullNameError by remember { mutableStateOf("") }
@@ -104,9 +103,11 @@ fun SignupScreen(navHostController: NavHostController) {
     }
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .verticalScroll(scrollState)
-        .padding(horizontal = 20.dp, vertical = 55.dp)) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .padding(horizontal = 20.dp, vertical = 55.dp)
+    ) {
         // Arrow back
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -336,6 +337,7 @@ fun SignupScreen(navHostController: NavHostController) {
                         AppState.updateMyProfile(newUser)
                         AppState.setUserAsLogged()
                         actions.navigateTo("complete_registration")
+
                     } catch (e: Exception) {
                         val errorMessage = e.message ?: "An error occurred"
                         println("email: $email, password: $password")
@@ -355,9 +357,12 @@ fun SignupScreen(navHostController: NavHostController) {
             Text("Register", style = MaterialTheme.typography.titleMedium)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Row (modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp), horizontalArrangement = Arrangement.Center){
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = "Already have an account? Login",
                 style = MaterialTheme.typography.bodyMedium,

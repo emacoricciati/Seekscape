@@ -99,9 +99,11 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
                             .weight(1f),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp, top = 4.dp, end = 3.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 4.dp, top = 4.dp, end = 3.dp)
+                        ) {
                             IconLocation(travel!!.country ?: "Unknown Location")
                         }
                     }
@@ -110,9 +112,11 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
                             .weight(1f),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp, top = 4.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 4.dp, top = 4.dp)
+                        ) {
                             IconDateRange(travel!!.startDate!!, travel!!.endDate!!)
                         }
                     }
@@ -166,7 +170,6 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
             LazyColumn(modifier = Modifier.weight(1f), state=listState) {
 
                 itemsIndexed(messages) { index, msg ->
-
                     val currentDate = msg.date.toLocalDate()
                     val previousDate = messages.getOrNull(index - 1)?.date?.toLocalDate()
 
@@ -192,15 +195,12 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
     }
 
     if(travel!=null && isChatLoaded){
-        /*
-        In NotificationNavigation is set as
-        AppState.updateMyTravelTab("Upcoming")
-        AppState.updateMyTravelMode(EXPLORE_TRAVEL_MODE)
-        */
-        if(myProfile.userId==travel!!.creator.userId){ // I own the travel
+
+        if(myProfile.userId==travel!!.creator.userId){
             AppState.updateMyTravelTab("My trips")
             AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-        }else if(LocalDate.now().isAfter(travel!!.endDate)){
+
+        } else if(LocalDate.now().isAfter(travel!!.endDate)){
             AppState.updateMyTravelTab("Past")
         }
 
@@ -213,9 +213,7 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
                 }
             }
         }
-
     }
-
 }
 
 

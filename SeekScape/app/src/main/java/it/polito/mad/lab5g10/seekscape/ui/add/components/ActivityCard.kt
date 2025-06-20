@@ -48,9 +48,7 @@ fun ActivityCard (image: ImageVector, title: String, optional: Boolean, onClick:
                         .padding(8.dp)
                         .size(24.dp)
                 )
-                Text(
-                    text = title,
-                )
+                Text(title)
             }
             Spacer(modifier = Modifier.weight(1f))
             Box(

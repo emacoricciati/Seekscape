@@ -122,8 +122,8 @@ fun ResetEmailCompletedScreen(navCont: NavHostController, uid: String, email: St
         ) {
             CircularProgressIndicator()
         }
-    }
-    else {
+
+    } else {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -135,26 +135,26 @@ fun ResetEmailCompletedScreen(navCont: NavHostController, uid: String, email: St
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                    Spacer(modifier = Modifier.height(1.dp))
+                Spacer(modifier = Modifier.height(1.dp))
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (isError){
-                            Text(
-                                text = "Error while updating email",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                        }
-                        else {
-                            AnimatedCheckmark()
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(
-                                text = "Operation completed",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                        }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (isError){
+                        Text(
+                            text = "Error while updating email",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
                     }
+                    else {
+                        AnimatedCheckmark()
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            text = "Operation completed",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                }
 
                 Button(
                     onClick = {
@@ -165,7 +165,8 @@ fun ResetEmailCompletedScreen(navCont: NavHostController, uid: String, email: St
                                 AppState.setUserAsUnlogged()
                             }
                         }
-                            navCont.navigate(MainDestinations.HOME_ROUTE) },
+                        navCont.navigate(MainDestinations.HOME_ROUTE)
+                      },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)

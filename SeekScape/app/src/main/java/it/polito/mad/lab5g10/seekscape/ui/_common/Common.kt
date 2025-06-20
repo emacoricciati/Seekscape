@@ -562,6 +562,7 @@ fun NotificationItemView(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
+
             NOT_LAST_MINUTE_JOIN -> {
                 Icon(
                     imageVector = Icons.Outlined.Timelapse,

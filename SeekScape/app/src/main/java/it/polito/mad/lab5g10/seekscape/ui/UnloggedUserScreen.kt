@@ -20,15 +20,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 
 
 @Composable
 fun UnloggedUserScreen(navHostController: NavHostController){
-    val coroutineScope = rememberCoroutineScope()
-    val actions = remember (navHostController){ Actions(navHostController) }
-    val uriHandler = LocalUriHandler.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +39,7 @@ fun UnloggedUserScreen(navHostController: NavHostController){
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
-        // Jetpack compose Button to navigate to login screen
+
         Button(
             onClick = {
                 AppState.updateCurrentTab(MainDestinations.PROFILE_ROUTE)
@@ -54,5 +51,5 @@ fun UnloggedUserScreen(navHostController: NavHostController){
         ) {
             Text("Log In", style = MaterialTheme.typography.titleMedium)
         }
-        }
     }
+}

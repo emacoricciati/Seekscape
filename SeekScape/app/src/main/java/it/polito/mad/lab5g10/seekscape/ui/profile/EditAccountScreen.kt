@@ -45,9 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
-import it.polito.mad.lab5g10.seekscape.phonePrefixes
 import it.polito.mad.lab5g10.seekscape.services.AccountService
-import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
+import it.polito.mad.lab5g10.seekscape.ui._common.phonePrefixes
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import kotlinx.coroutines.launch
 
@@ -72,7 +71,6 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
     var showNewPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
 
-    val actions = remember(navCont) { Actions(navCont) }
     val userId = AppState.myProfile.collectAsState().value.userId
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -205,7 +203,7 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded },
-                    ) {
+                ) {
                     OutlinedTextField(
                         value = selectedPrefix,
                         onValueChange = {selectedPrefix = it},
@@ -220,9 +218,7 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
                         modifier = Modifier
-                            .width(
-                                100.dp
-                            )
+                            .width(100.dp)
                             .menuAnchor()
                     )
                     ExposedDropdownMenu(

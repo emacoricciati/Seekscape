@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import it.polito.mad.lab5g10.seekscape.models.UserInfoViewModel
 
 @Composable
 fun PillButton(text: String){

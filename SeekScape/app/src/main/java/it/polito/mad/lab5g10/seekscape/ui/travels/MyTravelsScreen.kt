@@ -276,6 +276,7 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
         ) {
             CircularProgressIndicator()
         }
+
     } else {
         val actions = remember(navController) { Actions(navController) }
         if (ownedTravels.isEmpty()) {
@@ -392,6 +393,7 @@ fun RequestsScreen(
         ) {
             CircularProgressIndicator()
         }
+
     } else {
         if (requests.isEmpty()) {
             Box(
@@ -437,11 +439,9 @@ fun ReqMng(index: String, vm: RequestViewModel, ownedTravelViewModel: OwnedTrave
     var showModalBottom by remember { mutableStateOf(false) }
     var openTextBox by remember { mutableStateOf(false) }
     var confirmReq by remember { mutableStateOf(false) }
-
     val isAccepted by vm.getRequest(index).isAcceptedValue.collectAsState()
     val isRefused by vm.getRequest(index).isRefusedValue.collectAsState()
     var actionDone by remember { mutableStateOf(false) }
-    val actions = remember(navController) { Actions(navController) }
 
     if (!isAccepted && !isRefused) {
         Row(
