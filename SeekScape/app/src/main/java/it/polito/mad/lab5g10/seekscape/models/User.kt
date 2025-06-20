@@ -244,8 +244,9 @@ class RequestViewModel() : ViewModel() {
         }
     }
 
-    fun getRequest(requestId: String): RequestInfoModel =
-        _requests.value.first { it.idValue.value == requestId }
+    fun getRequest(requestId: String): RequestInfoModel{
+        return _requests.value.first { it.idValue.value == requestId }
+    }
 
     fun removeReqFromList(requestId: String){
         _requests.value = _requests.value.filter { it.idValue.value!=requestId }

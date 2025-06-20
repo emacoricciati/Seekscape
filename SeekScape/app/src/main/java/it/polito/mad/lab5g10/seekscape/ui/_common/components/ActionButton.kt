@@ -66,11 +66,13 @@ fun ActionButton(actionName: String, onClick: ()->Unit) {
 
 @Composable
 fun ConfirmButton(acceptAction: ()->Unit){
-    IconButton(onClick = acceptAction,
+    IconButton(
+        onClick = acceptAction,
         modifier = Modifier
             .size(30.dp)
             .background(color = Color(0xFF4CAF50), shape = CircleShape)
-            .clip(CircleShape)) {
+            .clip(CircleShape)
+    ) {
         Icon(
             imageVector = Icons.Filled.Check,
             contentDescription = "Confirm request",
@@ -81,11 +83,13 @@ fun ConfirmButton(acceptAction: ()->Unit){
 
 @Composable
 fun DenyButton(denyAction: ()->Unit){
-    IconButton(onClick = denyAction,
+    IconButton(
+        onClick = denyAction,
         modifier = Modifier
             .size(30.dp)
             .background(color = MaterialTheme.colorScheme.error, shape = CircleShape)
-            .clip(CircleShape)) {
+            .clip(CircleShape)
+    ) {
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = "Deny request",

@@ -77,66 +77,69 @@ fun RequestModal(requestId: String, vm: RequestViewModel, ownedTravelViewModel: 
     }
 
     ModalBottomSheet(
-            modifier = Modifier.fillMaxHeight(0.7f),
-            sheetState = sheetState,
-            onDismissRequest = onDismiss
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().
-                padding(end = 30.dp),
-                horizontalArrangement = Arrangement.End){
-                IconButton(
-                    onClick = closeModal,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close modal",
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
-            Column(
+        modifier = Modifier.fillMaxHeight(0.7f),
+        sheetState = sheetState,
+        onDismissRequest = onDismiss
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().
+            padding(end = 30.dp),
+            horizontalArrangement = Arrangement.End
+        ){
+            IconButton(
+                onClick = closeModal,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column() {
-                    Row(modifier = Modifier.fillMaxWidth()){
-                        Text(trip.title!!,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    UserInfo(author, spots)
-                    HorizontalDivider(modifier =  Modifier.fillMaxWidth()
-                        .padding(start = 5.dp, end = 5.dp, bottom = 20.dp))
-                    if(!openTextBox){
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .verticalScroll(rememberScrollState())
-                        ){
-                            Text(reqMes, style = MaterialTheme.typography.bodyMedium)
-                        }
-                    }
-                    else{
-                        EditableTextBox(requestId, vm, ownedTravelViewModel, confirm, onDismiss)
-                    }
-
-                }
-            }
-
-            if(!openTextBox){
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
-                    horizontalArrangement = Arrangement.End
-                ){
-                    ButtonsSection({ openTextBox = true; confirm = true}, {openTextBox = true; confirm = false})
-                }
+                    .size(40.dp)
+                    .clip(CircleShape)) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close modal",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(40.dp)
+                )
             }
         }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column() {
+                Row(modifier = Modifier.fillMaxWidth()){
+                    Text(trip.title!!,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                UserInfo(author, spots)
+                HorizontalDivider(
+                    modifier =  Modifier.fillMaxWidth()
+                        .padding(start = 5.dp, end = 5.dp, bottom = 20.dp)
+                )
+                if(!openTextBox){
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                    ){
+                        Text(reqMes, style = MaterialTheme.typography.bodyMedium)
+                    }
+
+                } else {
+                    EditableTextBox(requestId, vm, ownedTravelViewModel, confirm, onDismiss)
+                }
+
+            }
+        }
+
+        if(!openTextBox){
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
+                horizontalArrangement = Arrangement.End
+            ){
+                ButtonsSection({ openTextBox = true; confirm = true}, {openTextBox = true; confirm = false})
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -212,9 +215,11 @@ fun ShowResponseModal(request:Request, user: User, travelId: String, showModal: 
 @Composable
 fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello user e linkare l'icon dello user al rispettivo profilo
     val avgRating = if(author.reviews != null){
-        (author.reviews as Iterable<Review>).map{it.rating}.average()
-    }
-    else{
+        author.reviews
+            ?.map { it.rating }
+            ?.takeIf { it.isNotEmpty() }
+            ?.average() ?: 0.0
+    } else{
         0.0
     }
 
@@ -222,26 +227,33 @@ fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello 
         modifier = Modifier.padding(bottom = 5.dp),
         horizontalArrangement = Arrangement.Start)
     {
-            UserImage(author.profilePic, 70.dp, author.name, author.surname)
-        Column(verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(start = 5.dp, top = 5.dp)){
-            Text(author.name+ " " + author.surname,
+        UserImage(author.profilePic, 70.dp, author.name, author.surname)
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(start = 5.dp, top = 5.dp)
+        ){
+            Text(
+                text=author.name+ " " + author.surname,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface)
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ){
-                Text(String.format("%.1f", avgRating),
+                Text(
+                    text=String.format("%.1f", avgRating),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface)
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(Icons.Rounded.Star, contentDescription = "Rating", modifier = Modifier.size(20.dp))
             }
             Text(
-                "Spot requested: $spotReq",
+                text="Spot requested: $spotReq",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface)
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -268,7 +280,7 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
         )
-    ){
+    ) {
         TextField(
             value = text,
             onValueChange = { text = it},
@@ -276,7 +288,8 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
                 Text(placeHolder,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                ) },
+                )
+              },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -290,9 +303,11 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
         )
     }
 
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp, end = 30.dp),
-        horizontalArrangement = Arrangement.Center){
-        if(confirm)
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, end = 30.dp),
+        horizontalArrangement = Arrangement.Center
+    ){
+        if(confirm){
             AcceptButton {
                 request.responseMessage=text
                 scope.launch{
@@ -301,7 +316,7 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
                     closeModal()
                 }
             }
-        else
+        } else {
             DeclineButton {
                 request.responseMessage=text
                 scope.launch{
@@ -310,5 +325,6 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
                     closeModal()
                 }
             }
+        }
     }
 }
