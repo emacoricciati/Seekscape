@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,6 +60,7 @@ fun RequestModal(req: Request, vm: RequestViewModel, ownedTravelViewModel: Owned
     var confirm by remember { mutableStateOf(confirmState) }
     val scope = rememberCoroutineScope()
 
+    val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { true }
@@ -76,64 +78,67 @@ fun RequestModal(req: Request, vm: RequestViewModel, ownedTravelViewModel: Owned
         sheetState = sheetState,
         onDismissRequest = onDismiss
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().
-            padding(end = 30.dp),
-            horizontalArrangement = Arrangement.End
-        ){
-            IconButton(
-                onClick = closeModal,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close modal",
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(40.dp)
-                )
-            }
-        }
         Column(
             modifier = Modifier
+                .fillMaxHeight()
                 .fillMaxWidth()
-                .padding(16.dp)
+                .heightIn(max = 500.dp)
+                .padding(start=16.dp, end=16.dp)
         ) {
-            Column() {
-                Row(modifier = Modifier.fillMaxWidth()){
-                    Text(req.trip.title!!,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(modifier = Modifier.fillMaxWidth()){
+                        Text(req.trip.title!!,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    UserInfo(req.author, req.spots)
+                }
+
+                IconButton(
+                    onClick = closeModal,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close modal",
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(40.dp)
                     )
                 }
-                UserInfo(req.author, req.spots)
-                HorizontalDivider(
-                    modifier =  Modifier.fillMaxWidth()
-                        .padding(start = 5.dp, end = 5.dp, bottom = 20.dp)
-                )
-                if(!openTextBox){
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ){
-                        Text(req.reqMessage, style = MaterialTheme.typography.bodyMedium)
-                    }
+            }
 
-                } else {
-                    EditableTextBox(req.id, vm, ownedTravelViewModel, confirm, onDismiss)
+            HorizontalDivider(
+                modifier =  Modifier.fillMaxWidth()
+                    .padding(start = 5.dp, end = 5.dp, bottom = 20.dp)
+            )
+            if(!openTextBox){
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start=10.dp, end=10.dp)
+                        .verticalScroll(scrollState)
+                ){
+                    Text(req.reqMessage, style = MaterialTheme.typography.bodyMedium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top=20.dp, end = 30.dp),
+                        horizontalArrangement = Arrangement.End
+                    ){
+                        ButtonsSection({ openTextBox = true; confirm = true}, {openTextBox = true; confirm = false})
+                    }
                 }
 
+            } else {
+                EditableTextBox(req.id, vm, ownedTravelViewModel, confirm, onDismiss)
             }
-        }
 
-        if(!openTextBox){
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
-                horizontalArrangement = Arrangement.End
-            ){
-                ButtonsSection({ openTextBox = true; confirm = true}, {openTextBox = true; confirm = false})
-            }
         }
     }
 }
@@ -209,7 +214,7 @@ fun ShowResponseModal(request:Request, user: User, travelId: String, showModal: 
 }
 
 @Composable
-fun UserInfo(author: User, spotReq: Int){         //da passare poi i dati dello user e linkare l'icon dello user al rispettivo profilo
+fun UserInfo(author: User, spotReq: Int){
     val avgRating = if(author.reviews != null){
         author.reviews
             ?.map { it.rating }
@@ -269,7 +274,7 @@ fun EditableTextBox(requestId: String, vm: RequestViewModel, ownedTravelViewMode
     ElevatedCard (
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(180.dp)
             .shadow(8.dp, shape = RoundedCornerShape(20.dp))
             .padding(start = 5.dp, end = 5.dp),
         colors = CardDefaults.cardColors(

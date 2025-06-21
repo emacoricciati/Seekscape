@@ -166,17 +166,20 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                     ) {
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp, end = 3.dp)) {
+                            .padding(bottom = 4.dp, end = 3.dp)
+                        ) {
                             IconLocation(travel.country ?: "Unknown Location")
                         }
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 6.dp)) {
+                            .padding(bottom = 6.dp)
+                        ) {
                             IconPeopleJoined(travel.travelCompanions!!, travel.maxPeople!!)
                         }
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp, end = 3.dp)) {
+                            .padding(bottom = 4.dp, end = 3.dp)
+                        ) {
                             IconTravelType(travel)
                         }
                     }
@@ -188,12 +191,14 @@ fun TravelCard(travel: Travel, onCardClick: () -> Unit, textAbove: String? = nul
                     ) {
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp)) {
+                            .padding(bottom = 4.dp)
+                        ) {
                             IconDateRange(travel.startDate!!, travel.endDate!!)
                         }
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp)) {
+                            .padding(bottom = 4.dp)
+                        ) {
                             IconCost(travel.priceMin!!, travel.priceMax!!)
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {

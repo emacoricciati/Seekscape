@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,12 +57,12 @@ fun RequestCard(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedT
 
             Column(
                 modifier = Modifier
-                    .padding(start = 3.dp, end = 3.dp)
+                    .padding(start = 3.dp, end = 3.dp, top = 2.dp)
                     .weight(1f)
             ) {
                 Text(
-                    text=req.trip.title!!,
-                    style = MaterialTheme.typography.titleLarge,
+                    text=req.trip.title ?: "Untitled Travel",
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -99,7 +100,7 @@ fun TravelSmallImage(tripImage: TravelImage, userImage: ProfilePic?, name: Strin
     Box(
         modifier = Modifier
             .size(90.dp)
-            .padding(start = 5.dp, top = 5.dp)
+            .padding(start = 5.dp, top = 5.dp, bottom = 5.dp)
     ) {
         val painter = when (tripImage) {
             is TravelImage.Url -> rememberAsyncImagePainter(model = tripImage.value)

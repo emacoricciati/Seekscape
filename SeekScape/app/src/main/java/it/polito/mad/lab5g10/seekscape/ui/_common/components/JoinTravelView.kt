@@ -119,14 +119,35 @@ fun TravelResumeCard(travel: Travel) {
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
                     )
+
                     Row(modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)) {
-                        IconDateRange(travel.startDate!!, travel.endDate!!)
-                    }
-                    Row(modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)) {
-                        IconPeopleJoined(
-                            travel.travelCompanions!!,
-                            travel.maxPeople!!
-                        )     //travel.travelCompanions!!, travel.maxPeople!!
+                        Column(
+                            modifier = Modifier
+                                .weight(1f),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                            ) {
+                                IconDateRange(travel.startDate!!, travel.endDate!!)
+                            }
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .weight(1f),
+                        ) {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                            ) {
+                                IconPeopleJoined(
+                                    travel.travelCompanions!!,
+                                    travel.maxPeople!!
+                                )
+                            }
+                        }
+
                     }
                 }
             }

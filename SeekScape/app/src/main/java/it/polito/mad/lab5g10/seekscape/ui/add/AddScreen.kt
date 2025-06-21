@@ -1045,8 +1045,6 @@ fun TripRangeSlider(
             RangeSlider(
                 value = localMin..localMax,
                 onValueChange = { range ->
-                    // coerceAtMost is used to be sure that range.start is at most equal to range.endInclusive
-                    // coerceAtLeast is used as coerceAtMost but opposite
                     localMin = range.start.roundToInt().toFloat().coerceAtMost(localMax)
                     localMax = range.endInclusive.roundToInt().toFloat().coerceAtLeast(localMin)
                     onRangeSelected(localMin.toInt()..localMax.toInt())
@@ -1069,8 +1067,15 @@ fun TripRangeSlider(
                 value = localMin.toInt().toString(),
                 onValueChange = {
                     it.toIntOrNull()?.let { value ->
-                        val newValue = if (value >= MIN_PRICE) value else MIN_PRICE
-                        localMin = newValue.coerceAtMost(localMax.toInt()).toFloat()
+                        var newValue = value
+                        if (value < MIN_PRICE)
+                            newValue = MIN_PRICE
+                        if (value > MAX_PRICE)
+                            newValue = MAX_PRICE
+                        var newMin = newValue.coerceAtMost(MAX_PRICE).toFloat()
+                        var newMax = localMax.toInt().coerceAtLeast(newMin.toInt()).toFloat()
+                        localMin = newMin
+                        localMax = newMax
                         onRangeSelected(localMin.toInt()..localMax.toInt())
                     }
                 },

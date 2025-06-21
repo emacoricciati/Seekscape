@@ -59,13 +59,17 @@ fun TabSelectionExplorerMode(exploreTravelViewModel: ExploreModeTravelViewModel,
         exploreTravelViewModel.fetchTravels(myTravelTab, null)
     }
 
-    Column  {
+    Column (
+        modifier = Modifier.padding(bottom = 0.dp)
+    ) {
         ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 0.dp
-            ) {
+            selectedTabIndex = selectedTabIndex,
+            edgePadding = 0.dp,
+            modifier = Modifier.padding(bottom = 0.dp)
+        ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
+                    modifier = Modifier.padding(bottom=0.dp),
                     text = { Text(title) },
                     selected = selectedTabIndex == index,
                     onClick = {
@@ -109,7 +113,7 @@ fun ExploreModeTrips(travels: List<Travel>, myTravelTab: String, navController: 
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(start = 16.dp, end = 16.dp, top=8.dp)
             .fillMaxSize()
     ) {
 
@@ -227,10 +231,16 @@ fun TabSelectionCreator(
     val badgeCount = requestsViewModel.requests.collectAsState().value.count {
         !it.isAcceptedValue.collectAsState().value && !it.isRefusedValue.collectAsState().value
     }
-    Column {
-        TabRow(selectedTabIndex = selectedTabIndex) {
+    Column (
+        modifier = Modifier.padding(bottom = 0.dp)
+    ){
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.padding(bottom = 0.dp)
+        ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
+                    modifier = Modifier.padding(bottom=0.dp),
                     text = {
                         if (index == 1 && badgeCount > 0) {
                             BadgedBox(
@@ -254,7 +264,6 @@ fun TabSelectionCreator(
                 )
             }
         }
-
         when (myTravelTab) {
             "My trips" -> UserTripsScreen(ownedTravelViewModel, navController)
             "Requests" -> RequestsScreen(requestsViewModel, ownedTravelViewModel, action, navController)
@@ -271,6 +280,8 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
     LaunchedEffect(Unit) {
         ownedTravelViewModel.refresh()
     }
+
+    Spacer(Modifier.height(8.dp))
     if(!fetched){
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -401,6 +412,7 @@ fun RequestsScreen(
         requestsViewModels.updateRequests()
     }
 
+    Spacer(Modifier.height(8.dp))
     if(!fetched){
         Box(
             modifier = Modifier.fillMaxSize(),
