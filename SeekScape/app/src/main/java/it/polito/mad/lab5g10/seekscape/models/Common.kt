@@ -7,6 +7,7 @@ import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.lang.Thread.State
 import kotlin.collections.listOf
 
 
@@ -133,6 +134,13 @@ object AppState {
         if(tabs.contains(new) && new!=_currentTab.value){
             _currentTab.value = new
         }
+    }
+
+    private val _openNotification = MutableStateFlow<Boolean>(false)
+    val openNotification: StateFlow<Boolean> = _openNotification.asStateFlow()
+    fun updateOpenNotification(new: Boolean){
+        if(new != _openNotification.value)
+            _openNotification.value = new
     }
 
     private val _redirectPath = MutableStateFlow<String>("")

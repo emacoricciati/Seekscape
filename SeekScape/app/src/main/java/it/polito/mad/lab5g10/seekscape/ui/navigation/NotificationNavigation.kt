@@ -17,9 +17,9 @@ import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 
 
 fun navigateToNotificationAction(notification: NotificationItem) {
+    AppState.updateOpenNotification(true)
 
     when (notification.type) {
-
         NOT_MY_PROFILE_REV -> {
             AppState.updateCurrentTab(notification.tab)
             AppState.updateRedirectPath(notification.navRoute)
