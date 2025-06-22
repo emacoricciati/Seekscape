@@ -329,11 +329,11 @@ fun TravelDescription(vm: TravelViewModel, modifier: Modifier = Modifier, navCon
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(top=5.dp, bottom=7.dp),
         )
 
         //------------------------------- COUNTRY and DATES, PEOPLE and PRICE -------------------------------
-        val paddingHorizontalScreen = 15.dp
+        val paddingHorizontalScreen = 6.dp
         Spacer(modifier = Modifier.height(6.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically

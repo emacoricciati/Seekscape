@@ -48,7 +48,7 @@ fun BottomDialog(
                         detectTapGestures { /* Consumes all taps */ }
                     }
             ) {
-                Box(modifier = Modifier.padding(20.dp)) {
+                Box(modifier = Modifier.padding(16.dp)) {
                     content()
                 }
             }

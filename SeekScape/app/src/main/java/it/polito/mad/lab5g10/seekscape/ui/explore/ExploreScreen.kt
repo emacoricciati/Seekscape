@@ -28,8 +28,20 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -331,7 +343,7 @@ fun FilterChipsReadOnly(vm: SearchViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
     val context = LocalContext.current
@@ -355,6 +367,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .fillMaxWidth()
+                .padding(0.dp)
         ) {
             //HEADER
             Row(
@@ -362,7 +375,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 3.dp, bottom = 10.dp)
+                    .padding(top = 3.dp, bottom = 5.dp)
             ) {
                 Spacer(Modifier.width(1.dp))
                 Row(
@@ -373,13 +386,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                         imageVector = Icons.Filled.Tune,
                         contentDescription = "filters",
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = "Select Filters",
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(start=15.dp)
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start=10.dp)
                     )
                 }
                 IconButton(
@@ -405,10 +418,11 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp),
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "Available travels only",
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -417,13 +431,15 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     onCheckedChange = { isChecked ->
                         vm.setAvailable(isChecked)
                     },
+                    modifier = Modifier
+                        .padding(bottom = 8.dp),
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp, bottom = 8.dp),
+                    .padding(bottom = 8.dp),
                 color = MaterialTheme.colorScheme.outline
             )
 
@@ -439,15 +455,15 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                 Text(
                     text = "Location",
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             if (place!!.isNotEmpty()) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp)
                 ) {
                     PillButtonEditable(place!!) { vm.removePlace() }
                 }
@@ -474,8 +490,6 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             }
 
 
-
-
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -483,11 +497,9 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                 color = MaterialTheme.colorScheme.outline
             )
 
-
             //DATES
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 3.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.DateRange,
@@ -499,7 +511,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                 Text(
                     text = "Dates",
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             Row (
@@ -513,7 +525,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp, top = 6.dp),
+                    .padding(bottom = 8.dp),
                 color = MaterialTheme.colorScheme.outline
             )
 
@@ -522,8 +534,9 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             val durationSteps = durationRange.endInclusive - durationRange.start - 1
             var durationCurrentRange by remember { mutableStateOf(minDuration..maxDuration) }
             FlowRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -536,7 +549,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     Text(
                         text = "Duration (days)",
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
 
@@ -556,10 +569,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(end = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ) {
-                        Text(text = "${durationCurrentRange.start}")
+                        Text(
+                            text = "${durationCurrentRange.start}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
@@ -576,10 +592,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(horizontal = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ) {
-                        Text(text = "${durationCurrentRange.endInclusive}")
+                        Text(
+                            text = "${durationCurrentRange.endInclusive}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
@@ -611,8 +630,9 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             val priceSteps = ((priceRange.endInclusive - priceRange.start) / pricestepSize) - 1
             var priceCurrentRange by remember { mutableStateOf(minPrice..maxPrice) }
             FlowRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconMoney(Icons.Filled.Euro)
@@ -620,7 +640,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     Text(
                         text = "Price Range",
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
                 Row(
@@ -639,10 +659,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(end = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ) {
-                        Text(text = "${priceCurrentRange.start}")
+                        Text(
+                            text = "${priceCurrentRange.start}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
@@ -659,10 +682,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(horizontal = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ) {
-                        Text(text = "${priceCurrentRange.endInclusive}")
+                        Text(
+                            text = "${priceCurrentRange.endInclusive}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
@@ -697,8 +723,9 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
             val companionsSteps = companionsRange.endInclusive - companionsRange.start - 1
             var companionsCurrentRange by remember { mutableStateOf(minCompanions..maxCompanions) }
             FlowRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -711,7 +738,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     Text(
                         text = "Companions",
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
                 Row(
@@ -730,10 +757,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(end = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ){
-                        Text(text = "${companionsCurrentRange.start}")
+                        Text(
+                            text = "${companionsCurrentRange.start}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
@@ -750,10 +780,13 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(horizontal = 10.dp),
                         contentAlignment = Alignment.CenterEnd
                     ){
-                        Text(text = "${companionsCurrentRange.endInclusive}")
+                        Text(
+                            text = "${companionsCurrentRange.endInclusive}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
@@ -792,7 +825,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                 Text(
                     text = "Travel type",
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             var showTravelTypeDialog by remember { mutableStateOf(false) }
@@ -804,7 +837,7 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
-                        .padding(top=5.dp)
+                        .padding(top=5.dp, bottom = 0.dp)
                 ) {
 
                     travelTypes.forEach { PillButtonEditable(it) { vm.removeTravelTypes(it) } }
@@ -851,18 +884,20 @@ fun FilterDialog(vm: SearchViewModel, onDismissRequest: () -> Unit) {
                     text = {
                         Column {
                             TRAVEL_TYPES.forEach { type ->
-                                TextButton(onClick = {
-                                    if (!travelTypes.contains(type)) {
-                                        vm.addTravelTypes(type)
-                                    } else {
-                                        // Show toast for duplicate entry
-                                        Toast.makeText(
-                                            context,
-                                            "$type already selected",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                TextButton(
+                                    onClick = {
+                                        if (!travelTypes.contains(type)) {
+                                            vm.addTravelTypes(type)
+                                        } else {
+                                            // Show toast for duplicate entry
+                                            Toast.makeText(
+                                                context,
+                                                "$type already selected",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
-                                }) {
+                                ) {
                                     Text(type)
                                 }
                             }

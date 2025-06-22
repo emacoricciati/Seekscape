@@ -82,15 +82,15 @@ fun TravelResumeCard(travel: Travel) {
                     painter = painter,
                     contentDescription = "Travel Image for travel",
                     modifier = Modifier
-                        .width(120.dp)
+                        .width(130.dp)
                         .height(120.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
+                        .clip(RoundedCornerShape(10.dp))
+                        .padding(10.dp),
                     contentScale = ContentScale.Crop
                 )
                 Column(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(start = 10.dp, top = 10.dp)
+                        .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                 ) {
                     Text(
                         text = travel.title ?: "Untitled Travel",
@@ -110,7 +110,7 @@ fun TravelResumeCard(travel: Travel) {
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
                 color = MaterialTheme.colorScheme.outline
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Row(modifier = Modifier.padding(start = 10.dp)) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -155,7 +155,7 @@ fun TravelResumeCard(travel: Travel) {
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
                 color = MaterialTheme.colorScheme.outline
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Row(modifier = Modifier.padding(start = 10.dp)) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -169,7 +169,7 @@ fun TravelResumeCard(travel: Travel) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
@@ -183,7 +183,7 @@ fun SelectNumberSpots(
     var showDropdown by remember { mutableStateOf(false) }
     var currentSelection by remember { mutableStateOf(selectedNumber) }
 
-    Column {
+    Column (modifier = Modifier.fillMaxWidth().padding(bottom = 0.dp)){
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(start = 40.dp)
@@ -241,9 +241,9 @@ fun TextBox(vm: SingleRequestViewModel, name: String){
 
     ElevatedCard (
         modifier = Modifier
-            .height(240.dp)
-            .shadow(30.dp, shape = RoundedCornerShape(30.dp))
-            .padding(start = 30.dp, end = 30.dp),
+            .height(180.dp)
+            .shadow(20.dp, shape = RoundedCornerShape(15.dp))
+            .padding(start = 15.dp, end = 15.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
@@ -251,9 +251,10 @@ fun TextBox(vm: SingleRequestViewModel, name: String){
     ) {
         TextField(
             value = text,
-            onValueChange = { text = it
-                            vm.setReqMessage(text)
-                            },
+            onValueChange = {
+                text = it
+                vm.setReqMessage(text)
+              },
             placeholder = {
                 Text(
                     text="Hi ${name} I'd like to join your group...",
@@ -263,7 +264,7 @@ fun TextBox(vm: SingleRequestViewModel, name: String){
               },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(5.dp),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
@@ -328,7 +329,7 @@ fun ConfirmRequestButton(vm: SingleRequestViewModel, navCont: NavHostController)
             },
             modifier = Modifier
                 .fillMaxWidth(0.7f)
-                .padding(vertical = 20.dp)
+                .padding(vertical = 10.dp)
         ) {
             Text("Confirm", style = MaterialTheme.typography.titleSmall)
         }

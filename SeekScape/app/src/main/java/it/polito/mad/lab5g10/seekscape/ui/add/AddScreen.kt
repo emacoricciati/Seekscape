@@ -69,7 +69,6 @@ import it.polito.mad.lab5g10.seekscape.copyUriToInternalStorage
 import it.polito.mad.lab5g10.seekscape.firebase.CommonModel
 import it.polito.mad.lab5g10.seekscape.firebase.TheTravelModel
 import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
-import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.TRAVEL_TYPES
 import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.ui._common.components.AddLocation

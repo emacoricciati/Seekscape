@@ -60,7 +60,7 @@ fun ApplyToJoinView(travel: Travel, navCont: NavHostController) {
 
         Spacer(modifier = Modifier.height(10.dp))
         TravelResumeCard(travel)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,7 +74,7 @@ fun ApplyToJoinView(travel: Travel, navCont: NavHostController) {
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)
+                .padding(horizontal = 24.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         TextBox(viewModel, travel.creator.name + travel.creator.surname)

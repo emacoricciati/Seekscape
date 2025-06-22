@@ -379,7 +379,7 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
                 if (currentRoute != null) {
                     if (isLogged) {
                         if(!currentRoute.contains("profile")){
-                            UserImage(user.profilePic, 46.dp, user.name, user.surname)
+                            UserImage(user.profilePic, 40.dp, user.name, user.surname)
                         }
                         else if(currentRoute != "profile/edit")
                             NotificationBell(notifications = user.notifications, currentNavController)
