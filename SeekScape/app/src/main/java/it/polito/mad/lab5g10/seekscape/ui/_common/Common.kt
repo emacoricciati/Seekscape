@@ -99,6 +99,7 @@ import it.polito.mad.lab5g10.seekscape.models.NOT_REQ_DEN
 import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.models.TravelImage
 import it.polito.mad.lab5g10.seekscape.ui._common.components.UserImage
+import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import it.polito.mad.lab5g10.seekscape.ui.navigation.navigateToNotificationAction
 import kotlinx.coroutines.launch
@@ -325,6 +326,8 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
     val isLogged by AppState.isLogged.collectAsState()
     val user = AppState.myProfile.collectAsState().value
     val isDarkMode = AppState.isDarkMode.collectAsState().value
+    val actions = remember(currentNavController) { Actions(currentNavController) }
+
 
 
     TopAppBar(
@@ -344,7 +347,7 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
         navigationIcon = {
             if (canGoBack) {
                 Box() {
-                    ArrowBackIcon(clickFunc = { currentNavController.popBackStack() })
+                    ArrowBackIcon(clickFunc = { actions.navigateBack() })
                 }
             } else {
 
@@ -377,7 +380,7 @@ fun AppTopBar(title: String, currentNavController: NavHostController, canGoBack:
                     }
             ){
                 if (currentRoute != null) {
-                    if (isLogged) {
+                    if (isLogged && AppState.doneFirstFetch.collectAsState().value) {
                         if(!currentRoute.contains("profile")){
                             UserImage(user.profilePic, 40.dp, user.name, user.surname)
                         }

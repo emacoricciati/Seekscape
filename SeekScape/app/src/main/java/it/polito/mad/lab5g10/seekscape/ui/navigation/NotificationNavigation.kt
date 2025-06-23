@@ -1,6 +1,5 @@
 package it.polito.mad.lab5g10.seekscape.ui.navigation
 
-import androidx.navigation.NavHostController
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.CREATOR_TRAVEL_MODE
 import it.polito.mad.lab5g10.seekscape.models.EXPLORE_TRAVEL_MODE
@@ -17,7 +16,6 @@ import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 
 
 fun navigateToNotificationAction(notification: NotificationItem) {
-    AppState.updateOpenNotification(true)
 
     when (notification.type) {
         NOT_MY_PROFILE_REV -> {

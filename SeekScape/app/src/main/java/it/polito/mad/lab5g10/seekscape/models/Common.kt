@@ -137,12 +137,6 @@ object AppState {
         }
     }
 
-    private val _openNotification = MutableStateFlow<Boolean>(false)
-    val openNotification: StateFlow<Boolean> = _openNotification.asStateFlow()
-    fun updateOpenNotification(new: Boolean){
-        if(new != _openNotification.value)
-            _openNotification.value = new
-    }
 
     private val _redirectPath = MutableStateFlow<String>("")
     val redirectPath: StateFlow<String> = _redirectPath.asStateFlow()

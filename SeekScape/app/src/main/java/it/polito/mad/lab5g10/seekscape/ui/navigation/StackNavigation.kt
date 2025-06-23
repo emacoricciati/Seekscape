@@ -721,7 +721,6 @@ fun StackNavigation(
     LaunchedEffect(navCont, redirectPath, doneFirstFetch) {
         if (redirectPath.isNotEmpty() && selectedTab == tab && doneFirstFetch) {
             cleanStack(navCont, redirectPath)
-            AppState.updateOpenNotification(false)
             AppState.updateRedirectPath("")
         }
     }

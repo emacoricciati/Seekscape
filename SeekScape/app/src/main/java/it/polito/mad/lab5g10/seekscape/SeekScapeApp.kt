@@ -90,9 +90,8 @@ fun SeekScapeApp(
 
     Scaffold(
         topBar = {
-            val canGoBack = currentNavController.previousBackStackEntry != null &&
-                    currentDestination?.route !in tabs && !currentDestination?.route?.contains("add_location")!!
-                    && !currentDestination.route?.contains("unlogged")!! && !currentDestination.route?.contains("complete_registration")!!
+            val canGoBack = currentDestination != null && currentDestination.route !in tabs && currentDestination.route?.contains("add_location") == false
+                    && currentDestination.route?.contains("unlogged") == false && currentDestination.route?.contains("complete_registration") == false
             if (currentDestination?.route != "travel/{travelId}" &&
                 currentDestination?.route != "travel/{travelId}/action/{action}" &&
                 currentDestination?.route != "travel/{travelId}/chat" &&
