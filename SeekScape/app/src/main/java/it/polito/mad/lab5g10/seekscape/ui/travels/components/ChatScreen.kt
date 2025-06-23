@@ -78,21 +78,25 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(start = 55.dp, end=30.dp, top=10.dp)
         ) {
             if (travel != null) {
-                Text(
-                    text = travel!!.title ?: "Untitled Travel",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 1.dp)
+                        .padding(start = 55.dp, end=20.dp, top = 16.dp, bottom = 7.dp)
+                ) {
+                    Text(
+                        text = travel!!.title ?: "Untitled Travel",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
                 ) {
                     Column(
                         modifier = Modifier
@@ -136,7 +140,7 @@ fun TravelChatScreen(vm: ChatMessageViewModel, navController: NavHostController)
                 modifier = Modifier
                     .weight(1f)
                     .wrapContentHeight()
-                    .padding(vertical = 25.dp, horizontal = 10.dp),
+                    .padding(vertical = 25.dp, horizontal = 4.dp),
             ) {
                 Row(
                     modifier = Modifier

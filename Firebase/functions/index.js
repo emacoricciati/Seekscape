@@ -286,7 +286,7 @@ exports.notifications_create_my_profile_review = onDocumentWritten("Users/{userI
 
     const notification_type = "my_profile_review";
     const notification = {
-      id: `${notification_type}_${authorDoc.userId}`,
+      id: `${notification_type}`,
       type: notification_type,
       title: "You have a new review",
       description: `Your profile has been reviewed by ${authorDoc.nickname || "someone"}.`,
