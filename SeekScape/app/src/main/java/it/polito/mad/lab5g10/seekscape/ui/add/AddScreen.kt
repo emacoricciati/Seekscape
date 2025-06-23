@@ -73,6 +73,7 @@ import it.polito.mad.lab5g10.seekscape.models.TRAVEL_TYPES
 import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.ui._common.components.AddLocation
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -125,6 +126,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
     val isTravelLoaded by vm.isTravelLoaded.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     val theTravelModel = remember { TheTravelModel() }
+    val isLoading = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
 
@@ -455,146 +457,145 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     }
                     Spacer(Modifier.height(5.dp))
                     if (travelItinerary.isEmpty()) {
-
-                    //default add button
-                    when(mode){
-                        "copy" -> {
-                            val onClickAction = {
-                                actions.navigateToCopyTravelItinerary(vm.travelIdValue.value)
+                        //default add button
+                        when(mode){
+                            "copy" -> {
+                                val onClickAction = {
+                                    actions.navigateToCopyTravelItinerary(vm.travelIdValue.value)
+                                }
+                                AddItineraryButton(vm, onClickAction = onClickAction)
                             }
-                            AddItineraryButton(vm, onClickAction = onClickAction)
-                        }
-                        "edit" -> {
-                            val onClickAction = { actions.addItineraryfromEdit(vm.travelIdValue.value) }
-                            AddItineraryButton(vm, onClickAction = onClickAction)
-                        }
-                        "add" -> {
-                            val onClickAction = {actions.addItinerary()}
-                            AddItineraryButton(vm, onClickAction = onClickAction)
-                        }
+                            "edit" -> {
+                                val onClickAction = { actions.addItineraryfromEdit(vm.travelIdValue.value) }
+                                AddItineraryButton(vm, onClickAction = onClickAction)
+                            }
+                            "add" -> {
+                                val onClickAction = {actions.addItinerary()}
+                                AddItineraryButton(vm, onClickAction = onClickAction)
+                            }
 
-                    }
-                } else {
-                    //display itineraryCard with button for adding more
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        for (itinerary in travelItinerary.sortedBy {
-                            it.startDate
-                        }) {
-                            Box(
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .height(150.dp)
-                                    .wrapContentHeight()
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.outline,
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                        }
+                    } else {
+                        //display itineraryCard with button for adding more
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            for (itinerary in travelItinerary.sortedBy {
+                                it.startDate
+                            }) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(150.dp)
+                                        .wrapContentHeight()
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outline,
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = itinerary.name,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text = itinerary.places.firstOrNull() ?: "",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.secondary,
+                                            text = itinerary.name,
+                                            style = MaterialTheme.typography.titleMedium,
                                             modifier = Modifier.weight(1f)
                                         )
-                                        //Edit Itinerary
-                                        Box(
-                                            modifier = Modifier
-                                                .requiredSize(22.dp)
-                                                .clip(CircleShape)
-                                                .clickable {
-                                                    when(mode){
-                                                        "add" -> actions.editItineraryFromAdd(itinerary.itineraryId)
-                                                        "copy" -> { //AppState.updateCurrentTab("add");
-                                                             actions.navigateTo("add/${vm.travelIdValue.value}/copy/itinerary/${itinerary.itineraryId}/edit")}
-                                                        "edit" -> actions.editItineraryfromEdit(vm.travelIdValue.value, itinerary.itineraryId)
-                                                    }
-                                                }
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Edit,
-                                                contentDescription = "Edit Itinerary",
-                                                tint = MaterialTheme.colorScheme.onBackground,
+                                            Text(
+                                                text = itinerary.places.firstOrNull() ?: "",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            //Edit Itinerary
+                                            Box(
                                                 modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .padding(3.dp)
-                                            )
-                                        }
-                                        //Delete itinerry
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(4.dp)
-                                                .clickable {
-                                                    vm.removeItinerary(itinerary)
-                                                }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Close,
-                                                contentDescription = "Close Itinerary",
-                                                tint = MaterialTheme.colorScheme.onBackground,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                        }
+                                                    .requiredSize(22.dp)
+                                                    .clip(CircleShape)
+                                                    .clickable {
+                                                        when(mode){
+                                                            "add" -> actions.editItineraryFromAdd(itinerary.itineraryId)
+                                                            "copy" -> { //AppState.updateCurrentTab("add");
+                                                                 actions.navigateTo("add/${vm.travelIdValue.value}/copy/itinerary/${itinerary.itineraryId}/edit")}
+                                                            "edit" -> actions.editItineraryfromEdit(vm.travelIdValue.value, itinerary.itineraryId)
+                                                        }
+                                                    }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Edit,
+                                                    contentDescription = "Edit Itinerary",
+                                                    tint = MaterialTheme.colorScheme.onBackground,
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .padding(3.dp)
+                                                )
+                                            }
+                                            //Delete itinerry
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .clickable {
+                                                        vm.removeItinerary(itinerary)
+                                                    }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Close,
+                                                    contentDescription = "Close Itinerary",
+                                                    tint = MaterialTheme.colorScheme.onBackground,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
 
+                                        }
                                     }
                                 }
                             }
-                        }
-                        // Small circle button to add more itineraries
-                        IconButton(
-                            onClick = {
-                                when(mode){
-                                    "copy" -> {AppState.updateCurrentTab("add"); AppState.updateRedirectPath("add/${vm.travelIdValue.value}/copy/itinerary")}
-                                    "edit" -> actions.addItineraryfromEdit(vm.travelIdValue.value)
-                                    "add" -> actions.addItinerary()
-                                }
-                            },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surface)
-                                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add Itinerary",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            // Small circle button to add more itineraries
+                            IconButton(
+                                onClick = {
+                                    when(mode){
+                                        "copy" -> {AppState.updateCurrentTab("add"); AppState.updateRedirectPath("add/${vm.travelIdValue.value}/copy/itinerary")}
+                                        "edit" -> actions.addItineraryfromEdit(vm.travelIdValue.value)
+                                        "add" -> actions.addItinerary()
+                                    }
+                                },
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Itinerary",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
-                }
-                if (vm.itineraryError.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        vm.itineraryError,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                }
+                    if (vm.itineraryError.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            vm.itineraryError,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
 
 
                     val currentTravelState by vm.statusForUser.collectAsState()
@@ -653,11 +654,11 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                             }
                     ) {
                         Button(
+                            enabled = !isLoading.value,
                             onClick = {
                                 if (vm.validateTravel()) {
-
+                                    isLoading.value = true
                                     if (mode == "edit") { // modify
-
                                         scope.launch {
                                             try{
                                                 val oldTravel = CommonModel.getTravelById(vm.travelIdValue.value)
@@ -692,6 +693,8 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                                             }catch (e: Exception){
                                                 Toast.makeText(currentContext, "Failed to update travel: ${e.message}", Toast.LENGTH_LONG).show()
                                                 Log.e("updateTravel", "Error updating travel", e)
+                                            } finally {
+                                                isLoading.value = false
                                             }
                                         }
 
@@ -729,6 +732,8 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                                             } catch (e: Exception) {
                                                 Toast.makeText(currentContext, "Failed to add travel: ${e.message}", Toast.LENGTH_LONG).show()
                                                 Log.e("addTravel", "Error adding travel", e)
+                                            } finally {
+                                                isLoading.value = false
                                             }
                                         }
                                     }
@@ -743,6 +748,14 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                         }
                     }
 
+                }
+            }
+            if (isLoading.value) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         } else {

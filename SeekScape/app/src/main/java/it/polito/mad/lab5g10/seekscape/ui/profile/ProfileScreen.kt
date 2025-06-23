@@ -54,6 +54,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -595,7 +596,7 @@ fun EditableUserDestinations(vm: UserInfoViewModel, showScreen: MutableState<Boo
 
 @Composable
 fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
-              onRequestGalleryPermission: () -> Unit, navCont: NavHostController, userId:String){
+              onRequestGalleryPermission: () -> Unit, navCont: NavHostController, userId:String) {
     val actions = remember(navCont) { Actions(navCont) }
     val context = LocalContext.current
 
@@ -612,6 +613,7 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
     val personality by vm.personality.collectAsState()
     val bio by vm.bioValue.collectAsState()
     val showLocationScreen = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
 
     val theUserModel = TheUserModel()
     if (showLocationScreen.value) {
@@ -634,84 +636,102 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                UserImageWithMenu(
-                    profilePic, 150.dp, modifier = Modifier,vm,
-                    onSelectFromGallery = {
-                        onRequestGalleryPermission()
-                    },
-                    onTakePhoto = {
-                        onRequestCameraPermission()
-                    }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text="$nameValue $surnameValue", style = MaterialTheme.typography.headlineMedium)
+            Box(modifier = Modifier.fillMaxSize()) {
                 Column(
-                    Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Column(horizontalAlignment = Alignment.Start) {
-                            UserPersonalInfo(vm)
+                    UserImageWithMenu(
+                        profilePic, 150.dp, modifier = Modifier, vm,
+                        onSelectFromGallery = {
+                            onRequestGalleryPermission()
+                        },
+                        onTakePhoto = {
+                            onRequestCameraPermission()
                         }
-                        Spacer(Modifier.width(20.dp))
-                    }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "$nameValue $surnameValue",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Column(
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Column(horizontalAlignment = Alignment.Start) {
+                                UserPersonalInfo(vm)
+                            }
+                            Spacer(Modifier.width(20.dp))
+                        }
 
-                    UserDetails(vm)
+                        UserDetails(vm)
 
-                    Spacer(Modifier.height(20.dp))
+                        Spacer(Modifier.height(20.dp))
 
-                    EditableUserPersonality(vm)
+                        EditableUserPersonality(vm)
 
-                    Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(10.dp))
 
-                    EditableUserDestinations(vm,showLocationScreen)
+                        EditableUserDestinations(vm, showLocationScreen)
 
-                    Row(Modifier.fillMaxWidth()) {
-                        ActionButton("Save") {
-                            if(vm.validate()){
-                                val user = User(
-                                    userId = userId,
-                                    nickname = nicknameValue,
-                                    name = nameValue,
-                                    surname = surnameValue,
-                                    phoneNumber = "",
-                                    email = "",
-                                    profilePic = profilePic,
-                                    bio = bio,
-                                    travelPreferences = listOf(),
-                                    desiredDestinations = desiredDestinations,
-                                    age = 0,
-                                    nationality = nationalityValue,
-                                    city = cityValue,
-                                    language = languageValue,
-                                    numTravels = 0,
-                                    personality = personality,
-                                    reviews = listOf(),
-                                )
-                                lifecycleOwner.lifecycleScope.launch {
-                                    try {
-                                        theUserModel.updateMyProfile(user)
-                                        val myProfile = CommonModel.getUser(user.userId)
-                                        if (myProfile != null) {
-                                            AppState.updateMyProfile(myProfile)
-                                            actions.navigateBack()
+                        Row(Modifier.fillMaxWidth()) {
+                            ActionButton("Save", enabled = !isLoading.value,
+                                onClick = {
+                                    if (vm.validate()) {
+                                        val user = User(
+                                            userId = userId,
+                                            nickname = nicknameValue,
+                                            name = nameValue,
+                                            surname = surnameValue,
+                                            phoneNumber = "",
+                                            email = "",
+                                            profilePic = profilePic,
+                                            bio = bio,
+                                            travelPreferences = listOf(),
+                                            desiredDestinations = desiredDestinations,
+                                            age = 0,
+                                            nationality = nationalityValue,
+                                            city = cityValue,
+                                            language = languageValue,
+                                            numTravels = 0,
+                                            personality = personality,
+                                            reviews = listOf(),
+                                        )
+                                        isLoading.value = true
+                                        lifecycleOwner.lifecycleScope.launch {
+                                            try {
+                                                theUserModel.updateMyProfile(user)
+                                                val myProfile = CommonModel.getUser(user.userId)
+                                                if (myProfile != null) {
+                                                    AppState.updateMyProfile(myProfile)
+                                                    actions.navigateBack()
+                                                }
+                                            } catch (e: Exception) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Error during update profile, try again later",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } finally {
+                                                isLoading.value = false
+                                            }
                                         }
-                                    } catch (e: Exception) {
-                                        Toast.makeText(
-                                            context,
-                                            "Error during update profile, try again later",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
                                 }
-                            }
+                            )
                         }
+                    }
+                }
+                if (isLoading.value) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }

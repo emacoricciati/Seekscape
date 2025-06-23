@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -70,6 +72,8 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
     var showPassword by remember { mutableStateOf(false) }
     var showNewPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
+
 
     val userId = AppState.myProfile.collectAsState().value.userId
     val context = LocalContext.current
@@ -77,356 +81,204 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
     val accountService = AccountService()
     val userModel = TheUserModel()
     val scrollState = rememberScrollState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .verticalScroll(scrollState)
-    ) {
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = "Manage your account",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-
-        if (!isGoogleAccount) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .verticalScroll(scrollState)
+        ) {
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Update email",
+                text = "Manage your account",
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            if (!isGoogleAccount) {
+                Text(
+                    text = "Update email",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text("Email", color = MaterialTheme.colorScheme.primary)
+                    },
+                    isError = emailError.isNotEmpty(),
+                    supportingText = {
+                        if (emailError.isNotEmpty()) {
+                            Text(emailError, color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                )
+                Button(
+                    enabled = !isLoading.value,
+                    onClick = {
+                        var isError = false
+                        val emailTrimmed = email.trim()
+                        if (emailTrimmed.matches(
+                                Regex(
+                                    "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+                                )
+                            ).not()
+                        ) {
+                            emailError = "Please enter a valid email address."
+                            isError = true
+                        }
+                        if (isError) {
+                            return@Button
+                        }
+                        isLoading.value = true
+                        coroutineScope.launch {
+                            try {
+                                isEmailSent = false
+                                accountService.updateEmail(email)
+                                isEmailSent = true
+                            } catch (e: Exception) {
+                                Log.e("EditAccountScreen", "Error updating email: ${e.message}")
+                                val errorMessage = "Failed to update email, please try again."
+                                Toast.makeText(
+                                    context,
+                                    errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } finally {
+                                isLoading.value = false
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text("Update Email", style = MaterialTheme.typography.titleMedium)
+                }
+                if (isEmailSent) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Request sent! Please check your email for a verification link and follow the instructions to complete the email update.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                Spacer(Modifier.height(30.dp))
+            }
+            Text(
+                text = "Update phone number",
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(Modifier.height(10.dp))
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text("Email", color = MaterialTheme.colorScheme.primary)
-                },
-                isError = emailError.isNotEmpty(),
+                isError = phoneNumberError.isNotEmpty(),
                 supportingText = {
-                    if (emailError.isNotEmpty()) {
-                        Text(emailError, color = MaterialTheme.colorScheme.error)
-                    }
-                }
-            )
-            Button(
-                onClick = {
-                    var isError = false
-                    val emailTrimmed = email.trim()
-                    if (emailTrimmed.matches(
-                            Regex(
-                                "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
-                            )
-                        ).not()
-                    ) {
-                        emailError = "Please enter a valid email address."
-                        isError = true
-                    }
-                    if (isError) {
-                        return@Button
-                    }
-                    coroutineScope.launch {
-                        try {
-                            isEmailSent = false
-                            accountService.updateEmail(email)
-                            isEmailSent = true
-                        } catch (e: Exception) {
-                            Log.e("EditAccountScreen", "Error updating email: ${e.message}")
-                            val errorMessage = "Failed to update email, please try again."
-                            Toast.makeText(
-                                context,
-                                errorMessage,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Text("Update Email", style = MaterialTheme.typography.titleMedium)
-            }
-            if (isEmailSent) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Request sent! Please check your email for a verification link and follow the instructions to complete the email update.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-            Spacer(Modifier.height(30.dp))
-        }
-        Text(
-            text = "Update phone number",
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(Modifier.height(10.dp))
-        OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = {phoneNumber = it},
-            modifier = Modifier.fillMaxWidth(),
-            isError = phoneNumberError.isNotEmpty(),
-            supportingText = {
-                if (phoneNumberError.isNotEmpty()) {
-                    Text(
-                        text = phoneNumberError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            },
-            label = {
-                Text(
-                    text = "Phone Number",
-                    color = MaterialTheme.colorScheme.primary
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Phone
-            ),
-            leadingIcon = {
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
-                ) {
-                    OutlinedTextField(
-                        value = selectedPrefix,
-                        onValueChange = {selectedPrefix = it},
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
-                        ),
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-                        modifier = Modifier
-                            .width(100.dp)
-                            .menuAnchor()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        phonePrefixes.forEach { prefix ->
-                            DropdownMenuItem(
-                                text = { Text(prefix) },
-                                onClick = {
-                                    selectedPrefix = prefix
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        )
-        Button(
-            onClick = {
-                var isError = false
-                if (phoneNumber.isBlank()) {
-                    phoneNumberError = "Phone number cannot be empty"
-                    isError = true
-                } else if (!phoneNumber.matches(Regex("\\d+"))) {
-                    phoneNumberError = "Phone number must contain only digits"
-                    isError = true
-                }
-                if (isError) {
-                    return@Button
-                }
-                coroutineScope.launch {
-                    try {
-                        val completeNumber = selectedPrefix + phoneNumber
-                        userModel.updatePhoneNumber(userId, completeNumber)
-                        Toast.makeText(
-                            context,
-                            "Phone number updated successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } catch (e: Exception) {
-                        val errorMessage = "Failed to update phone number, please try again."
-                        Toast.makeText(
-                            context,
-                            errorMessage,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text("Update Phone Number", style = MaterialTheme.typography.titleMedium)
-        }
-        if (!isGoogleAccount) {
-
-            Spacer(Modifier.height(30.dp))
-            Text(
-                text = "Update password",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary) },
-                modifier = Modifier.fillMaxWidth(),
-                isError = passwordError.isNotEmpty(),
-                visualTransformation = if (showPassword) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                // Eye icon to toggle password visibility
-                trailingIcon = {
-                    Icon(
-                        imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = "Toggle password visibility",
-                        modifier = Modifier
-                            .clickable { showPassword = !showPassword }
-                            .padding(8.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                supportingText = {
-                    if (passwordError.isNotEmpty()) {
+                    if (phoneNumberError.isNotEmpty()) {
                         Text(
-                            text = passwordError,
+                            text = phoneNumberError,
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                 },
-            )
-            OutlinedTextField(
-                value = newPassword,
-                onValueChange = { newPassword = it },
-                label = { Text(text = "New Password", color = MaterialTheme.colorScheme.primary) },
-                modifier = Modifier.fillMaxWidth(),
-                isError = newPasswordError.isNotEmpty(),
-                visualTransformation = if (showNewPassword) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                // Eye icon to toggle password visibility
-                trailingIcon = {
-                    Icon(
-                        imageVector = if (showNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = "Toggle password visibility",
-                        modifier = Modifier
-                            .clickable { showNewPassword = !showNewPassword }
-                            .padding(8.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                supportingText = {
-                    if (newPasswordError.isNotEmpty()) {
-                        Text(
-                            text = newPasswordError,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                },
-            )
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
                 label = {
                     Text(
-                        text = "Confirm New Password",
+                        text = "Phone Number",
                         color = MaterialTheme.colorScheme.primary
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
-                isError = confirmPasswordError.isNotEmpty(),
-                visualTransformation = if (showConfirmPassword) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                // Eye icon to toggle password visibility
-                trailingIcon = {
-                    Icon(
-                        imageVector = if (showConfirmPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = "Toggle password visibility",
-                        modifier = Modifier
-                            .clickable { showConfirmPassword = !showConfirmPassword }
-                            .padding(8.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                supportingText = {
-                    if (confirmPasswordError.isNotEmpty()) {
-                        Text(
-                            text = confirmPasswordError,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Phone
+                ),
+                leadingIcon = {
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                    ) {
+                        OutlinedTextField(
+                            value = selectedPrefix,
+                            onValueChange = { selectedPrefix = it },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent
+                            ),
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            modifier = Modifier
+                                .width(100.dp)
+                                .menuAnchor()
                         )
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            phonePrefixes.forEach { prefix ->
+                                DropdownMenuItem(
+                                    text = { Text(prefix) },
+                                    onClick = {
+                                        selectedPrefix = prefix
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
-                },
+                }
             )
             Button(
+                enabled = !isLoading.value,
                 onClick = {
                     var isError = false
-                    if (password.length < 6) {
-                        passwordError = "Password must be at least 6 characters long."
+                    if (phoneNumber.isBlank()) {
+                        phoneNumberError = "Phone number cannot be empty"
                         isError = true
-                    }
-                    if (newPassword != confirmPassword) {
-                        confirmPasswordError = "New password and confirmation do not match."
-                        isError = true
-                    }
-                    if (newPassword.length < 6) {
-                        newPasswordError = "New password must be at least 6 characters long."
-                        isError = true
-                    }
-                    if (confirmPassword.length < 6) {
-                        confirmPasswordError =
-                            "Confirm password must be at least 6 characters long."
-                        isError = true
-                    }
-                    if (password == newPassword && newPassword == confirmPassword) {
-                        confirmPasswordError = "New password must be different from the current password."
+                    } else if (!phoneNumber.matches(Regex("\\d+"))) {
+                        phoneNumberError = "Phone number must contain only digits"
                         isError = true
                     }
                     if (isError) {
                         return@Button
                     }
+                    isLoading.value = true
                     coroutineScope.launch {
                         try {
-                            accountService.updatePassword(newPassword)
-                            AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
-                            AppState.setUserAsUnlogged()
+                            val completeNumber = selectedPrefix + phoneNumber
+                            userModel.updatePhoneNumber(userId, completeNumber)
+                            Toast.makeText(
+                                context,
+                                "Phone number updated successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } catch (e: Exception) {
-                            val errorMessage = "Failed to update password, please try again."
+                            val errorMessage = "Failed to update phone number, please try again."
                             Toast.makeText(
                                 context,
                                 errorMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
+                        } finally {
+                            isLoading.value = false
                         }
                     }
                 },
@@ -435,10 +287,189 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
                     .height(48.dp),
                 shape = RoundedCornerShape(12.dp),
             ) {
-                Text("Update Password", style = MaterialTheme.typography.titleMedium)
+                Text("Update Phone Number", style = MaterialTheme.typography.titleMedium)
+            }
+            if (!isGoogleAccount) {
+
+                Spacer(Modifier.height(30.dp))
+                Text(
+                    text = "Update password",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = passwordError.isNotEmpty(),
+                    visualTransformation = if (showPassword) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    // Eye icon to toggle password visibility
+                    trailingIcon = {
+                        Icon(
+                            imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            contentDescription = "Toggle password visibility",
+                            modifier = Modifier
+                                .clickable { showPassword = !showPassword }
+                                .padding(8.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    supportingText = {
+                        if (passwordError.isNotEmpty()) {
+                            Text(
+                                text = passwordError,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                )
+                OutlinedTextField(
+                    value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = {
+                        Text(
+                            text = "New Password",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = newPasswordError.isNotEmpty(),
+                    visualTransformation = if (showNewPassword) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    // Eye icon to toggle password visibility
+                    trailingIcon = {
+                        Icon(
+                            imageVector = if (showNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            contentDescription = "Toggle password visibility",
+                            modifier = Modifier
+                                .clickable { showNewPassword = !showNewPassword }
+                                .padding(8.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    supportingText = {
+                        if (newPasswordError.isNotEmpty()) {
+                            Text(
+                                text = newPasswordError,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                )
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = {
+                        Text(
+                            text = "Confirm New Password",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = confirmPasswordError.isNotEmpty(),
+                    visualTransformation = if (showConfirmPassword) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    // Eye icon to toggle password visibility
+                    trailingIcon = {
+                        Icon(
+                            imageVector = if (showConfirmPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            contentDescription = "Toggle password visibility",
+                            modifier = Modifier
+                                .clickable { showConfirmPassword = !showConfirmPassword }
+                                .padding(8.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    supportingText = {
+                        if (confirmPasswordError.isNotEmpty()) {
+                            Text(
+                                text = confirmPasswordError,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                )
+                Button(
+                    enabled = !isLoading.value,
+                    onClick = {
+                        var isError = false
+                        if (password.length < 6) {
+                            passwordError = "Password must be at least 6 characters long."
+                            isError = true
+                        }
+                        if (newPassword != confirmPassword) {
+                            confirmPasswordError = "New password and confirmation do not match."
+                            isError = true
+                        }
+                        if (newPassword.length < 6) {
+                            newPasswordError = "New password must be at least 6 characters long."
+                            isError = true
+                        }
+                        if (confirmPassword.length < 6) {
+                            confirmPasswordError =
+                                "Confirm password must be at least 6 characters long."
+                            isError = true
+                        }
+                        if (password == newPassword && newPassword == confirmPassword) {
+                            confirmPasswordError =
+                                "New password must be different from the current password."
+                            isError = true
+                        }
+                        if (isError) {
+                            return@Button
+                        }
+                        isLoading.value = true
+                        coroutineScope.launch {
+                            try {
+                                accountService.updatePassword(newPassword)
+                                AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+                                AppState.setUserAsUnlogged()
+                            } catch (e: Exception) {
+                                val errorMessage = "Failed to update password, please try again."
+                                Toast.makeText(
+                                    context,
+                                    errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } finally {
+                                isLoading.value = false
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text("Update Password", style = MaterialTheme.typography.titleMedium)
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        if (isLoading.value) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
-        Spacer(modifier = Modifier.height(4.dp))
     }
 
 }

@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ActionButton(actionName: String, onClick: ()->Unit) {
+fun ActionButton(actionName: String, onClick: ()->Unit, enabled: Boolean = true ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,6 +48,7 @@ fun ActionButton(actionName: String, onClick: ()->Unit) {
     ) {
         Button(
             onClick = onClick,
+            enabled = enabled,
             shape = RoundedCornerShape(16.dp),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 8.dp,
