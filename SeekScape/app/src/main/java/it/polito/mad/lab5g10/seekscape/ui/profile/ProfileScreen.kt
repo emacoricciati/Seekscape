@@ -55,11 +55,15 @@ import android.content.Intent
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -636,7 +640,21 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            if(isLoading.value){
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+                        .zIndex(1f)
+                        .clickable(onClick = {}),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Column(
                     Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -679,7 +697,9 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                         EditableUserDestinations(vm, showLocationScreen)
 
                         Row(Modifier.fillMaxWidth()) {
-                            ActionButton("Save", enabled = !isLoading.value,
+                            ActionButton(
+                                "Save",
+                                enabled = !isLoading.value,
                                 onClick = {
                                     if (vm.validate()) {
                                         val user = User(
@@ -724,14 +744,6 @@ fun EditPanel(vm: UserInfoViewModel, onRequestCameraPermission: () -> Unit,
                                 }
                             )
                         }
-                    }
-                }
-                if (isLoading.value) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
                     }
                 }
             }

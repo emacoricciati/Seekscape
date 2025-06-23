@@ -2,6 +2,7 @@ package it.polito.mad.lab5g10.seekscape.ui.profile
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import it.polito.mad.lab5g10.seekscape.firebase.TheUserModel
 import it.polito.mad.lab5g10.seekscape.models.AppState
@@ -462,9 +464,14 @@ fun EditAccountScreen(navCont: NavHostController, isGoogleAccount: Boolean) {
             }
             Spacer(modifier = Modifier.height(4.dp))
         }
-        if (isLoading.value) {
+
+        if(isLoading.value){
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+                    .zIndex(1f)
+                    .clickable(onClick = {}),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()

@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.zIndex
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.MAX_COMPANIONS
 import it.polito.mad.lab5g10.seekscape.models.MAX_PRICE
@@ -750,9 +751,13 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
 
                 }
             }
-            if (isLoading.value) {
+            if(isLoading.value){
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+                        .zIndex(1f)
+                        .clickable(onClick = {}),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
