@@ -259,7 +259,7 @@ fun UserProfile(vm: UserInfoViewModel, isOwnProfile: Boolean, onRequestCameraPer
         }
 
         if(myProfile.userId==profileUserId){
-            var possibleNotificationId = "my_profile_review_${profileUserId}"
+            var possibleNotificationId = "my_profile_review"
             LaunchedEffect(possibleNotificationId, myProfile.notifications) {
                 if (possibleNotificationId.isNotEmpty() && myProfile.notifications.any { it.id == possibleNotificationId }) {
                     CommonModel.removeNotificationById(myProfile.userId, possibleNotificationId)

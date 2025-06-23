@@ -100,6 +100,13 @@ object AppState {
         _myProfile.value = user.copy(notifications = updatedNotifications)
     }
 
+    private val _notificationClicked = MutableStateFlow<NotificationItem?>(null)
+    val notificationClicked: StateFlow<NotificationItem?> = _notificationClicked.asStateFlow()
+
+    fun updateNotificationClicked(new: NotificationItem?) {
+        _notificationClicked.value = new
+    }
+
 
     private val _actualThemeIsDark = MutableStateFlow<Boolean?>(null)
     val actualThemeIsDark: StateFlow<Boolean?> = _actualThemeIsDark.asStateFlow()

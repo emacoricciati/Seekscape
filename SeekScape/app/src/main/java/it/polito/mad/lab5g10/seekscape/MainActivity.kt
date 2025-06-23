@@ -28,6 +28,8 @@ import android.Manifest
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -137,12 +139,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeekScapeTheme {
                 NotificationPermissionRequester()
+                NotificationListener()
                 SeekScapeApp(initialIntent = intent, dynamicRoute = dynamicLinkRouteState.value)
                 //Support()
             }
         }
         hideNavigationBar()
-//        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -208,8 +210,7 @@ class MainActivity : ComponentActivity() {
                     tab = notificationTab,
                     navRoute = notificationRoute
                 )
-
-                navigateToNotificationAction(notificationItem)
+                AppState.updateNotificationClicked(notificationItem)
             }
             else{
                 Log.w("MainActivity", "Missing Intent or incomplete intent")
@@ -217,6 +218,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun NotificationListener() {
+    val notificationClicked by AppState.notificationClicked.collectAsState()
+    val isLogged by AppState.isLogged.collectAsState()
+    LaunchedEffect(notificationClicked, isLogged) {
+        if(isLogged && notificationClicked!=null) {
+            navigateToNotificationAction(notificationClicked!!)
+            AppState.updateNotificationClicked(null)
+        }
+    }
+}
+
 
 @Composable
 fun NotificationPermissionRequester() {
