@@ -68,7 +68,8 @@ fun ActivityCard (image: ImageVector, title: String, optional: Boolean, onClick:
                     imageVector = if (!optional) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
                     contentDescription = "Optional Icon",
                     tint = if(optional) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier
+                        .size(18.dp)
                         .clickable {
                             onClick()
                         },

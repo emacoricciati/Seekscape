@@ -7,7 +7,6 @@ import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.lang.Thread.State
 import kotlin.collections.listOf
 
 
@@ -64,10 +63,12 @@ object AppState {
     fun setUserAsLogged(){
         _isLogged.value = true
         _loggedStatusChanged.value = true
+        updateLastSearchResults(null)
     }
     fun setUserAsUnlogged(){
         _isLogged.value = false
         _loggedStatusChanged.value = true
+        updateLastSearchResults(null)
     }
 
     fun actionDoneForSwitchLoggedStatus(){

@@ -35,9 +35,11 @@ import androidx.compose.ui.window.Dialog
 fun <T> SelectionDialog(title: String, selectedOptions: List<T>, options: List<T>, addSelections: (selectedOptions: List<T>) -> Unit, closeDialog: () -> Unit, getIcon: (T) -> ImageVector? = { null }) {
     val selected = remember { mutableStateListOf<T>().apply { addAll(selectedOptions) } }
 
-    Dialog(onDismissRequest = {
+    Dialog(
+        onDismissRequest = {
             closeDialog()
-    }) {
+        }
+    ) {
         Surface(
             shape = RoundedCornerShape(12.dp),
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
@@ -55,7 +57,7 @@ fun <T> SelectionDialog(title: String, selectedOptions: List<T>, options: List<T
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 250.dp)
+                        .heightIn(max = 350.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                     options.forEach { option ->

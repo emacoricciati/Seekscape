@@ -249,7 +249,8 @@ fun AddItinerary(vm: ItineraryViewModel, travelViewModel: TravelViewModel, navCo
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .clickable { isAddingActivity = true })
+                        .clickable { isAddingActivity = true }
+                )
                 if (vm.activitiesError.isNotBlank()) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
