@@ -372,6 +372,10 @@ fun TravelButton(vm: TravelViewModel, onButtonClick: () -> Unit, navController: 
                 text = "Rate your experience";
                 enabled = true;
             }
+            PAST -> {
+                text = "Past travel";
+                enabled = false;
+            }
 
             else -> {}
         }

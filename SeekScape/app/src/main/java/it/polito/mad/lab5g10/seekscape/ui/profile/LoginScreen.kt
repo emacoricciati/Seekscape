@@ -2,11 +2,14 @@ package it.polito.mad.lab5g10.seekscape.ui.profile
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import androidx.navigation.NavHostController
@@ -76,6 +81,7 @@ fun LoginScreen(navHostController: NavHostController) {
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     val userModel = TheUserModel()
+    val isLoading = remember { mutableStateOf(false) }
 
     // Launched effect to reset errors when the screen is displayed
     LaunchedEffect(Unit) {
@@ -90,210 +96,235 @@ fun LoginScreen(navHostController: NavHostController) {
     }
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 55.dp)
-    ) {
 
-        Text(text = "Sign in to your account", style = MaterialTheme.typography.headlineLarge)
-        Spacer(Modifier.height(15.dp))
-        Text(
-            text = "Enter your email and password to log in",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = {
-                Text(
-                    text = "Email",
-                    color = MaterialTheme.colorScheme.primary
-                )
-            },
-            isError = emailError.isNotEmpty(),
-            supportingText = {
-                if (emailError.isNotEmpty()) {
+    Box {
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = 20.dp, vertical = 55.dp)
+        ) {
+
+            Text(text = "Sign in to your account", style = MaterialTheme.typography.headlineLarge)
+            Spacer(Modifier.height(15.dp))
+            Text(
+                text = "Enter your email and password to log in",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = {
                     Text(
-                        text = emailError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
+                        text = "Email",
+                        color = MaterialTheme.colorScheme.primary
                     )
-                }
-            },
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary) },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (showPassword) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            isError = passwordError.isNotEmpty(),
-            supportingText = {
-                if (passwordError.isNotEmpty()) {
-                    Text(
-                        text = passwordError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            // Eye icon to toggle password visibility
-            trailingIcon = {
-                Icon(
-                    imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                    contentDescription = "Toggle password visibility",
-                    modifier = Modifier
-                        .clickable { showPassword = !showPassword }
-                        .padding(8.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-        )
-        // Login button
-        Spacer(Modifier.height(30.dp))
-        Button(
-            onClick = {
-                var isError = false
-                val emailTrimmed = email.trim()
-                val passwordTrimmed = password.trim()
-                if (emailTrimmed.matches(
-                        Regex(
-                            "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+                },
+                isError = emailError.isNotEmpty(),
+                supportingText = {
+                    if (emailError.isNotEmpty()) {
+                        Text(
+                            text = emailError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
                         )
-                    ).not()
-                ) {
-                    emailError = "Please enter a valid email address."
-                    isError = true
-                }
-                if (passwordTrimmed.length < 6) {
-                    passwordError = "Password must be at least 6 characters long."
-                    isError = true
-                }
-                if (isError) {
-                    return@Button
-                }
+                    }
+                },
+            )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary) },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (showPassword) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                isError = passwordError.isNotEmpty(),
+                supportingText = {
+                    if (passwordError.isNotEmpty()) {
+                        Text(
+                            text = passwordError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                // Eye icon to toggle password visibility
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        contentDescription = "Toggle password visibility",
+                        modifier = Modifier
+                            .clickable { showPassword = !showPassword }
+                            .padding(8.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+            )
+            // Login button
+            Spacer(Modifier.height(30.dp))
+            Button(
+                enabled = !isLoading.value,
+                onClick = {
+                    var isError = false
+                    val emailTrimmed = email.trim()
+                    val passwordTrimmed = password.trim()
+                    if (emailTrimmed.matches(
+                            Regex(
+                                "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+                            )
+                        ).not()
+                    ) {
+                        emailError = "Please enter a valid email address."
+                        isError = true
+                    }
+                    if (passwordTrimmed.length < 6) {
+                        passwordError = "Password must be at least 6 characters long."
+                        isError = true
+                    }
+                    if (isError) {
+                        return@Button
+                    }
+                    coroutineScope.launch {
+                        try {
+                            isLoading.value = true
+                            val user = accountService.signIn(emailTrimmed, passwordTrimmed)
+
+                            val token = FirebaseMessaging.getInstance().token.await()
+                            userModel.addTokenUserById(user.userId, token)
+
+                            AppState.setUserAsLogged()
+                            AppState.updateMyProfile(user)
+
+                            AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+                        } catch (e: Exception) {
+                            val errorMessage = when {
+                                e.message?.contains(
+                                    "auth credential is incorrect",
+                                    ignoreCase = true
+                                ) == true -> {
+                                    "Email or password is incorrect."
+                                }
+
+                                e.message?.contains("has expired", ignoreCase = true) == true -> {
+                                    "Session expired. Try again."
+                                }
+
+                                else -> {
+                                    "Login failed. Please check your credentials."
+                                }
+                            }
+                            Toast.makeText(
+                                context,
+                                errorMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        finally {
+                            isLoading.value = false
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Text("Log In", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(Modifier.height(30.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Divider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.outline,
+                    thickness = 1.dp
+                )
+                Text(
+                    text = "Or",
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Divider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.outline,
+                    thickness = 1.dp
+                )
+            }
+            Spacer(Modifier.height(30.dp))
+            GoogleButton { cred ->
                 coroutineScope.launch {
                     try {
-                        val user = accountService.signIn(emailTrimmed, passwordTrimmed)
+                        isLoading.value = true
+                        val result = onSignInWithGoogle(cred)
 
                         val token = FirebaseMessaging.getInstance().token.await()
-                        userModel.addTokenUserById(user.userId, token)
+                        userModel.addTokenUserById(result.user.userId, token)
 
                         AppState.setUserAsLogged()
-                        AppState.updateMyProfile(user)
+                        AppState.updateMyProfile(result.user)
 
-                        AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
-                    } catch (e: Exception) {
-                        val errorMessage = when {
-                            e.message?.contains(
-                                "auth credential is incorrect",
-                                ignoreCase = true
-                            ) == true -> {
-                                "Email or password is incorrect."
+                        if (!result.isNew) {
+                            Log.d("UnloggedUserScreen", "Existing user signed in, navigating to home")
+                            AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
+                        } else {
+                            Log.d(
+                                "UnloggedUserScreen",
+                                "New user signed in, navigating to profile setup"
+                            )
+                            val start = navHostController.graph.startDestinationRoute
+                            if (start != null) {
+                                navHostController.popBackStack(start, inclusive = false)
                             }
-
-                            e.message?.contains("has expired", ignoreCase = true) == true -> {
-                                "Session expired. Try again."
-                            }
-
-                            else -> {
-                                "Login failed. Please check your credentials."
-                            }
+                            actions.navigateTo("complete_registration")
                         }
+
+                    } catch (e: Exception) {
                         Toast.makeText(
                             context,
-                            errorMessage,
+                            "Google sign-in failed. Please try again.",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text("Log In", style = MaterialTheme.typography.titleMedium)
-        }
-        Spacer(Modifier.height(30.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outline,
-                thickness = 1.dp
-            )
-            Text(
-                text = "Or",
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Divider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outline,
-                thickness = 1.dp
-            )
-        }
-        Spacer(Modifier.height(30.dp))
-        GoogleButton { cred ->
-            coroutineScope.launch {
-                try {
-                    val result = onSignInWithGoogle(cred)
-
-                    val token = FirebaseMessaging.getInstance().token.await()
-                    userModel.addTokenUserById(result.user.userId, token)
-
-                    AppState.setUserAsLogged()
-                    AppState.updateMyProfile(result.user)
-
-                    if (!result.isNew) {
-                        Log.d("UnloggedUserScreen", "Existing user signed in, navigating to home")
-                        AppState.updateCurrentTab(MainDestinations.HOME_ROUTE)
-                    } else {
-                        Log.d(
-                            "UnloggedUserScreen",
-                            "New user signed in, navigating to profile setup"
-                        )
-                        val start = navHostController.graph.startDestinationRoute
-                        if (start != null) {
-                            navHostController.popBackStack(start, inclusive = false)
-                        }
-                        actions.navigateTo("complete_registration")
+                    finally {
+                        isLoading.value = false
                     }
-
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        context,
-                        "Google sign-in failed. Please try again.",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Don't have an account? Sign up",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .clickable {
+                            actions.navigateTo("signup")
+                        },
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp), horizontalArrangement = Arrangement.Center) {
-            Text(
-                text = "Don't have an account? Sign up",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+        if(isLoading.value){
+            Box(
                 modifier = Modifier
-                    .clickable {
-                        actions.navigateTo("signup")
-                    },
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+                    .zIndex(1f)
+                    .clickable(onClick = {}),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
+
 }

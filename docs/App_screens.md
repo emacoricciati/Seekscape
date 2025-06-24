@@ -56,8 +56,8 @@ android 14, OnePlus Nord 2T 5G (6,43 pollici)
     <img src="./assets/app_explore_travel_1.jpg" alt="app_explore_travel" />
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
-    <figcaption style="font-size: 1.1em; font-style: italic;">Explore travel share</figcaption>
-    <img src="./assets/app_explore_travel_share.jpg" alt="app_explore_travel_share" />
+    <figcaption style="font-size: 1.1em; font-style: italic;">Explore travel</figcaption>
+    <img src="./assets/app_explore_travel_2.jpg" alt="app_explore_travel" />
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">Apply to join</figcaption>
@@ -66,10 +66,6 @@ android 14, OnePlus Nord 2T 5G (6,43 pollici)
 </div>
 
 <div style="width:100%; display: flex; justify-content: left; gap: 10px;">
-  <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
-    <figcaption style="font-size: 1.1em; font-style: italic;">Explore travel</figcaption>
-    <img src="./assets/app_explore_travel_2.jpg" alt="app_explore_travel" />
-  </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">Explore travel itinerary</figcaption>
     <img src="./assets/app_explore_travel_itinerary.jpg" alt="app_explore_travel_itinerary" />
@@ -139,7 +135,18 @@ android 14, OnePlus Nord 2T 5G (6,43 pollici)
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">Review travel</figcaption>
+    <img src="./assets/app_travels_toReview_view.jpg" alt="app_travels_toReview_view" />
+  </figure>
+</div>
+
+<div style="width:100%; display: flex; justify-content: left; gap: 10px;">
+  <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
+    <figcaption style="font-size: 1.1em; font-style: italic;">Review travel</figcaption>
     <img src="./assets/app_travels_toReview_view_t.jpg" alt="app_travels_toReview_view_t" />
+  </figure>
+  <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
+    <figcaption style="font-size: 1.1em; font-style: italic;">Review organizer</figcaption>
+    <img src="./assets/app_travels_toReview_view_org.jpg" alt="app_travels_toReview_view_org" />
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">Review companion</figcaption>

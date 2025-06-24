@@ -172,6 +172,7 @@ class TravelReviewViewModel(private val model: TravelReviewModel): ViewModel() {
         }
         viewModelScope.launch {
             theReviewModel.addReviews(travelReview, userReviews)
+            AppState.setTravelToTab(null, "travels")
         }
     }
 

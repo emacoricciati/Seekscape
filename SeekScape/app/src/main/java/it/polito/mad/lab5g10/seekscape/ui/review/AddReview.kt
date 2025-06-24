@@ -113,11 +113,11 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(45.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         HorizontalDivider()
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
                         //STARS-------------------------------------------------
                         Text(
                             text = "Rating",
@@ -136,18 +136,18 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
                         HorizontalDivider()
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
                         //REVIEW_TRAVEL_TEXT-------------------------------------------------
                         Text("Review", style = MaterialTheme.typography.titleLarge)
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
                         OutlinedTextField(
                             value =  travelReviewText,
                             onValueChange = { vm.setReviewText(it) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(150.dp)
+                                .height(160.dp)
                                 .padding(horizontal = 16.dp),
                             placeholder = { Text("Enter your review...", fontSize = 16.sp) }
                         )
@@ -160,7 +160,7 @@ fun AddReviewScreen(vm: TravelReviewViewModel, navCont: NavHostController) {
                             )
                         }
                         //REVIEW_IMAGES----------------------------------------------
-                        Spacer(modifier = Modifier.height(30.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
 
                         ImagePickerWithPreview(
                             imageUris = reviewImages,
@@ -316,7 +316,7 @@ fun UserReviewPage(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(25.dp),
+            .padding(start=20.dp, end=20.dp, top=15.dp, bottom=15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         //USER_IMAGE & NAME_SURNAME-----------------------------
@@ -343,10 +343,10 @@ fun UserReviewPage(
             )
         }
     }
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(10.dp))
     HorizontalDivider()
     //STARS--------------------------------------------------------
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(12.dp))
     Text("Rating", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.height(8.dp))
     StarRatingBar(
@@ -363,12 +363,12 @@ fun UserReviewPage(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(15.dp))
     HorizontalDivider()
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(15.dp))
     //USER_REVIEW_TEXT--------------------------------------------------------
     Text("Review", style = MaterialTheme.typography.titleLarge)
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(15.dp))
     OutlinedTextField(
         value = initialReviewText,
         onValueChange = {
@@ -376,7 +376,7 @@ fun UserReviewPage(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(160.dp)
             .padding(horizontal = 16.dp),
         placeholder = { Text("Enter your review...", fontSize = 16.sp) }
     )
