@@ -32,10 +32,8 @@ function parseDate(dateStr) {
 
 
 async function updateTravelStatus(docSnap) {
-
   if (!docSnap.exists) return;
   const docRef = docSnap.ref;
-
 
   await db.runTransaction(async (transaction) => {
     const doc = await transaction.get(docRef);
@@ -181,6 +179,7 @@ async function sendFirebaseCloudMessagge(notification, userTokens, userId) {
   }
 }
 
+
 exports.notifications_send = onDocumentWritten("Users/{userId}", async (event) => {
   const before = event.data.before?.data();
   const after = event.data.after?.data();
@@ -209,6 +208,7 @@ exports.notifications_send = onDocumentWritten("Users/{userId}", async (event) =
 
   return null;
 });
+
 
 async function addNotificationToUser(notification, userId) {
   console.log(`userId: ${userId}, notification composed:`, notification);
@@ -402,10 +402,11 @@ exports.notifications_create_requestsNot = onDocumentWritten("Requests/{requestI
 
     const notification_type = "manage_apply";
     targetUserId = creatorDoc.userId;
+    const spots = doc.spots || 1;
     notification = {
       id: `${notification_type}_${doc.authorId}_${doc.tripId}`,
       type: notification_type,
-      title: `Application for ${doc.spots || 1} spot(s)`,
+      title: `Application for ${spots} ${spots > 1 ? 'spot' : 'spots'}`,
       description: `${authorDoc.nickname || "Someone"} is interested in '${tripTitle}'.`,
       tab: "travels",
       navRoute: `travels/action/SHOW_APPLY_${doc.tripId}_${doc.authorId}`
@@ -441,7 +442,6 @@ exports.notifications_create_requestsNot = onDocumentWritten("Requests/{requestI
 
   if (!targetUserId || !notification) return;
   await addNotificationToUser(notification, targetUserId);
-
 
 
   //DELETE NOTIFICATION
@@ -494,8 +494,6 @@ async function sendNotificationMessage(event) {
   }
 
   return null;
-
-
 }
 
 
