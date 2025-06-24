@@ -44,7 +44,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.AutoDelete
+import androidx.compose.material.icons.filled.Backspace
+import androidx.compose.material.icons.filled.CleaningServices
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.outlined.AirplanemodeActive
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -607,33 +612,7 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                     }
 
 
-                    val currentTravelState by vm.statusForUser.collectAsState()
-                    if (currentTravelState == OWNED && mode == "edit") {
-                        Spacer(modifier = Modifier.height(25.dp))
-                        OutlinedButton(
-                            onClick = {
-                                showDialog = true
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 60.dp)
-                                .height(45.dp),
-                            shape = RoundedCornerShape(50),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Text(
-                                text = "Delete",
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(60.dp))
-                    } else {
-                        Spacer(modifier = Modifier.height(60.dp))
-                    }
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
 
                 // For the gradient
@@ -662,101 +641,156 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
                                 alpha = 0.9f
                             }
                     ) {
-                        Button(
-                            enabled = !isLoading.value,
-                            onClick = {
-                                if (vm.validateTravel()) {
-                                    isLoading.value = true
-                                    if (mode == "edit") { // modify
-                                        scope.launch {
-                                            try{
-                                                val oldTravel = CommonModel.getTravelById(vm.travelIdValue.value)
-                                                val travel = Travel(
-                                                    travelId = vm.travelIdValue.value,
-                                                    creator = creator,
-                                                    title = title,
-                                                    description = description,
-                                                    country = location,
-                                                    priceMin = priceStart,
-                                                    priceMax = priceEnd,
-                                                    status = oldTravel?.status,
-                                                    statusForUser = OWNED,
-                                                    distance = distance,
-                                                    startDate = dateStart,
-                                                    endDate = dateEnd,
-                                                    maxPeople = nParticipants,
-                                                    travelImages = imageUris,
-                                                    travelTypes = travelTypesVM,
-                                                    travelItinerary = travelItinerary,
-                                                    travelCompanions = oldTravel?.travelCompanions
-                                                )
-                                                theTravelModel.updateTravel(travel)
-                                                vm.clean()
-                                                Toast.makeText(
-                                                    currentContext,
-                                                    "Travel Proposal Edited",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                navCont.previousBackStackEntry?.savedStateHandle?.set("updated_travel", true)
-                                                actions.navigateBack()
-                                            }catch (e: Exception){
-                                                Toast.makeText(currentContext, "Failed to update travel: ${e.message}", Toast.LENGTH_LONG).show()
-                                                Log.e("updateTravel", "Error updating travel", e)
-                                            } finally {
-                                                isLoading.value = false
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(
+                                enabled = !isLoading.value,
+                                onClick = {
+                                    if(mode == "edit"){
+                                        showDialog = true
+                                    }else {
+                                        actions.navigateBack()
+                                    }
+                                },
+                                modifier = Modifier
+                                    .weight(0.2f)
+                                    .fillMaxHeight(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                if (mode == "edit") {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete"
+                                    )
+                                }else{
+                                    Icon(
+                                        imageVector = Icons.Default.Backspace,
+                                        contentDescription = "Backspace"
+                                    )
+                                }
+                            }
+                            Button(
+                                enabled = !isLoading.value,
+                                onClick = {
+                                    if (vm.validateTravel()) {
+                                        isLoading.value = true
+                                        if (mode == "edit") { // modify
+                                            scope.launch {
+                                                try {
+                                                    val oldTravel =
+                                                        CommonModel.getTravelById(vm.travelIdValue.value)
+                                                    val travel = Travel(
+                                                        travelId = vm.travelIdValue.value,
+                                                        creator = creator,
+                                                        title = title,
+                                                        description = description,
+                                                        country = location,
+                                                        priceMin = priceStart,
+                                                        priceMax = priceEnd,
+                                                        status = oldTravel?.status,
+                                                        statusForUser = OWNED,
+                                                        distance = distance,
+                                                        startDate = dateStart,
+                                                        endDate = dateEnd,
+                                                        maxPeople = nParticipants,
+                                                        travelImages = imageUris,
+                                                        travelTypes = travelTypesVM,
+                                                        travelItinerary = travelItinerary,
+                                                        travelCompanions = oldTravel?.travelCompanions
+                                                    )
+                                                    theTravelModel.updateTravel(travel)
+                                                    vm.clean()
+                                                    Toast.makeText(
+                                                        currentContext,
+                                                        "Travel Proposal Edited",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    navCont.previousBackStackEntry?.savedStateHandle?.set(
+                                                        "updated_travel",
+                                                        true
+                                                    )
+                                                    actions.navigateBack()
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(
+                                                        currentContext,
+                                                        "Failed to update travel: ${e.message}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    Log.e(
+                                                        "updateTravel",
+                                                        "Error updating travel",
+                                                        e
+                                                    )
+                                                } finally {
+                                                    isLoading.value = false
+                                                }
                                             }
-                                        }
 
-                                        //to modify
+                                            //to modify
 
-                                    } else { // create
-                                        val travel = Travel(
-                                            travelId = "",
-                                            creator = creator,
-                                            title = title,
-                                            description = description,
-                                            country = location,
-                                            priceMin = priceStart,
-                                            priceMax = priceEnd,
-                                            status = "available",
-                                            statusForUser = OWNED,
-                                            distance = distance,
-                                            startDate = dateStart,
-                                            endDate = dateEnd,
-                                            maxPeople = nParticipants,
-                                            travelImages = imageUris,
-                                            travelTypes = travelTypesVM,
-                                            travelItinerary = travelItinerary,
-                                            travelCompanions = listOf(TravelCompanion(creator))
-                                        )
-                                        scope.launch {
-                                            try {
-                                                theTravelModel.addTravel(travel)
-                                                vm.clean()
-                                                AppState.updateMyTravelTab("My trips")
-                                                AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
-                                                AppState.updateCurrentTab("travels")
-                                                AppState.updateRedirectPath("travels")
-                                                Toast.makeText(currentContext, "Travel Proposal Added", Toast.LENGTH_SHORT).show()
-                                            } catch (e: Exception) {
-                                                Toast.makeText(currentContext, "Failed to add travel: ${e.message}", Toast.LENGTH_LONG).show()
-                                                Log.e("addTravel", "Error adding travel", e)
-                                            } finally {
-                                                isLoading.value = false
+                                        } else { // create
+                                            val travel = Travel(
+                                                travelId = "",
+                                                creator = creator,
+                                                title = title,
+                                                description = description,
+                                                country = location,
+                                                priceMin = priceStart,
+                                                priceMax = priceEnd,
+                                                status = "available",
+                                                statusForUser = OWNED,
+                                                distance = distance,
+                                                startDate = dateStart,
+                                                endDate = dateEnd,
+                                                maxPeople = nParticipants,
+                                                travelImages = imageUris,
+                                                travelTypes = travelTypesVM,
+                                                travelItinerary = travelItinerary,
+                                                travelCompanions = listOf(TravelCompanion(creator))
+                                            )
+                                            scope.launch {
+                                                try {
+                                                    theTravelModel.addTravel(travel)
+                                                    vm.clean()
+                                                    AppState.updateMyTravelTab("My trips")
+                                                    AppState.updateMyTravelMode(CREATOR_TRAVEL_MODE)
+                                                    AppState.updateCurrentTab("travels")
+                                                    AppState.updateRedirectPath("travels")
+                                                    Toast.makeText(
+                                                        currentContext,
+                                                        "Travel Proposal Added",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(
+                                                        currentContext,
+                                                        "Failed to add travel: ${e.message}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    Log.e("addTravel", "Error adding travel", e)
+                                                } finally {
+                                                    isLoading.value = false
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Save")
+                                },
+                                modifier = Modifier
+                                    .weight(0.8f)
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Save")
+                            }
                         }
                     }
-
                 }
             }
             if(isLoading.value){
