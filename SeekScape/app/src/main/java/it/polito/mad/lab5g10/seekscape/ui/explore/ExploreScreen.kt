@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 import it.polito.mad.lab5g10.seekscape.dayMonthFormat
+import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
 import it.polito.mad.lab5g10.seekscape.models.MAX_COMPANIONS
 import it.polito.mad.lab5g10.seekscape.models.MAX_DURATION
@@ -90,6 +91,12 @@ fun ExploreTravelsScreen(vm: SearchViewModel, navController: NavHostController) 
     val isLoadingMore by vm.isLoadingMore.collectAsState()
     val actions = remember(navController) { Actions(navController) }
 
+    val lastSearchResults by AppState.lastSearchResults.collectAsState()
+    LaunchedEffect(lastSearchResults) {
+        if(lastSearchResults==null){
+            vm.search()
+        }
+    }
     if (!vm.isAddingPlace) {
         Column(
             modifier = Modifier

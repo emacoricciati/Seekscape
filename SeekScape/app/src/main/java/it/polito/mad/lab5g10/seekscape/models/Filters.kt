@@ -195,6 +195,7 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
         triggerFilter()
     }
 
+    private var filterJob: Job? = null
     init {
         _filterChangeEvent
             .debounce(300)
@@ -204,12 +205,14 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
             }
             .launchIn(viewModelScope)
 
-        viewModelScope.launch {
+        filterJob = viewModelScope.launch {
             filterTravels(null, true)
         }
     }
 
-    private var filterJob: Job? = null
+    fun search(){
+        launchFilter()
+    }
     private fun launchFilter() {
         filterJob?.cancel()
         filterJob = viewModelScope.launch {
@@ -231,7 +234,8 @@ class SearchViewModel(private val model: SearchModel) : ViewModel() {
 
     fun loadMore(){
         Log.d("loadMore", "loading more on explore")
-        viewModelScope.launch {
+        filterJob?.cancel()
+        filterJob = viewModelScope.launch {
             filterTravels(model.lastStartDateFirebaseFoundValue.value)
         }
     }

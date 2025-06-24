@@ -68,6 +68,7 @@ object AppState {
     fun setUserAsUnlogged(){
         _isLogged.value = false
         _loggedStatusChanged.value = true
+        _myProfile.value = unknown_User
         updateLastSearchResults(null)
     }
 

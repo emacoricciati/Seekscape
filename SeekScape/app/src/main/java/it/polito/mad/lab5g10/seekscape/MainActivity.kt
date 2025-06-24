@@ -129,8 +129,8 @@ class MainActivity : ComponentActivity() {
             if (accountService.hasUser()) {
                 val userProfile = accountService.getUserProfile()
                 if (userProfile != null){
-                    AppState.setUserAsLogged()
                     AppState.updateMyProfile(userProfile)
+                    AppState.setUserAsLogged()
                 }
                 Log.d("SeekScapeApp", "User is logged in: ${userProfile?.userId}")
             } else {
