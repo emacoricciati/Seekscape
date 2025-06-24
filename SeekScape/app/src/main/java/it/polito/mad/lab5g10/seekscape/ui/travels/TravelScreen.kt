@@ -1,6 +1,12 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -9,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,6 +31,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.TravelButton
 import it.polito.mad.lab5g10.seekscape.ui.navigation.MainDestinations
 import it.polito.mad.lab5g10.seekscape.ui.travels.components.TravelDescription
 import it.polito.mad.lab5g10.seekscape.ui.travels.components.TravelImages
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,19 +83,35 @@ fun TravelProposalScreen(vm: TravelViewModel, navController: NavHostController, 
                 .fillMaxSize()
         ) {
             if (imageUris.isNotEmpty()) {
-                TravelImages(
-                    imageResources = imageUris,
-                    modifier = Modifier,
-                    onImageSelected = { selectedIndex ->
-                        Log.d("ImageCarousel", "Selected image at index: $selectedIndex")
-                    },
-                    onOpenInFull = { index ->
-                        actions.navigateToFullScreen(vm.travelIdValue.value, index)
-                    },
-                    actions,
-                    vm.travelIdValue.collectAsState().value,
-                    vm.titleValue.collectAsState().value
-                )
+                var imagesVisible by remember { mutableStateOf(false) }
+
+                LaunchedEffect(imageUris) {
+                    if (imageUris.isNotEmpty()) {
+                        imagesVisible = true
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = imagesVisible,
+                    enter = fadeIn(tween(600)) +
+                            scaleIn(initialScale = 0.95f, animationSpec = tween(600, easing = EaseOutCubic)) +
+                            slideInVertically(initialOffsetY = { it / 10 }, animationSpec = tween(600))
+
+                ) {
+                    TravelImages(
+                        imageResources = imageUris,
+                        modifier = Modifier,
+                        onImageSelected = { selectedIndex ->
+                            Log.d("ImageCarousel", "Selected image at index: $selectedIndex")
+                        },
+                        onOpenInFull = { index ->
+                            actions.navigateToFullScreen(vm.travelIdValue.value, index)
+                        },
+                        actions,
+                        vm.travelIdValue.collectAsState().value,
+                        vm.titleValue.collectAsState().value
+                    )
+                }
             }
             TravelDescription(
                 vm = vm,

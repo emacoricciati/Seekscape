@@ -372,7 +372,7 @@ class TravelViewModel(private val model: TravelModel) : ViewModel() {
                 "Date cannot be in the past",
                 ::validateDateToday
             ),
-            Triple((model.nParticipantsValue.value <= 1), "The number of partecipants must be greater than 1", ::validatePeople),
+            Triple((model.nParticipantsValue.value <= 1), "The number of participants must be greater than 1", ::validatePeople),
             Triple(model.travelTypesValues.value.isEmpty(), "At least one travel type is required", ::validateTypes),
             Triple(model.travelItineraryValues.value.isEmpty(), "At least one itinerary is required", ::validateItinerary),
             //not used for now in images

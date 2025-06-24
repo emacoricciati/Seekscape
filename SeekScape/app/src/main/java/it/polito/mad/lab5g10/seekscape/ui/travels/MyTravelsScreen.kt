@@ -1,5 +1,10 @@
 package it.polito.mad.lab5g10.seekscape.ui.travels
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +40,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.RequestCard
 import it.polito.mad.lab5g10.seekscape.ui._common.components.RequestModal
 import it.polito.mad.lab5g10.seekscape.ui._common.components.TravelCard
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -164,7 +170,27 @@ fun ExploreModeTrips(travels: List<Travel>, myTravelTab: String, navController: 
                     actions.seeTravel(travel.travelId)
                 }
                 val hasChat = myTravelTab!="Pending" && myTravelTab!="Rejected"
-                TravelCard(travel, onCardClick, text, navController, hasChat=hasChat)
+
+                var visible by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) {
+                    delay(index * 150L)
+                    visible = true
+                }
+
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = fadeIn(tween(500)) + slideInVertically(
+                        initialOffsetY = { it / 2 },
+                        animationSpec = tween(500)
+                    ) + scaleIn(
+                        initialScale = 0.8f,
+                        animationSpec = tween(500)
+                    )
+                ) {
+                    TravelCard(travel, onCardClick, text, navController, hasChat = hasChat)
+                }
+
                 Spacer(Modifier.height(10.dp))
 
                 if(index==travels.lastIndex && isLoadingMore){
@@ -385,8 +411,27 @@ fun UserTripsScreen(ownedTravelViewModel: OwnedTravelViewModel, navController: N
                             }
                             Spacer(modifier = Modifier.height(10.dp))
                         }
-                        TravelCard(travel, onCardClick, textAboveCard, navController, hasChat = true)
+                        var visible by remember { mutableStateOf(false) }
+
+                        LaunchedEffect(Unit) {
+                            delay(index * 150L)
+                            visible = true
+                        }
+
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = fadeIn(tween(500)) + slideInVertically(
+                                initialOffsetY = { it },
+                                animationSpec = tween(500)
+                            ) + scaleIn(
+                                initialScale = 0.8f,
+                                animationSpec = tween(500)
+                            )
+                        ) {
+                            TravelCard(travel, onCardClick, textAboveCard, navController, hasChat = true)
+                        }
                         Spacer(Modifier.height(10.dp))
+
                     }
 
                 }
@@ -465,7 +510,8 @@ fun RequestsScreen(
                                 requestsViewModels,
                                 ownedTravelViewModel,
                                 action,
-                                navController
+                                navController,
+                                index
                             )
                         }
                     }
@@ -477,7 +523,7 @@ fun RequestsScreen(
 
 
 @Composable
-fun ReqMng(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, action:String?, navController: NavHostController) {
+fun ReqMng(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravelViewModel, action:String?, navController: NavHostController, index: Int) {
     var showModalBottom by remember { mutableStateOf(false) }
     var openTextBox by remember { mutableStateOf(false) }
     var confirmReq by remember { mutableStateOf(false) }
@@ -489,15 +535,33 @@ fun ReqMng(req: Request, vm: RequestViewModel, ownedTravelViewModel: OwnedTravel
                 .fillMaxSize()
                 .padding(bottom = 15.dp)
         ) {
-            RequestCard(
-                req,
-                vm,
-                ownedTravelViewModel,
-                { showModalBottom = true },
-                { openTextBox = true },
-                { openTextBox = false },
-                { confirmReq = true },
-                { confirmReq = false })
+            var visible by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) {
+                delay(index * 150L)
+                visible = true
+            }
+
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(500)) + slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(500)
+                )+ scaleIn(
+                    initialScale = 0.8f,
+                    animationSpec = tween(500)
+                )
+            ){
+                RequestCard(
+                    req,
+                    vm,
+                    ownedTravelViewModel,
+                    { showModalBottom = true },
+                    { openTextBox = true },
+                    { openTextBox = false },
+                    { confirmReq = true },
+                    { confirmReq = false })
+            }
         }
 
         if (showModalBottom) {

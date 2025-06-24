@@ -6,6 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.*
 import androidx.compose.foundation.Image
@@ -53,6 +58,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.zIndex
 import it.polito.mad.lab5g10.seekscape.models.AppState
 import it.polito.mad.lab5g10.seekscape.models.MAX_COMPANIONS
@@ -74,9 +80,11 @@ import it.polito.mad.lab5g10.seekscape.models.TRAVEL_TYPES
 import it.polito.mad.lab5g10.seekscape.models.TravelCompanion
 import it.polito.mad.lab5g10.seekscape.ui._common.components.AddLocation
 import it.polito.mad.lab5g10.seekscape.ui.navigation.Actions
+import kotlin.math.max
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Composable
@@ -833,12 +841,12 @@ fun AddItineraryButton(vm: TravelViewModel, onClickAction: ()->Unit) {
 }
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SelectNumbers(
     selectedNumber: Int = 2,
     onNumberSelected: (Int) -> Unit = {}
 ) {
-    var showDropdown by remember { mutableStateOf(false) }
     var currentSelection by remember { mutableStateOf(selectedNumber) }
 
     Column {
@@ -859,55 +867,49 @@ fun SelectNumbers(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .padding(top = 8.dp)
                 .padding(horizontal = 8.dp)
-
         ) {
-            Text(
-                text = "Number:",
-                modifier = Modifier
-                    .padding(end = 8.dp)
+            Text("Number:")
 
-            )
             Button(
-                onClick = { showDropdown = true },
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-                    .height(30.dp),
+                onClick = {
+                    currentSelection = max(currentSelection - 1, MIN_COMPANIONS)
+                    onNumberSelected(currentSelection)
+                },
                 shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.size(36.dp),
+                enabled = currentSelection > MIN_COMPANIONS
             ) {
-                Text(
-                    text = currentSelection.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
+                Text("−", textAlign = TextAlign.Center)
+            }
 
-                )
-                Icon(
-                    imageVector = Icons.Outlined.ArrowDropDown,
-                    contentDescription = "Select number",
-                    tint = MaterialTheme.colorScheme.surface
+            AnimatedContent(
+                targetState = currentSelection,
+                transitionSpec = { fadeIn() with fadeOut() }
+            ) { number ->
+                Text(
+                    text = number.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.width(24.dp),
+                    textAlign = TextAlign.Center
                 )
             }
 
-
-            DropdownMenu(
-                expanded = showDropdown,
-                onDismissRequest = { showDropdown = false }
+            Button(
+                onClick = {
+                    currentSelection = min(currentSelection + 1, MAX_COMPANIONS)
+                    onNumberSelected(currentSelection)
+                },
+                shape = CircleShape,
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.size(36.dp),
+                enabled = currentSelection < MAX_COMPANIONS
             ) {
-                (MIN_COMPANIONS..MAX_COMPANIONS).forEach { number ->
-                    DropdownMenuItem(
-                        text = { Text(number.toString()) },
-                        onClick = {
-                            currentSelection = number
-                            showDropdown = false
-                            onNumberSelected(number)
-                        }
-                    )
-                }
+                Text("+", textAlign = TextAlign.Center)
             }
         }
     }

@@ -31,6 +31,8 @@ import android.view.WindowInsetsController
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.appcheck.FirebaseAppCheck
@@ -40,6 +42,7 @@ import it.polito.mad.lab5g10.seekscape.models.NotificationItem
 import it.polito.mad.lab5g10.seekscape.ui._theme.SeekScapeTheme
 import it.polito.mad.lab5g10.seekscape.ui.navigation.navigateToNotificationAction
 import it.polito.mad.lab5g10.seekscape.services.AccountService
+import it.polito.mad.lab5g10.seekscape.ui._common.components.AnimatedLogo
 import kotlinx.coroutines.launch
 
 
@@ -138,10 +141,18 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             SeekScapeTheme {
-                NotificationPermissionRequester()
-                NotificationListener()
-                SeekScapeApp(initialIntent = intent, dynamicRoute = dynamicLinkRouteState.value)
-                //Support()
+                var showSplash by remember { mutableStateOf(true) }
+
+                if (showSplash) {
+                    AnimatedLogo {
+                        showSplash = false
+                    }
+                } else {
+                    NotificationPermissionRequester()
+                    NotificationListener()
+                    SeekScapeApp(initialIntent = intent, dynamicRoute = dynamicLinkRouteState.value)
+                    //Support()
+                }
             }
         }
         hideNavigationBar()

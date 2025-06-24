@@ -1,6 +1,11 @@
 package it.polito.mad.lab5g10.seekscape.ui.explore
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -75,6 +80,7 @@ import it.polito.mad.lab5g10.seekscape.ui._common.components.BottomDialog
 import it.polito.mad.lab5g10.seekscape.ui._common.components.IconMoney
 import it.polito.mad.lab5g10.seekscape.ui._common.components.PillButtonEditable
 import it.polito.mad.lab5g10.seekscape.ui._common.components.TravelCard
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 @Composable
@@ -207,12 +213,30 @@ fun ExploreTravelsScreen(vm: SearchViewModel, navController: NavHostController) 
                     }
                     LazyColumn(modifier = Modifier.fillMaxSize(), state=listState) {
                         itemsIndexed(uiState.travels) { index, travel ->
-                            TravelCard(
-                                travel,
-                                { actions.seeTravel(travel.travelId) },
-                                null,
-                                navController
-                            )
+                            var visible by remember { mutableStateOf(false) }
+
+                            LaunchedEffect(Unit) {
+                                delay(index * 150L)
+                                visible = true
+                            }
+
+                            AnimatedVisibility(
+                                visible = visible,
+                                enter = fadeIn(tween(500)) + slideInVertically(
+                                    initialOffsetY = { it },
+                                    animationSpec = tween(500)
+                                )+ scaleIn(
+                                    initialScale = 0.8f,
+                                    animationSpec = tween(500)
+                                )
+                            ) {
+                                TravelCard(
+                                    travel,
+                                    { actions.seeTravel(travel.travelId) },
+                                    null,
+                                    navController
+                                )
+                            }
                             Spacer(modifier = Modifier.height(10.dp))
                             if(index==uiState.travels.lastIndex && isLoadingMore){
                                 Box(
