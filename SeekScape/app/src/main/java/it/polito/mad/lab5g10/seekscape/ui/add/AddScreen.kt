@@ -798,18 +798,6 @@ fun AddTravelsScreen(vm: TravelViewModel, navCont: NavHostController, mode: Stri
 
 @Composable
 fun AddItineraryButton(vm: TravelViewModel, onClickAction: ()->Unit) {
-    val creator by vm.creatorValue.collectAsState()
-    val title by vm.titleValue.collectAsState()
-    val description by vm.descriptionValue.collectAsState()
-    val nParticipants by vm.nParticipantsValue.collectAsState()
-    val dateStart by vm.dateStartValue.collectAsState()
-    val dateEnd by vm.dateEndValue.collectAsState()
-    val priceStart by vm.priceStartValue.collectAsState()
-    val priceEnd by vm.priceEndValue.collectAsState()
-    val travelTypesVM by vm.travelTypesValues.collectAsState()
-    val imageUris by vm.imageUrisValues.collectAsState()
-    val travelItinerary by vm.travelItineraryValues.collectAsState()
-    val location by vm.locationValue.collectAsState()
 
     Button(
         onClick = {
