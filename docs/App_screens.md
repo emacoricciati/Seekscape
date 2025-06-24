@@ -218,21 +218,25 @@ android 14, OnePlus Nord 2T 5G (6,43 pollici)
     <img src="./assets/app_add_travel_1.jpg" alt="app_add_travel" />
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
-    <figcaption style="font-size: 1.1em; font-style: italic;">Add travel image</figcaption>
-    <img src="./assets/app_add_travel_image.jpg" alt="app_add_travel_image" />
+    <figcaption style="font-size: 1.1em; font-style: italic;">Add travel</figcaption>
+    <img src="./assets/app_add_travel_2.jpg" alt="app_add_travel" />
   </figure>
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">Add travel</figcaption>
-    <img src="./assets/app_add_travel_2.jpg" alt="app_add_travel" />
+    <img src="./assets/app_add_travel_3.jpg" alt="app_add_travel" />
   </figure>
 </div>
 
 <div style="width:100%; display: flex; justify-content: left; gap: 10px;">
   <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">add itinerary</figcaption>
-    <img src="./assets/app_add_itinerary.jpg" alt="app_add_itinerary" />
+    <img src="./assets/app_add_itinerary_1.jpg" alt="app_add_itinerary" />
   </figure>
-    <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
+  <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
+    <figcaption style="font-size: 1.1em; font-style: italic;">add itinerary</figcaption>
+    <img src="./assets/app_add_itinerary_2.jpg" alt="app_add_itinerary" />
+  </figure>
+  <figure style="width:30%; display: inline-block; text-align: center; margin: 0 10px;">
     <figcaption style="font-size: 1.1em; font-style: italic;">add activity</figcaption>
     <img src="./assets/app_add_activity.jpg" alt="app_add_activity" />
   </figure>
