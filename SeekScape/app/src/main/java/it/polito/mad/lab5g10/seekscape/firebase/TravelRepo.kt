@@ -252,7 +252,7 @@ class TheTravelModel() {
 
         if(search.text==""){
             query = query.limit(5)
-        }else{
+        } else {
             query = query.limit(10)
         }
 
@@ -290,7 +290,6 @@ class TheTravelModel() {
                 null
             }
         }
-
 
         var queryPast: Query = Collections.travels
         queryPast = queryPast.whereEqualTo("creatorId", creatorId)
