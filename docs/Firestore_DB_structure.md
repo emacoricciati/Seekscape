@@ -56,7 +56,14 @@
       "tab": "String",
       "navRoute": "String",
     }
-  ]
+  ],
+  "notificationSettings": {
+    "apply": true,
+    "applyAnswer": true,
+    "msg": true,
+    "lastMinute": true,
+    "review": true,
+  }
   
 }
 ```
@@ -118,6 +125,13 @@
       ],
      "date": "YYYY-MM-dd"
      }
+  ],
+  "travelChat":[
+    {
+      "authorId": "system",
+      "date": "YYYY-MM-dd HH-mm",
+      "text": "New companion"
+    }
   ]
 }
 
